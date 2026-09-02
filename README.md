@@ -129,6 +129,20 @@ SVG marks on the home page. Those are original and yours to keep or drop.
 
 ## Sharing a link with Bill
 
+Three of these are already published as private Artifact pages, plus an index
+that links to all three, so there is one URL to send:
+
+| | Link |
+|---|---|
+| **All three** | https://claude.ai/code/artifact/e526a635-595b-4204-9676-d029a906c816 |
+| Meridian | https://claude.ai/code/artifact/03918644-7063-4b9e-b3b9-e3eae5550c50 |
+| Atmosphere | https://claude.ai/code/artifact/7dc98d15-96aa-441c-bae2-e09c288a4969 |
+| Almanac | https://claude.ai/code/artifact/aa73775a-a989-403f-a32a-3d3a58cecbfc |
+
+They are private until shared from the share menu on the page itself. The
+options below still apply if you would rather the URL sit on your own domain.
+
+
 `index.html` is the entry point: a quiet page describing the three directions
 and linking to each. Send one URL and he can click through everything.
 
