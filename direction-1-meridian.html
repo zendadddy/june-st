@@ -219,9 +219,6 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
 .co .mark{font-family:var(--disp); font-size:1.16rem; line-height:1.08; letter-spacing:-.01em}
 .co .mark img{max-height:30px; width:auto; object-fit:contain}
 .co .sector{font-size:.74rem; color:var(--ink-45); margin-top:1.4rem}
-.co.is-more{background:var(--ink); color:var(--bone); justify-content:flex-end}
-.co.is-more:hover{background:#1E3229}
-.co.is-more .mark{color:var(--bone)}
 
 /* ---------- team ---------- */
 .people{display:grid; gap:clamp(30px,4vw,54px); grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); margin-top:40px}
@@ -838,11 +835,10 @@ function paint(){
     g.innerHTML=""; COMPANIES.forEach(c=>g.appendChild(card(c)));
   });
   document.querySelectorAll('[data-fill="home"]').forEach(g=>{
-    g.innerHTML=""; COMPANIES.slice(0,11).forEach(c=>g.appendChild(card(c)));
-    const more=document.createElement("a");
-    more.className="co is-more"; more.href="#/portfolio";
-    more.innerHTML='<div class="mark">See all<br>17</div><div class="sector" style="color:rgba(232,231,222,.55)">Portfolio</div>';
-    g.appendChild(more);
+    /* Twelve, not eleven: the tile that used to fill the twelfth cell is
+       gone, and twelve divides by 2, 3, 4 and 6, so the grid still fills at
+       every column count auto-fill lands on. Portfolio is in the nav. */
+    g.innerHTML=""; COMPANIES.slice(0,12).forEach(c=>g.appendChild(card(c)));
   });
   document.querySelectorAll('[data-fill="team"]').forEach(g=>{
     g.innerHTML="";

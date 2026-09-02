@@ -130,9 +130,6 @@ nav.nav a[aria-current="page"]::before{
 .co .mark{font-family:var(--disp); font-size:1.1rem; line-height:1.1}
 .co .mark img{max-height:30px; width:auto; object-fit:contain}
 .co .sector{font-size:.75rem; color:var(--ink-40); margin-top:1.4rem}
-.co.is-more{background:var(--ink); color:var(--euc)}
-.co.is-more .mark{color:var(--euc)} .co.is-more .sector{color:rgba(227,232,223,.6)}
-.co.is-more:hover{background:#2A3327}
 
 /* ---------- team ---------- */
 .people{display:grid; gap:clamp(28px,4vw,52px); grid-template-columns:repeat(auto-fill,minmax(248px,1fr)); margin-top:44px}
@@ -768,10 +765,9 @@ function card(c){
 function paint(){
   document.querySelectorAll('[data-fill="all"]').forEach(g=>{g.innerHTML="";COMPANIES.forEach(c=>g.appendChild(card(c)));});
   document.querySelectorAll('[data-fill="home"]').forEach(g=>{
-    g.innerHTML=""; COMPANIES.slice(0,11).forEach(c=>g.appendChild(card(c)));
-    const m=document.createElement("a"); m.className="co is-more"; m.href="#/portfolio";
-    m.innerHTML='<div class="mark">See all<br>17</div><div class="sector">Portfolio</div>';
-    g.appendChild(m);
+    /* Twelve fills the grid at every column count now that the twelfth
+       cell is not a tile. Portfolio is in the nav. */
+    g.innerHTML=""; COMPANIES.slice(0,12).forEach(c=>g.appendChild(card(c)));
   });
   document.querySelectorAll('[data-fill="team"]').forEach(g=>{
     g.innerHTML="";
