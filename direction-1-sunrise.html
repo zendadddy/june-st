@@ -68,12 +68,40 @@ p{margin:0 0 1em}
 /* ---------- shell ---------- */
 .wrap{max-width:1320px; margin:0 auto; padding:0 var(--gut)}
 
+/* Fixed, not sticky: sticky occupies flow, so a transparent bar would have
+   shown the paper ground rather than the sky, where white reads at 1.12:1.
+   Overlaying the hero is what makes the transparent treatment possible. */
 header.bar{
-  position:sticky; top:0; z-index:60;
+  position:fixed; top:0; left:0; right:0; z-index:60;
   backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
   background:color-mix(in srgb, var(--paper) 78%, transparent);
   border-bottom:1px solid var(--line);
 }
+/* The hero goes under the bar; every other page starts below it. */
+.page:not(#p-home){padding-top:var(--bar,80px)}
+
+/* ---------- the bar over the hero ----------
+   Transparent, with the mark and links in white. White on the raw sky is
+   2.64:1, so the bar carries a scrim: the sky deepening at the zenith,
+   which is what a sky does. It runs half again the bar's own height and
+   eases out, so there is no edge where it ends, and it is spent before the
+   headline's tightest position. */
+body.hero-nav header.bar{
+  background:none; border-bottom-color:transparent;
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+body.hero-nav header.bar::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:150%;
+  z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(22,36,30,.56) 0%, rgba(22,36,30,.48) 44%,
+    rgba(22,36,30,.21) 76%, rgba(22,36,30,0) 100%);
+}
+body.hero-nav .brand{color:#FFF}
+body.hero-nav nav.nav a{color:rgba(255,255,255,.88)}
+body.hero-nav nav.nav a:hover{color:#FFF}
+body.hero-nav nav.nav a[aria-current="page"]{color:#FFF; border-bottom-color:#FFF}
+body.hero-nav .burger{color:#FFF}
 .bar-in{display:flex; align-items:center; justify-content:space-between; gap:20px; padding-top:14px; padding-bottom:14px}
 .brand{display:block; text-decoration:none; color:var(--ink)}
 .brand .jsv-mark{height:clamp(38px,4.4vw,50px); width:auto; display:block}
@@ -102,7 +130,7 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
      below shows under the fold. min-height is the floor: on a short window
      the strip gives way rather than the composition collapsing. */
   position:relative; overflow:hidden; min-height:600px;
-  height:calc(100svh - var(--bar,80px) - clamp(90px,15vh,190px));
+  height:calc(100svh - clamp(90px,15vh,190px));
   /* The sky's three stops live here rather than on .sky, so the ground can
      read the terminal colour and carry it across the horizon. */
   --sky-a:#8FA0BE; --sky-b:#D57D35; --sky-c:#D57D35;
@@ -155,13 +183,20 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
 .photo{
   position:absolute; left:0; right:0; top:var(--hz);
   transform:translateY(calc(var(--ph-f) * -1));
-  aspect-ratio:var(--ph-w) / var(--ph-h);
-  background:var(--sunrise) center/100% 100% no-repeat;
+  /* Height is capped. Left to aspect-ratio alone the frame scaled with
+     viewport *width*, so a wide, short window got a 550px photograph in a
+     380px sky and the copy had nowhere to go. cover with a 30%
+     background-position keeps the alignment exact anyway: a percentage
+     position aligns that point of the image with the same point of the box,
+     so the ridgeline stays at 30% of the element however it is cropped, and
+     translateY(-30%) puts that on --hz. */
+  height:min(calc(100vw * var(--ph-h) / var(--ph-w)), 42vh);
+  background:var(--sunrise) center var(--ph-f) / cover no-repeat;
   z-index:2; pointer-events:none;
   -webkit-mask-image:linear-gradient(180deg,
-    rgba(0,0,0,0) 0%, #000 13%, #000 46%, rgba(0,0,0,.55) 74%, rgba(0,0,0,0) 97%);
+    rgba(0,0,0,0) 0%, #000 17%, #000 48%, rgba(0,0,0,.55) 76%, rgba(0,0,0,0) 97%);
           mask-image:linear-gradient(180deg,
-    rgba(0,0,0,0) 0%, #000 13%, #000 46%, rgba(0,0,0,.55) 74%, rgba(0,0,0,0) 97%);
+    rgba(0,0,0,0) 0%, #000 17%, #000 48%, rgba(0,0,0,.55) 76%, rgba(0,0,0,0) 97%);
 }
 
 .hero-copy{
@@ -175,11 +210,13 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
      into the photograph's masked top edge, where nothing shows. */
   position:relative; z-index:4; height:var(--hz);
   display:flex; flex-direction:column; justify-content:flex-start;
-  padding-top:14px;
+  padding-top:calc(var(--bar,80px) + 16px);   /* clear of the fixed bar */
   /* Clearance is the photograph's own top third, less a little: the top of
      the frame is masked to transparent there, so the copy can sit a touch
      into it without touching anything visible. */
-  padding-bottom:min(calc(100vw * 126 / 1274 - 12px), 17vh);
+  /* 30% of the frame's height, the part that sits above the line, less a
+     little: the top of that is masked to nothing. */
+  padding-bottom:calc(min(100vw * 420 / 1274, 42vh) * 0.30 - 10px);
 }
 .hero h1{max-width:15ch; margin-top:auto; margin-bottom:.28em}
 /* .d1 sizes on width alone. In the hero that is not the only constraint: the
@@ -188,7 +225,14 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
    display size pushed the headline under the fixed bar. Width and height
    both get a say, and the smaller wins. The photograph's clearance is
    capped the same way, for the same reason. */
-.hero h1.d1{font-size:min(clamp(2.6rem,7.4vw,6.4rem), 10.5vh)}
+.hero h1.d1{font-size:min(clamp(2.6rem,7.4vw,6.4rem), 10vh)}
+/* Very wide and short is the one aspect where the sky cannot hold the copy
+   at full size: width pushes the type up while height squeezes the room.
+   Scoped here rather than trimming the headline on every screen to fix one. */
+@media (min-aspect-ratio: 19/10){
+  .hero h1.d1{font-size:min(clamp(2.6rem,7.4vw,6.4rem), 8.2vh)}
+  .hero .lede{font-size:1.02rem}
+}
 /* Against the photograph's sky the muted ink measured 3.20:1. #384640 was
    already a darkening for the old gradient; this one needs full ink. */
 .hero .lede{color:var(--ink)}
@@ -962,6 +1006,7 @@ function route(){
     if(a.dataset.route===key) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
   });
   window.scrollTo(0,0);
+  navState();
   document.title = id==="p-team" ? "Team — June Street Ventures"
                  : id==="p-portfolio" ? "Portfolio — June Street Ventures"
                  : "June Street Ventures";
@@ -984,6 +1029,7 @@ const SKY = [
 let ticking=false;
 function frame(){
   ticking=false;
+  navState();
   const y = scrollY;
   if(!reduce){
     document.querySelectorAll("[data-depth]").forEach(b=>{
@@ -1018,6 +1064,16 @@ const io = new IntersectionObserver(es=>es.forEach(e=>{
 const bar = document.querySelector("header.bar");
 function measureBar(){
   if(bar) document.documentElement.style.setProperty("--bar", bar.offsetHeight + "px");
+}
+
+/* White only where white reads: over the hero on the home page. On the inner
+   pages, and once the home page has scrolled its bone ground up under the
+   bar, the bar goes back to paper and ink. */
+function navState(){
+  const hero = document.querySelector("#p-home.on .hero");
+  const barH = bar ? bar.offsetHeight : 80;
+  const over = !!hero && scrollY < hero.offsetTop + hero.offsetHeight - barH;
+  document.body.classList.toggle("hero-nav", over);
 }
 measureBar();
 addEventListener("resize", measureBar, {passive:true});
