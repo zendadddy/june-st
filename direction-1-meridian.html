@@ -33,7 +33,7 @@
   --body: "June Sans", -apple-system, system-ui, sans-serif;
 
   --gut: clamp(20px, 5vw, 64px);
-  --hz: 62vh; /* horizon position in the hero */
+  --hz: 62%;  /* horizon position, as a share of the hero's own height */
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -84,23 +84,85 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
 }
 
 /* ---------- the horizon hero ---------- */
-.hero{position:relative; height:100svh; min-height:560px; overflow:hidden}
+.hero{
+  position:relative; height:calc(100svh - var(--bar,80px)); min-height:520px; overflow:hidden;
+  /* The sky's three stops live here rather than on .sky, so the ground can
+     read the terminal colour and carry it across the horizon. */
+  --sky-a:#8FA0BE; --sky-b:#E9A472; --sky-c:#EFAE6B;
+  --rg: clamp(76px, 12vh, 138px);   /* depth of the ridge band above the line */
+}
 .sky{
   position:absolute; inset:0 0 auto 0; height:var(--hz);
+  /* The last stop settles at 88% and holds, so the sky is not still
+     brightening at the moment it reaches the line. */
   background:linear-gradient(178deg,
-    var(--sky-a,#8FA0BE) 0%,
-    var(--sky-b,#E8A986) 58%,
-    var(--sky-c,#F7D6B2) 100%);
+    var(--sky-a) 0%,
+    var(--sky-b) 58%,
+    var(--sky-c) 88%,
+    var(--sky-c) 100%);
   transition:background 1.2s linear;
 }
 .ground{
   position:absolute; inset:var(--hz) 0 0 0;
-  background:linear-gradient(180deg, #EFE6DA 0%, var(--paper) 62%);
+  /* Haze. The first pixel below the line is the sky's own last colour, so
+     both sides of the meridian share a value and the hairline is the only
+     thing marking the change. It resolves into paper over the top third,
+     and it warms as the sky advances, because it is the same variable. */
+  background:
+    linear-gradient(180deg, rgba(255,248,237,.46) 0%, rgba(255,248,237,0) 16%),
+    linear-gradient(180deg, var(--sky-c) 0%, transparent 34%),
+    linear-gradient(180deg, #EFE6DA 0%, var(--paper) 62%);
+  transition:background 1.2s linear;
 }
 .meridian{
   position:absolute; left:0; right:0; top:var(--hz); height:1px;
-  background:var(--ink); opacity:.5; z-index:3;
+  /* Every other rule on the page is --line at .16. The spine earns more
+     weight than that, but .5 made it a border rather than a horizon. */
+  background:var(--ink); opacity:.34; z-index:3;
 }
+/* ---------- the ridgeline ----------
+   Distant hills, flattened by haze into near-silhouettes. Each layer is the
+   ink at a low opacity rather than its own colour, so the range warms with
+   the sky as it advances and there is no second palette to keep in step.
+   Recession is opacity, not hue: .10 farthest, .26 nearest.
+   ------------------------------------------------------------------ */
+.range{position:absolute; left:0; right:0; z-index:2; pointer-events:none; will-change:transform}
+.range svg{display:block; width:100%; height:100%}
+/* Opacity goes on the fill, not the layer, so the fog below can sit at full
+   strength inside the same element. */
+.range path{fill:var(--ink)}
+/* Baselines step down toward the line rather than sharing it, so each
+   layer's fog pools at its own height. When all three ended at the horizon
+   their fogs stacked and bleached the very band the line sits on. */
+.range.g1{top:calc(var(--hz) - var(--rg));      height:calc(var(--rg)*.58)}
+.range.g2{top:calc(var(--hz) - var(--rg)*.80);  height:calc(var(--rg)*.60)}
+.range.g3{top:calc(var(--hz) - var(--rg)*.52);  height:calc(var(--rg)*.52)}
+.range.g1 path{fill-opacity:.11}
+.range.g2 path{fill-opacity:.19}
+.range.g3 path{fill-opacity:.30}
+/* Fog pools at the foot of each range. Each layer's fog draws over its own
+   silhouette and under the next one down, which is the whole trick: the
+   ranges separate by haze rather than by outline. */
+.range::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:46%;
+  background:linear-gradient(180deg, rgba(255,248,237,0), rgba(255,248,237,.46));
+}
+
+/* The sun rides the crest of the far range: it is drawn first, so all three
+   ranges veil its lower third. At .11 fill that is a haze, not a cut edge. */
+.sun{
+  position:absolute; z-index:2; left:52%; transform:translateX(-50%);
+  top:calc(var(--hz) - var(--rg) - 8px);
+  width:clamp(38px,4.6vw,58px); aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle,
+    #FFFDF5 0%, #FFF4D6 34%, rgba(255,233,182,.72) 60%, rgba(255,226,168,0) 100%);
+}
+.sun::before{
+  content:""; position:absolute; inset:-300%; border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,198,120,.32) 0%, rgba(255,198,120,.11) 36%, rgba(255,198,120,0) 64%);
+}
+
 /* three abstract bands parallaxing above the line — not a landscape, just weather */
 .band{position:absolute; left:-10%; right:-10%; z-index:2; opacity:.5; will-change:transform}
 .band.b1{top:calc(var(--hz) - 190px); height:120px; background:linear-gradient(180deg,transparent,rgba(233,167,110,.40),transparent)}
@@ -108,22 +170,26 @@ nav.nav a[aria-current="page"]{color:var(--ink); border-bottom-color:var(--lupin
 .band.b3{top:calc(var(--hz) - 42px);  height:26px;  background:linear-gradient(180deg,transparent,rgba(22,36,30,.14),transparent)}
 
 .hero-copy{
-  position:relative; z-index:4; height:100%;
+  /* Height is the sky's share of the hero, so the copy's own box ends at the
+     horizon; the padding then lifts it clear of the ridge band. Percentage
+     padding would resolve against width, which is why the offset is px.
+     .wrap's horizontal gutter survives because this only sets the longhand. */
+  position:relative; z-index:4; height:var(--hz);
   display:flex; flex-direction:column; justify-content:flex-end;
-  padding-bottom:calc(100svh - var(--hz) - 22px);
+  padding-bottom:calc(var(--rg) + 6px);
 }
 .hero h1{max-width:15ch; margin-bottom:.28em}
 .hero .lede{color:#384640}
 .hero-foot{
-  position:absolute; z-index:4; left:var(--gut); right:var(--gut); bottom:clamp(18px,3.4vh,34px);
+  position:absolute; z-index:4; left:0; right:0; bottom:clamp(18px,3.4vh,34px);
   display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
   font-size:.86rem; color:var(--ink-70);
 }
-.hero-foot .sectors{max-width:46ch}
+.hero-foot .sectors{max-width:64ch}
 .scrollcue{display:flex; align-items:center; gap:.5rem; white-space:nowrap}
 .scrollcue i{width:26px; height:1px; background:var(--ink-45); display:block}
 @media(max-width:760px){
-  .hero{--hz:58vh}
+  .hero{--hz:58%}
   .hero-foot{flex-direction:column; align-items:flex-start}
   .scrollcue{display:none}
 }
@@ -634,7 +700,10 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
     <div class="ground"></div>
     <div class="band b1" data-depth="0.16"></div>
     <div class="band b2" data-depth="0.28"></div>
-    <div class="band b3" data-depth="0.44"></div>
+    <div class="sun" aria-hidden="true"></div>
+    <div class="range g1" data-depth="0.04" aria-hidden="true"><svg viewBox="0 0 1200 140" preserveAspectRatio="none"><path d="M0 140V96L140 70L280 84L420 58L545 62L630 36L715 56L850 46L985 74L1110 60L1200 72V140Z"/></svg></div>
+    <div class="range g2" data-depth="0.07" aria-hidden="true"><svg viewBox="0 0 1200 104" preserveAspectRatio="none"><path d="M0 104V72L160 48L320 66L470 40L610 58L750 36L890 60L1030 44L1160 64L1200 56V104Z"/></svg></div>
+    <div class="range g3" data-depth="0.12" aria-hidden="true"><svg viewBox="0 0 1200 62" preserveAspectRatio="none"><path d="M0 62V42L200 30L400 40L600 28L800 38L1000 30L1200 40V62Z"/></svg></div>
     <div class="meridian"></div>
     <div class="wrap hero-copy">
       <h1 class="d1">We invest on a longer clock.</h1>
@@ -886,17 +955,17 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* Sunrise. Cool overhead, warm at the horizon, opening up as you scroll.
    Every stop is checked for contrast against the evergreen hero copy. */
 const SKY = [
-  ["#8FA0BE","#E8A986","#F7D6B2"],  /* first light */
-  ["#A79FB4","#F0B183","#FAE0C0"],  /* sunrise */
-  ["#BFAFA8","#F6C193","#FCE9D2"],  /* glow */
-  ["#D2C4B4","#F8D3AC","#FDF1E2"]   /* risen */
+  ["#8FA0BE","#E9A472","#EFAE6B"],  /* first light */
+  ["#A79FB4","#F0AC69","#F5B978"],  /* sunrise */
+  ["#BFAFA8","#F5BA79","#F8C88C"],  /* glow */
+  ["#D2C4B4","#F8D3AC","#FADCB4"]   /* risen */
 ];
 let ticking=false;
 function frame(){
   ticking=false;
   const y = scrollY;
   if(!reduce){
-    document.querySelectorAll(".band").forEach(b=>{
+    document.querySelectorAll(".band, .range").forEach(b=>{
       b.style.transform = `translate3d(0, ${y * parseFloat(b.dataset.depth)}px, 0)`;
     });
   }
@@ -908,11 +977,12 @@ function frame(){
     const A=p(a),B=p(b);
     return `rgb(${A.map((v,k)=>Math.round(v+(B[k]-v)*f)).join(",")})`;
   };
-  const sky=document.getElementById("sky");
-  if(sky){
-    sky.style.setProperty("--sky-a", mix(SKY[i][0],SKY[i+1][0]));
-    sky.style.setProperty("--sky-b", mix(SKY[i][1],SKY[i+1][1]));
-    sky.style.setProperty("--sky-c", mix(SKY[i][2],SKY[i+1][2]));
+  /* Set on .hero, not .sky — the ground's haze reads --sky-c too. */
+  const hero=document.querySelector(".hero");
+  if(hero){
+    hero.style.setProperty("--sky-a", mix(SKY[i][0],SKY[i+1][0]));
+    hero.style.setProperty("--sky-b", mix(SKY[i][1],SKY[i+1][1]));
+    hero.style.setProperty("--sky-c", mix(SKY[i][2],SKY[i+1][2]));
   }
 }
 addEventListener("scroll", ()=>{ if(!ticking){ ticking=true; requestAnimationFrame(frame); } }, {passive:true});
@@ -921,6 +991,15 @@ addEventListener("scroll", ()=>{ if(!ticking){ ticking=true; requestAnimationFra
 const io = new IntersectionObserver(es=>es.forEach(e=>{
   if(e.isIntersecting){ e.target.classList.add("lit"); io.unobserve(e.target); }
 }), {threshold:.35});
+
+/* The hero is one viewport minus the header, so nothing in it falls below
+   the fold. The bar's height is content-driven, so measure it. */
+const bar = document.querySelector("header.bar");
+function measureBar(){
+  if(bar) document.documentElement.style.setProperty("--bar", bar.offsetHeight + "px");
+}
+measureBar();
+addEventListener("resize", measureBar, {passive:true});
 
 document.getElementById("yr").textContent = new Date().getFullYear();
 paint();
