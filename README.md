@@ -9,8 +9,10 @@ in a browser and click through Home / Team / Portfolio.
 | `direction-2-atmosphere.html` | **Atmosphere** | Coastal light in four parallax layers, built entirely in CSS. Dark, big type, no photography. |
 | `direction-3-almanac.html` | **Almanac** | Growth rings. Patient capital drawn as the thing it actually looks like over time. |
 
-All three: responsive to 360px, keyboard focus visible, `prefers-reduced-motion`
-respected, and every page reachable without JavaScript-heavy routing beyond a hash.
+All three are single scrolling pages. Team and Portfolio are sections, reached
+by anchors in the header rather than by routes, and the header's current state
+follows what is actually on screen. Responsive to 360px, keyboard focus
+visible, `prefers-reduced-motion` respected throughout.
 
 `index.html` is the entry point: a quiet page describing the three directions and
 linking to each.
@@ -176,14 +178,13 @@ These are static files. Whatever the hosting plan is, this works:
 2. Upload `index.html` plus the `logos/` folder to the site root via cPanel File
    Manager or SFTP.
 
-The hash router (`#/team`, `#/portfolio`) means one file serves all three pages.
-That's deliberate for the pitch stage. Once a direction is locked, splitting into
-real `index.html` / `team.html` / `portfolio.html` is a fifteen-minute job and is
-better for search. Ask Claude to do it.
+Each direction is one page, so one file is the whole site. If Team and Portfolio
+should later become their own URLs for search, splitting the sections into
+`team.html` and `portfolio.html` is a short job. Ask Claude to do it.
 
 ## Placeholders to replace before launch
 
 - `hello@junestreetventures.com` — appears in the contact block on all three pages
 - The `TEAM` array — names, roles, bios, and headshot images
-- Headshots: drop files into `.person .shot` in place of the initials span
+- Headshots: drop an `<img>` into `.person .shot` in place of the placeholder avatar; it takes the same circle
 - idealis is tagged "Consumer" as a holding position; worth confirming

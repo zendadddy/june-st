@@ -33,11 +33,15 @@
   --disp: "June Sans", -apple-system, system-ui, sans-serif;
   --body: "June Sans", -apple-system, system-ui, sans-serif;
 
+  --av-bg:#1C2E36; --av-fg:#334A53;
   --gut: clamp(20px,5vw,72px);
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+/* Anchor targets stop below the bar rather than under it. */
+#team,#portfolio{scroll-margin-top:calc(var(--bar,72px) + 8px)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   margin:0; background:var(--night); color:var(--fog);
   font-family:var(--body); font-size:clamp(15px,1.05vw,17.5px);
@@ -207,13 +211,21 @@ nav.nav a[aria-current="page"]{background:var(--fog); color:var(--night)}
 
 /* team */
 .people{display:grid; gap:clamp(28px,4vw,56px); grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); margin-top:46px}
+/* Placeholder portrait: the generic avatar, as a circle. Vector rather than
+   a raster, so it stays sharp at any size and each direction can tone it to
+   its own palette; the figure sits about 1.3:1 off its ground everywhere,
+   which is the quietness a placeholder wants. Drop a real headshot in as an
+   <img> and it takes the same circle. */
 .person .shot{
-  aspect-ratio:4/5; background:linear-gradient(150deg,#122026,#0A1216);
-  border:1px solid var(--hair); display:flex; align-items:center; justify-content:center;
+  width:clamp(112px,44%,158px); aspect-ratio:1; border-radius:50%;
+  background:none; border:0;
+  display:flex; align-items:center; justify-content:center;
   overflow:hidden; margin-bottom:1.15rem;
 }
-.person .shot img{width:100%;height:100%;object-fit:cover}
-.person .shot span{font-family:var(--disp); font-weight:400; font-size:2.7rem; color:var(--fog-38); letter-spacing:-.04em}
+.person .shot img,.person .shot .avatar{width:100%; height:100%; display:block}
+.person .shot img{object-fit:cover}
+.person .shot .av-bg{fill:var(--av-bg)}
+.person .shot .av-fg{fill:var(--av-fg)}
 .person h3{font-size:1.42rem; margin-bottom:.15rem}
 .person .role{font-family:var(--disp); font-size:.82rem; color:var(--glass); margin:0 0 .75rem}
 .person p{font-size:.95rem; color:var(--fog-60); max-width:42ch}
@@ -236,24 +248,19 @@ footer.foot{
   font-family:var(--disp); font-size:.78rem; font-weight:400; color:var(--fog-38);
 }
 
-.page{display:none}
-.page.on{display:block}
 
 /* ---------- load and route transition ----------
-   The router swaps .page between display:none and block, and coming back
-   from display:none restarts a CSS animation, so this one rule covers both
-   the first paint and every route change afterwards, with no JS. Logos
-   resolve asynchronously against a text fallback, so the mark that lands
-   fades rather than snapping in. */
+   One page now, so this is the opening fade and nothing else. Logos resolve
+   asynchronously against a text fallback, so the mark that lands fades in
+   rather than snapping. */
 @keyframes page-in{from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none}}
 @keyframes mark-in{from{opacity:0} to{opacity:1}}
-.page.on{animation:page-in .42s cubic-bezier(.2,.7,.2,1) both}
+main{animation:page-in .42s cubic-bezier(.2,.7,.2,1) both}
 .co .mark img{animation:mark-in .4s ease-out both}
 @media(prefers-reduced-motion:reduce){
-  .page.on,.co .mark img{animation:none}
+  main,.co .mark img{animation:none}
 }
 
-main.page{padding-top:0}
 
 
 /* ---------- mobile menu ---------- */
@@ -690,9 +697,9 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
 </g>
 </svg></a>
     <nav class="nav">
-      <a href="#/" data-route="/">Home</a>
-      <a href="#/team" data-route="/team">Team</a>
-      <a href="#/portfolio" data-route="/portfolio">Portfolio</a>
+      <a href="#top" data-route="top">Home</a>
+      <a href="#team" data-route="team">Team</a>
+      <a href="#portfolio" data-route="portfolio">Portfolio</a>
     </nav>
       <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
@@ -700,16 +707,17 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
 
 <div class="menu" id="menu" hidden>
   <nav class="menu-nav">
-    <a href="#/" data-route="/">Home</a>
-    <a href="#/team" data-route="/team">Team</a>
-    <a href="#/portfolio" data-route="/portfolio">Portfolio</a>
+    <a href="#top" data-route="top">Home</a>
+    <a href="#team" data-route="team">Team</a>
+    <a href="#portfolio" data-route="portfolio">Portfolio</a>
   </nav>
   <div class="menu-foot"><a href="mailto:hello@junestreetventures.com">hello@junestreetventures.com</a></div>
 </div>
 
 <!-- ============ HOME ============ -->
-<main id="p-home" class="page">
-  <section class="hero">
+<!-- ============ ONE PAGE ============ -->
+<main>
+  <section class="hero" id="top">
     <div class="orb orb-a" aria-hidden="true"></div>
     <div class="orb orb-b" aria-hidden="true"></div>
     <div class="orb orb-c" aria-hidden="true"></div>
@@ -728,18 +736,17 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
     </div>
   </section>
 
-
   <section class="sec expand-sec">
     <figure class="expand" data-expand>
       <div class="expand-img" role="img" aria-label="Big Sur coastline"></div>
-      <figcaption>Big Sur, California</figcaption>
     </figure>
   </section>
+
   <section class="sec">
     <div class="wrap sec-grid">
       <p class="kicker">Where we invest</p>
       <div>
-        <h2 class="d2">Six places we know well.</h2>
+        <h2 class="d2">The places we know well.</h2>
         <div class="sectors">
           <div class="sector-row">Food<span>Brands and better-for-you platforms</span></div>
           <div class="sector-row">Beverage<span>Spirits, wine, and functional drinks</span></div>
@@ -768,29 +775,7 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
     </div>
   </section>
 
-  <section class="sec">
-    <div class="wrap">
-      <p class="kicker">Selected portfolio</p>
-      <h2 class="d2">Companies we back.</h2>
-      <div class="logos" data-fill="home"></div>
-    </div>
-  </section>
-
-  <section class="sec contact">
-    <div class="wrap sec-grid">
-      <p class="kicker">Get in touch</p>
-      <div>
-        <h2 class="d2" style="margin-bottom:1.5rem">Building something worth a decade? Start here.</h2>
-        <a class="big" href="mailto:hello@junestreetventures.com">hello@junestreetventures.com</a>
-        <p class="addr">June Street Ventures<br>Los Angeles, California</p>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- ============ TEAM ============ -->
-<main id="p-team" class="page">
-  <section class="sec" style="padding-top:clamp(150px,20vh,215px)">
+  <section class="sec" id="team" style="padding-top:clamp(150px,20vh,215px)">
     <div class="wrap sec-grid">
       <p class="kicker">Team</p>
       <div>
@@ -800,20 +785,8 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
     </div>
     <div class="wrap"><div class="people" data-fill="team"></div></div>
   </section>
-  <section class="sec contact">
-    <div class="wrap sec-grid">
-      <p class="kicker">Get in touch</p>
-      <div>
-        <a class="big" href="mailto:hello@junestreetventures.com">hello@junestreetventures.com</a>
-        <p class="addr">June Street Ventures · Los Angeles, California</p>
-      </div>
-    </div>
-  </section>
-</main>
 
-<!-- ============ PORTFOLIO ============ -->
-<main id="p-portfolio" class="page">
-  <section class="sec" style="padding-top:clamp(110px,17vh,190px)">
+  <section class="sec" id="portfolio" style="padding-top:clamp(110px,17vh,190px)">
     <div class="wrap sec-grid">
       <p class="kicker">Portfolio</p>
       <div>
@@ -823,12 +796,14 @@ c0 -1476 1 -1629 16 -1635 9 -3 217 -6 463 -6 334 0 450 3 459 12 9 9 12 239
     </div>
     <div class="wrap"><div class="logos" data-fill="all"></div></div>
   </section>
+
   <section class="sec contact">
     <div class="wrap sec-grid">
       <p class="kicker">Get in touch</p>
       <div>
+        <h2 class="d2" style="margin-bottom:1.5rem">Building something worth a decade? Start here.</h2>
         <a class="big" href="mailto:hello@junestreetventures.com">hello@junestreetventures.com</a>
-        <p class="addr">June Street Ventures · Los Angeles, California</p>
+        <p class="addr">June Street Ventures<br>Los Angeles, California</p>
       </div>
     </div>
   </section>
@@ -879,17 +854,11 @@ function card(c){
 }
 function paint(){
   document.querySelectorAll('[data-fill="all"]').forEach(g=>{g.innerHTML="";COMPANIES.forEach(c=>g.appendChild(card(c)));});
-  document.querySelectorAll('[data-fill="home"]').forEach(g=>{
-    /* Twelve fills the grid at every column count now that the twelfth
-       cell is not a tile. Portfolio is in the nav. */
-    g.innerHTML=""; COMPANIES.slice(0,12).forEach(c=>g.appendChild(card(c)));
-  });
   document.querySelectorAll('[data-fill="team"]').forEach(g=>{
     g.innerHTML="";
     TEAM.forEach(p=>{
       const d=document.createElement("div"); d.className="person";
-      const i=p.name.split(" ").map(w=>w[0]).slice(0,2).join("");
-      d.innerHTML=`<div class="shot"><span>${i}</span></div><h3>${p.name}</h3><p class="role">${p.role}</p><p>${p.bio}</p>`;
+      d.innerHTML=`<div class="shot"><svg class="avatar" viewBox="0 0 100 100" aria-hidden="true"><circle class="av-bg" cx="50" cy="50" r="50"/><circle class="av-fg" cx="50" cy="36.5" r="14.2"/><path class="av-fg" d="M26.4 77.2a23.6 23.6 0 0 1 47.2 0v1.2a3.2 3.2 0 0 1-3.2 3.2H29.6a3.2 3.2 0 0 1-3.2-3.2z"/></svg></div><h3>${p.name}</h3><p class="role">${p.role}</p><p>${p.bio}</p>`;
       g.appendChild(d);
     });
   });
@@ -964,18 +933,34 @@ function resolveLogo(el){
 }
 function swapLogos(){ document.querySelectorAll(".mark[data-logo]").forEach(resolveLogo); }
 
-const ROUTES={"/":"p-home","/team":"p-team","/portfolio":"p-portfolio"};
-function route(){
-  const r=location.hash.replace(/^#/,"")||"/";
-  const key=ROUTES[r]?r:"/", id=ROUTES[key];
-  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("on",p.id===id));
-  document.querySelectorAll("a[data-route]").forEach(a=>{
-    if(a.dataset.route===key) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+/* ---------- one page ----------
+   The nav is anchors into the document, not routes. Which link reads as
+   current is decided by what is actually on screen: a band across the middle
+   of the viewport, and whichever section covers it wins. */
+const navLinks = [...document.querySelectorAll("a[data-route]")];
+function markCurrent(id){
+  navLinks.forEach(a=>{
+    if(a.dataset.route===id) a.setAttribute("aria-current","page");
+    else a.removeAttribute("aria-current");
   });
-  scrollTo(0,0);
-  document.title = id==="p-team"?"Team — June Street Ventures":id==="p-portfolio"?"Portfolio — June Street Ventures":"June Street Ventures";
 }
-addEventListener("hashchange",route);
+const spyIO = new IntersectionObserver(es=>{
+  const seen = es.filter(e=>e.isIntersecting)
+                 .sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+  if(seen) markCurrent(seen.target.id);
+}, {rootMargin:"-48% 0px -48% 0px", threshold:0});
+["top","team","portfolio"].forEach(id=>{
+  const el=document.getElementById(id); if(el) spyIO.observe(el);
+});
+markCurrent("top");
+
+/* The bar's height is content-driven, and the anchor offsets need it. */
+const barEl = document.querySelector("header.bar");
+function measureBarOnePage(){
+  if(barEl) document.documentElement.style.setProperty("--bar", barEl.offsetHeight+"px");
+}
+measureBarOnePage();
+addEventListener("resize", measureBarOnePage, {passive:true});
 
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 let ticking=false;
@@ -995,7 +980,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 }),{threshold:.6});
 
 document.getElementById("yr").textContent=new Date().getFullYear();
-paint(); route(); frame();
+paint(); frame();
 document.querySelectorAll(".sector-row").forEach(r=>io.observe(r));
 /* ---------- mobile menu ---------- */
 const burger = document.querySelector(".burger");
