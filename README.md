@@ -5,7 +5,7 @@ in a browser and click through Home / Team / Portfolio.
 
 | File | Direction | The idea in one line |
 |---|---|---|
-| `direction-1-meridian.html` | **Meridian** | A horizon line runs the length of the page and the sky advances dawn → dusk as you scroll. |
+| `direction-1-sunrise.html` | **Sunrise** | The supplied sunrise photograph is the horizon, and the page's hairline runs through the ridgeline the sun crests. |
 | `direction-2-atmosphere.html` | **Atmosphere** | Coastal light in four parallax layers, built entirely in CSS. Dark, big type, no photography. |
 | `direction-3-almanac.html` | **Almanac** | Growth rings. Patient capital drawn as the thing it actually looks like over time. |
 
@@ -42,7 +42,7 @@ const TEAM = [
 
 Add a `u:"https://..."` and the portfolio card becomes a link.
 
-## Meridian's sky
+## Sunrise's sky and horizon
 
 The horizon gradient runs a sunrise, warming from first light to risen as you
 scroll. Four stops live in the `SKY` array. The hero copy sits over the sky, so
@@ -68,7 +68,7 @@ separate on treatment rather than typeface:
 
 | | Weight | Scale | Tracking | Small caps |
 |---|---|---|---|---|
-| Meridian | Regular | 7.4vw | -0.028em | uppercase, +0.09em |
+| Sunrise | Regular | 7.4vw | -0.028em | uppercase, +0.09em |
 | Atmosphere | Bold | 10vw | -0.048em | uppercase, +0.10em |
 | Almanac | Medium | moderate | -0.016em | uppercase, +0.13em |
 
@@ -135,7 +135,7 @@ that links to all three, so there is one URL to send:
 | | Link |
 |---|---|
 | **All three** | https://claude.ai/code/artifact/e526a635-595b-4204-9676-d029a906c816 |
-| Meridian | https://claude.ai/code/artifact/03918644-7063-4b9e-b3b9-e3eae5550c50 |
+| Sunrise | https://claude.ai/code/artifact/03918644-7063-4b9e-b3b9-e3eae5550c50 |
 | Atmosphere | https://claude.ai/code/artifact/7dc98d15-96aa-441c-bae2-e09c288a4969 |
 | Almanac | https://claude.ai/code/artifact/aa73775a-a989-403f-a32a-3d3a58cecbfc |
 
