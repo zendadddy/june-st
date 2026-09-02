@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>June Street Ventures — three directions</title>
+<meta name="description" content="Three design directions for the June Street Ventures site.">
+<style>
+:root{
+  --ink:    #16241E;
+  --ink-70: #4A5850;
+  --ink-45: #66716A;
+  --bone:   #E8E7DE;
+  --paper:  #F3F2EC;
+  --lupine: #4C5C8A;
+  --line:   rgba(22,36,30,.16);
+  --body:   -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --gut:    clamp(20px, 5vw, 64px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bone);
+  color:var(--ink);
+  font:400 16px/1.6 var(--body);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:920px;margin:0 auto;padding:0 var(--gut)}
+a{color:inherit}
+
+header{padding:clamp(56px,12vh,140px) 0 0}
+.kicker{
+  font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-45);margin:0 0 clamp(20px,4vh,36px)
+}
+h1{
+  font-size:clamp(30px,5.4vw,58px);line-height:1.06;letter-spacing:-.028em;
+  font-weight:400;margin:0 0 .5em;max-width:20ch
+}
+.lede{font-size:clamp(16px,2vw,20px);color:var(--ink-70);max-width:56ch;margin:0}
+
+.rule{height:1px;background:var(--line);border:0;margin:clamp(44px,9vh,84px) 0 0}
+
+.grid{display:grid;gap:1px;background:var(--line);margin:0 0 clamp(48px,9vh,96px)}
+@media (min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+.card{
+  display:block;background:var(--paper);padding:clamp(26px,4vw,38px);
+  text-decoration:none;transition:background .25s ease
+}
+.card:hover,.card:focus-visible{background:#FBFAF5}
+.card:focus-visible{outline:2px solid var(--lupine);outline-offset:-2px}
+.num{
+  font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-45);display:block;margin-bottom:22px
+}
+.card h2{
+  font-size:clamp(22px,2.6vw,28px);line-height:1.1;letter-spacing:-.02em;
+  font-weight:400;margin:0 0 .55em
+}
+.card p{color:var(--ink-70);font-size:15px;margin:0 0 1.4em}
+.go{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--lupine)}
+
+.notes{padding:0 0 clamp(40px,8vh,80px);max-width:62ch}
+.notes h3{
+  font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-45);font-weight:400;margin:0 0 14px
+}
+.notes p{color:var(--ink-70);font-size:15px;margin:0 0 1.2em}
+.notes p:last-child{margin:0}
+
+footer{border-top:1px solid var(--line);padding:26px 0 44px}
+footer p{font-size:13px;color:var(--ink-45);margin:0}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="kicker">June Street Ventures</p>
+    <h1>Three directions for the site.</h1>
+    <p class="lede">Each one is a complete, working site — home, team and portfolio.
+      Pick a direction, or take pieces from more than one. Nothing here is locked.</p>
+    <hr class="rule">
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="grid">
+
+      <a class="card" href="direction-1-meridian.html">
+        <span class="num">Direction 01</span>
+        <h2>Meridian</h2>
+        <p>A horizon line runs the length of the page, and the sky above it
+           advances from first light to risen as you scroll. Nature and patience
+           without a single photograph.</p>
+        <span class="go">Open Meridian</span>
+      </a>
+
+      <a class="card" href="direction-2-atmosphere.html">
+        <span class="num">Direction 02</span>
+        <h2>Atmosphere</h2>
+        <p>Coastal light in four drifting layers, built entirely in CSS. Dark,
+           big type, closer to the consumer brands in the portfolio than to a
+           capital firm.</p>
+        <span class="go">Open Atmosphere</span>
+      </a>
+
+      <a class="card" href="direction-3-almanac.html">
+        <span class="num">Direction 03</span>
+        <h2>Almanac</h2>
+        <p>Growth rings. Patient capital drawn as the thing it actually looks
+           like over time, with four original marks for the four things the firm
+           says it is.</p>
+        <span class="go">Open Almanac</span>
+      </a>
+
+    </div>
+
+    <div class="notes">
+      <h3>Reading these</h3>
+      <p>Every page is reachable from the header of each direction. Each file is
+         self-contained — the typeface, the logos and the photograph are all
+         embedded, and nothing is fetched from anywhere. They open offline, on a
+         phone, on a plane.</p>
+      <p>The team page is still placeholder: names, roles, bios and headshots are
+         waiting on content. Read those as gaps to fill, not as an oversight.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Draft directions. Placeholder copy on the team page and one sector tag still
+       to confirm.</p>
+  </div>
+</footer>
+
+</body>
+</html>
