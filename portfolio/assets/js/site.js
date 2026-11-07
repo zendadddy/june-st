@@ -581,6 +581,23 @@
       // a little momentum, then let snapping settle it
       (function glide() { v *= .94; sc.scrollLeft += v * 16; if (Math.abs(v) > .05) raf = requestAnimationFrame(glide); else sc.classList.remove('is-dragging'); })();
     });
+    // resting the mouse within 48px of the carousel's left or right edge scrolls it that way, faster nearer the edge
+    var auto = 0, autoV = 0, EDGE = 48;
+    function autoLoop() {
+      if (!autoV) { auto = 0; sc.classList.remove('is-autoscroll'); return; }
+      var before = sc.scrollLeft; sc.scrollLeft += autoV;
+      if (sc.scrollLeft === before) { autoV = 0; } // reached the end
+      auto = requestAnimationFrame(autoLoop);
+    }
+    sc.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse' || down || reduce) return;
+      var r = sc.getBoundingClientRect(), x = e.clientX, v = 0;
+      if (x - r.left < EDGE) v = -(1 - (x - r.left) / EDGE) * 14 - 2;
+      else if (r.right - x < EDGE) v = (1 - (r.right - x) / EDGE) * 14 + 2;
+      autoV = v;
+      if (v && !auto) { sc.classList.add('is-autoscroll'); auto = requestAnimationFrame(autoLoop); }
+    });
+    sc.addEventListener('pointerleave', function () { autoV = 0; });
     // a drag should not count as a click on the card underneath
     sc.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
   });
