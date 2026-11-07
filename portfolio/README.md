@@ -80,6 +80,7 @@ Every page in `projects/` is password-protected. The `projects.html` overview st
 - The right password continues to the project that was clicked. Access lasts 72 hours in that browser (`localStorage` key `fb-unlock`), then the modal asks again.
 - The password is stored only as a SHA-256 hash: `PASS_HASH` in `assets/js/site.js` (section 0). It is checked in lowercase with spaces trimmed. To change it, replace the hash with the output of:
   `printf '%s' 'newpassword' | shasum -a 256`
+- To lock a browser again before the 72 hours are up, open any page with `#lock` on the end of the address (or `?lock`).
 - This is soft protection: the check runs in the browser and the project files are still on the server, so someone technical can reach them. For real protection, also turn on your host's password protection (Netlify, Vercel or Cloudflare Access).
 
 ## Other site-wide details

@@ -13,6 +13,13 @@
     var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // sha256("famouslastname")
     var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects\/[a-z0-9-]+\.html$/; // individual project pages; /projects itself is open
     function unlocked() { try { return +localStorage.getItem(KEY) > Date.now(); } catch (e) { return false; } }
+    // reset: open any page with #lock (or ?lock) to clear the 72-hour unlock in this browser
+    function relock() {
+      if (location.hash !== '#lock' && !new URLSearchParams(location.search).has('lock')) return;
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      try { var q0 = new URLSearchParams(location.search); q0.delete('lock'); var qs = q0.toString(); history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '')); } catch (e) {}
+    }
+    relock(); window.addEventListener('hashchange', relock);
     function relOf(href) { try { var u = new URL(href, location.href); if (u.origin !== siteRoot.origin) return null; return u.pathname.slice(siteRoot.pathname.length); } catch (e) { return null; } }
     function hex(a) { return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
     function sha256Fallback(m) { // for pages opened from disk, where crypto.subtle is unavailable
