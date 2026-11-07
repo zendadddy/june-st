@@ -1,0 +1,76 @@
+/* Site-level additions on top of the Webflow stylesheet. Loaded after it on every page. */
+
+/* Nav gradient: taller than the bar, and its color follows whatever sits behind the nav (see assets/js/site.js). */
+@property --nav-sky { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
+.navigation { background-image: none; --nav-sky: #91d4ff; transition: transform .7s cubic-bezier(.16,1,.3,1), color .8s; }
+.navigation::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; z-index: -1; pointer-events: none;
+  height: calc(100% + 4.5rem);
+  background-image: linear-gradient(var(--nav-sky), color-mix(in srgb, var(--nav-sky) 55%, transparent) 47%, transparent);
+  transition: --nav-sky 1.4s linear;
+}
+.navigation:where(.w-variant-8e092ad3-0474-1212-fe97-fd6fc297d996) { --nav-sky: #ffea00; }
+.navigation.is-on-dark { color: var(--_colors---all--white); }
+.navigation.is-on-dark .nav_link { color: inherit; }
+/* Tucked away while scrolling down */
+.navigation.is-tucked { transform: translateY(-115%); }
+.navigation.is-tucked .nav_sun { opacity: 0; transition: opacity .4s; }
+
+/* Nav links: underline draws in from the left on hover, and leaves to the right. */
+.nav_link { position: relative; }
+.nav_link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -0.15em; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: right center;
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+}
+.nav_link:hover::after { transform: scaleX(1); transform-origin: left center; }
+
+/* Home hero headline: wraps to two lines ("Shaping vision." / "Building with purpose.") */
+.hero h1 { max-width: 10.6em; margin-left: auto; margin-right: auto; text-wrap: initial; }
+
+/* Home hero: on laptop/desktop, cap the height so the logo bar sits above the fold. */
+@media (min-width: 992px) {
+  .hero.section { aspect-ratio: auto; height: calc(100svh - 7.25rem); min-height: 34rem; max-height: 56.25vw; }
+}
+
+/* Home intro tagline sits 15px higher than its bottom-aligned row */
+.u-nudge-up { position: relative; top: -15px; }
+
+/* Clouds hero: two copies of the About page clouds drifting at different speeds over a sky gradient. */
+.hero.cc-clouds { background: linear-gradient(#8fd2ff 0%, #bfe3fb 45%, #eef6fb 100%); color: var(--_colors---all--black); }
+.hero.cc-clouds .hero_sky { overflow: hidden; }
+.hero.cc-clouds .hero_clouds { position: absolute; inset: -6% -10%; width: 120%; max-width: none; height: 112%; object-fit: cover; will-change: transform; }
+.hero.cc-clouds .hero_clouds.cc-back { opacity: .85; animation: hero-drift-back 90s ease-in-out infinite alternate; }
+.hero.cc-clouds .hero_clouds.cc-front { inset: -12% -10% -4% -42%; width: 150%; opacity: .75; mix-blend-mode: screen; transform: scaleX(-1); animation: hero-drift-front 60s ease-in-out infinite alternate; }
+@keyframes hero-drift-back { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(-4%, 1.5%, 0) scale(1.06); } }
+@keyframes hero-drift-front { from { transform: scaleX(-1) translate3d(0,0,0) scale(1.04); } to { transform: scaleX(-1) translate3d(5%, -1%, 0) scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { .hero.cc-clouds .hero_clouds { animation: none; } }
+
+/* Page transition wipe: white wave rising from the bottom */
+.page-wipe { position: fixed; left: 0; right: 0; top: 0; height: 100%; z-index: 200; pointer-events: none; transform: translateY(calc(100% + 130px)); visibility: hidden; transition: transform .75s cubic-bezier(.65, 0, .35, 1); will-change: transform; }
+.page-wipe_wave { position: absolute; left: 0; right: 0; top: -119px; width: 100%; height: 120px; fill: var(--_colors---all--white); display: block; }
+.page-wipe_body { position: absolute; inset: 0; background: var(--_colors---all--white); }
+.page-wipe.is-entering { transform: translateY(0); visibility: visible; }
+.page-wipe.is-covering { transform: translateY(0); visibility: visible; transition: none; }
+.page-wipe.is-leaving { transform: translateY(calc(-100% - 130px)); visibility: visible; transition: transform .9s cubic-bezier(.65, 0, .35, 1) .05s; }
+.page-wipe.is-leaving .page-wipe_wave { top: auto; bottom: -119px; transform: scaleY(-1); }
+
+/* Playground (About): a loose stack of photos that deals itself into a grid as you scroll (logic in assets/js/site.js). */
+.pg { padding-bottom: 0; }
+.pg_sticky { position: relative; }
+.pg_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(.75rem, 1.5vw, 1.5rem); }
+.pg_card { margin: 0; aspect-ratio: 4 / 5; overflow: hidden; background: var(--_colors---all--black-12); box-shadow: 0 1.25rem 2.5rem -1.5rem #0000004d; will-change: transform; transform-origin: center; z-index: calc(20 - var(--i)); position: relative; }
+.pg_card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 767px) { .pg_grid { grid-template-columns: repeat(2, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .pg_card { transform: none !important; } }
+
+/* Back to top button */
+.totop{position:fixed;right:clamp(1rem,.76vw + .81rem,1.5rem);bottom:clamp(1rem,.76vw + .81rem,1.5rem);width:5rem;height:5rem;z-index:90;display:flex;align-items:center;justify-content:center;color:var(--text--primary);background:color-mix(in srgb,var(--background--primary) 70%,transparent);backdrop-filter:blur(.5rem);-webkit-backdrop-filter:blur(.5rem);border:1px dashed var(--background--invert);border-radius:50%;text-decoration:none;opacity:0;transform:translateY(1rem);pointer-events:none;transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1),background-color .3s,color .3s}
+  .totop.is-visible{opacity:1;transform:none;pointer-events:auto}
+  .totop:hover{background:var(--background--invert);color:var(--text--invert);border-style:solid}
+  .totop_ring{position:absolute;inset:0;width:100%;height:100%;will-change:transform}
+  .totop_text{font-family:var(--_typography---eyebrow--font);font-size:12.5px;font-weight:var(--_typography---eyebrow--font-weight);letter-spacing:.14em;text-transform:uppercase;fill:currentColor}
+  .totop_arrow{transform:rotate(-90deg)}
+  .u-theme-dark .totop{color:var(--text--primary)}
+  @media (max-width:479px){.totop{width:4rem;height:4rem}.totop_text{font-size:12px}}
+  @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}

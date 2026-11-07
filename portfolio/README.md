@@ -70,3 +70,12 @@ Copy `about.html` (it loads the generic page bundle), replace the contents of
 `<main class="page-main">`, keep everything else. The nav and footer are plain
 HTML repeated on every page, so a change to them means editing each file (or
 moving to a templating step later).
+
+## Site additions (on top of the Webflow export)
+
+Two shared files, loaded on every page after the Webflow CSS/JS. Edit these rather than the Webflow files.
+
+- `assets/css/custom.css`: nav gradient (taller, color driven by `--nav-sky`), nav link underline, nav tuck-away, clouds hero, laptop hero height so the logo bar is above the fold, page-transition wave, Playground stack/grid, back-to-top circle.
+- `assets/js/site.js`: always load new pages at the top, white wave page transition on internal links, nav hides on scroll down and returns on scroll up, nav gradient samples the color behind it and eases to it, Playground cards deal from a stack into a grid on scroll.
+- The back-to-top circle markup and its scroll-rotation script are inlined after the footer on each page.
+- `hover-lab.html` is a throwaway page with twelve hover ideas for project thumbnails. Not linked anywhere.
