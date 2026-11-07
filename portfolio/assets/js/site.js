@@ -221,64 +221,94 @@
   }
   window.addEventListener('scroll', function () { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
 
-  /* ---------- 4. Nav gradient follows whatever is behind it ---------- */
-  // Finds the element under the nav's bottom edge, reads its background color, or samples the top of a cover image, and feeds the color into --nav-sky. The CSS transitions the color so changes are barely noticeable.
-  var sampleCanvas = document.createElement('canvas'); sampleCanvas.width = 8; sampleCanvas.height = 8;
+  /* ---------- 4. Nav gradient follows whatever is behind it ----------
+     Samples three points just under the nav (left, centre, right). For photos it reads the pixels actually under each point,
+     taking object-fit cropping into account. The three colours become a left-to-right gradient that fades downward. */
+  var sampleCanvas = document.createElement('canvas'); sampleCanvas.width = 6; sampleCanvas.height = 6;
   var sctx = sampleCanvas.getContext('2d', { willReadFrequently: true });
   var lastKey = null;
   function parseRGBA(str) { var m = /rgba?\(([^)]+)\)/.exec(str || ''); if (!m) return null; var p = m[1].split(',').map(parseFloat); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
-  function imageAverage(img) {
+  function avgRegion(img, sx, sy, sw, sh) {
     try {
-      var w = img.naturalWidth, h = img.naturalHeight; if (!w || !h) return null;
-      // sample a band across the top 12% of the image, where the nav sits
-      sctx.drawImage(img, 0, 0, w, Math.max(1, h * 0.12), 0, 0, 8, 8);
-      var d = sctx.getImageData(0, 0, 8, 8).data, r = 0, g = 0, b = 0, n = 0;
-      for (var i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
-      return { r: r / n, g: g / n, b: b / n, a: 1 };
+      sctx.clearRect(0, 0, 6, 6); sctx.drawImage(img, sx, sy, Math.max(1, sw), Math.max(1, sh), 0, 0, 6, 6);
+      var d = sctx.getImageData(0, 0, 6, 6).data, r = 0, g = 0, b = 0, n = 0;
+      for (var i = 0; i < d.length; i += 4) { if (d[i + 3] < 10) continue; r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+      return n ? { r: r / n, g: g / n, b: b / n, a: 1 } : null;
     } catch (err) { return null; }
   }
-  function colorBehind() {
-    if (!nav) return null;
-    var r = nav.getBoundingClientRect();
-    var x = Math.min(window.innerWidth - 2, Math.max(1, window.innerWidth * 0.5));
-    var y = Math.min(window.innerHeight - 2, r.bottom + 2);
-    nav.style.pointerEvents = 'none';
-    var el = document.elementFromPoint(x, y);
-    nav.style.pointerEvents = '';
-    var guard = 0;
-    while (el && el !== document.documentElement && guard++ < 40) {
-      if (el.classList && (el.classList.contains('page-wipe') || el.classList.contains('totop'))) { el = el.parentElement; continue; }
-      var cs = getComputedStyle(el);
-      if (el.tagName === 'IMG' || el.tagName === 'VIDEO') {
-        if (el.tagName === 'IMG' && el.complete) { var avg = imageAverage(el); if (avg) return avg; }
-        if (el.tagName === 'VIDEO') return { r: 46, g: 46, b: 46, a: 1 };
+  // the part of an <img> that is drawn under screen point (x, y)
+  function imageAt(img, x, y) {
+    var nw = img.naturalWidth, nh = img.naturalHeight; if (!nw || !nh) return null;
+    var r = img.getBoundingClientRect(), fit = getComputedStyle(img).objectFit, s, ox = 0, oy = 0, sx, sy;
+    if (fit === 'cover' || fit === 'contain') {
+      s = fit === 'cover' ? Math.max(r.width / nw, r.height / nh) : Math.min(r.width / nw, r.height / nh);
+      ox = (r.width - nw * s) / 2; oy = (r.height - nh * s) / 2;
+      sx = (x - r.left - ox) / s; sy = (y - r.top - oy) / s;
+    } else { sx = (x - r.left) / r.width * nw; sy = (y - r.top) / r.height * nh; s = r.width / nw; }
+    var bw = Math.max(4, 90 / s), bh = Math.max(4, 40 / s); // about 90 x 40 screen pixels around the point
+    sx = Math.max(0, Math.min(nw - bw, sx - bw / 2)); sy = Math.max(0, Math.min(nh - bh, sy - bh / 2));
+    return avgRegion(img, sx, sy, bw, bh);
+  }
+  var imgCache = {};
+  function cachedImage(src) { if (!imgCache[src]) { var im = new Image(); im.src = src; imgCache[src] = im; } return imgCache[src]; }
+  function gradientAt(bi, el, y) {
+    var m = /linear-gradient\(([^]*)\)/.exec(bi); if (!m) return null;
+    var stops = [], re = /(rgba?\([^)]+\))\s*([\d.]+%)?/g, s;
+    while ((s = re.exec(m[1]))) { var c = parseRGBA(s[1]); if (c) stops.push({ c: c, p: s[2] ? parseFloat(s[2]) / 100 : null }); }
+    if (!stops.length) return null;
+    if (stops[0].p === null) stops[0].p = 0;
+    if (stops[stops.length - 1].p === null) stops[stops.length - 1].p = 1;
+    for (var i = 1; i < stops.length - 1; i++) if (stops[i].p === null) { // spread unpositioned stops evenly
+      var j = i; while (stops[j].p === null) j++;
+      for (var k = i; k < j; k++) stops[k].p = stops[i - 1].p + (stops[j].p - stops[i - 1].p) * (k - i + 1) / (j - i + 1);
+    }
+    var r = el.getBoundingClientRect(), t = Math.max(0, Math.min(1, (y - r.top) / Math.max(1, r.height)));
+    for (var n = 0; n < stops.length - 1; n++) {
+      var a = stops[n], b = stops[n + 1];
+      if (t <= b.p || n === stops.length - 2) {
+        var f = b.p > a.p ? Math.max(0, Math.min(1, (t - a.p) / (b.p - a.p))) : 0;
+        var out = { r: a.c.r + (b.c.r - a.c.r) * f, g: a.c.g + (b.c.g - a.c.g) * f, b: a.c.b + (b.c.b - a.c.b) * f, a: a.c.a + (b.c.a - a.c.a) * f };
+        return out.a > .5 ? out : null;
       }
+    }
+    return null;
+  }
+  function colorAt(x, y) {
+    nav.style.pointerEvents = 'none';
+    var stack = document.elementsFromPoint(x, y);
+    nav.style.pointerEvents = '';
+    for (var k = 0; k < stack.length; k++) {
+      var el = stack[k];
+      if (nav.contains(el) || el === nav) continue;
+      if (el.closest && el.closest('.page-wipe, .totop, .gate-modal')) continue;
+      if (el.tagName === 'IMG' && el.complete) { var c0 = imageAt(el, x, y); if (c0) return c0; continue; }
+      if (el.tagName === 'VIDEO' || el.tagName === 'IFRAME') return { r: 46, g: 46, b: 46, a: 1 };
+      if (el.tagName === 'CANVAS') continue;
+      var cs = getComputedStyle(el);
+      if (parseFloat(cs.opacity) < .5) continue;
       var bg = parseRGBA(cs.backgroundColor);
       if (bg && bg.a > 0.5) return bg;
       var bi = cs.backgroundImage;
       if (bi && bi !== 'none') {
         var urlm = /url\(["']?([^"')]+)["']?\)/.exec(bi);
-        if (urlm) { var im = cachedImage(urlm[1]); if (im && im.complete) { var a2 = imageAverage(im); if (a2) return a2; } }
-        var cm = /rgba?\([^)]+\)|#[0-9a-f]{3,8}/i.exec(bi);
-        if (cm && cm[0].charAt(0) === 'r') { var c = parseRGBA(cm[0]); if (c && c.a > 0.5) return c; }
+        if (urlm) { var im = cachedImage(urlm[1]); if (im && im.complete && im.naturalWidth) { var er = el.getBoundingClientRect(); var c1 = avgRegion(im, (x - er.left) / er.width * im.naturalWidth - 20, (y - er.top) / er.height * im.naturalHeight - 10, 40, 20); if (c1) return c1; } }
+        // a top-to-bottom CSS gradient: find the colour at this height from all of its stops
+        var gc = gradientAt(bi, el, y);
+        if (gc) return gc;
       }
-      el = el.parentElement;
     }
-    var body = parseRGBA(getComputedStyle(document.body).backgroundColor);
-    if (body && body.a > 0.5) return body;
     var html = parseRGBA(getComputedStyle(document.documentElement).backgroundColor);
     return html && html.a > 0.5 ? html : { r: 250, g: 250, b: 250, a: 1 };
   }
-  var imgCache = {};
-  function cachedImage(src) { if (!imgCache[src]) { var im = new Image(); im.src = src; imgCache[src] = im; } return imgCache[src]; }
   function sampleBackdrop() {
     if (!nav) return;
-    var c = colorBehind(); if (!c) return;
-    var key = Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b);
+    var r = nav.getBoundingClientRect(), w = document.documentElement.clientWidth;
+    var y = Math.min(window.innerHeight - 2, r.bottom + 4);
+    var cols = [.12, .5, .88].map(function (f) { return colorAt(Math.round(w * f), y); });
+    var key = cols.map(function (c) { return Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b); }).join('|');
     if (key === lastKey) return; lastKey = key;
-    var lum = (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255;
-    // Keep the sky feeling: nudge the sampled color toward the original gradient blue when it is light and bluish, otherwise follow it.
-    nav.style.setProperty('--nav-sky', 'rgb(' + key + ')');
+    ['--nav-l', '--nav-c', '--nav-r'].forEach(function (v, i) { var c = cols[i]; nav.style.setProperty(v, 'rgb(' + Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b) + ')'); });
+    var lum = cols.reduce(function (s, c) { return s + (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255; }, 0) / 3;
     nav.classList.toggle('is-on-dark', lum < 0.45);
   }
   /* ---------- 5. Playground ----------
@@ -312,11 +342,18 @@
       pg.style.setProperty('--pg-top', Math.max(12, (vh - gh) / 2) + 'px');
       var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
       homes = cards.map(function (c) { var r = c.getBoundingClientRect(); return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) }; });
-      // the pile: large prints in a loose horizontal fan with gentle tilts
-      var spread = Math.min(gr.width * .5, 960);
+      // the pile: six large prints in a loose fan; the rest slide in from the sides
+      var spread = Math.min(gr.width * .45, 860), vw = document.documentElement.clientWidth, FAN = 6;
       jitter = cards.map(function (c, n) {
-        var w = c.offsetWidth || 1, h = c.offsetHeight || 1;
-        return { rot: (rnd(n, 12.9898) - .5) * 8, dx: (rnd(n, 78.233) - .5) * spread, dy: (rnd(n, 39.425) - .5) * vh * .06, s: (vh * .42) / Math.sqrt(w * h) };
+        var w = c.offsetWidth || 1, h = c.offsetHeight || 1, rot = (rnd(n, 12.9898) - .5) * 8;
+        if (n < FAN) { // the opening fan: a few large prints spaced evenly around the centre, with a little wobble
+          var order = [2, 0, 4, 1, 5, 3][n], fx = (order / (FAN - 1) - .5) * spread * .7 + (rnd(n, 78.233) - .5) * 40;
+          return { sx: homes[n].x + fx, sy: homes[n].y + (rnd(n, 39.425) - .5) * vh * .06, rot: rot, s: (vh * .42) / Math.sqrt(w * h) };
+        }
+        // everything else waits just off the nearest side of the screen, at its own row height
+        var sr = slots[n].getBoundingClientRect(), cxs = sr.left + sr.width / 2, side = cxs < vw / 2 ? -1 : 1;
+        var off = side < 0 ? -(cxs + w * .7 + rnd(n, 7.13) * 60) : (vw - cxs) + w * .7 + rnd(n, 7.13) * 60;
+        return { sx: off, sy: (rnd(n, 39.425) - .5) * vh * .08, rot: rot * .6, s: 1.05 };
       });
       cur = target = progress();
       layout();
@@ -325,7 +362,7 @@
     function restOf(n, p, N) {
       var local = Math.max(0, Math.min(1, p * 1.25 - (N > 1 ? n / (N - 1) : 0) * .25));
       var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
-      return { tx: (h0.x + jt.dx) * k, ty: (h0.y + jt.dy) * k, rot: jt.rot * k, s: 1 + (jt.s - 1) * k };
+      return { tx: jt.sx * k, ty: jt.sy * k, rot: jt.rot * k, s: 1 + (jt.s - 1) * k };
     }
     function layout() {
       if (!homes.length) return;
@@ -364,7 +401,7 @@
       stage.style.cursor = n > -1 ? 'zoom-in' : '';
       layout();
     }
-    function updateHover() { if (!pointer) return; setFocus(hitTest(pointer.x, pointer.y)); }
+    function updateHover() { if (!pointer) return; if (cur < .8) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover only once the grid is 80% dealt
     if (canHover) {
       stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); });
       stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
@@ -487,6 +524,63 @@
       card.addEventListener('mouseleave', function () { cv.classList.remove('is-on'); });
     });
   })();
+
+  /* ---------- 8. Home carousels (projects, courses): native scroll, mouse drag, arrow pills ---------- */
+  var PAG_HTML = "<div class=\"testimonial_pagination\"><div class=\"testimonial_controls cc-prev\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 23 18\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M8.38769 17.28L9.79569 16L3.8117 9.6H22.4997V7.712H3.8117L9.79569 1.312L8.38769 0L0.387695 8.64L8.38769 17.28Z\" fill=\"currentColor\"></path></svg></div><div class=\"testimonial_controls cc-next\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 25 25\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M15.612 21.28L14.204 20L20.188 13.6L1.5 13.6V11.712H20.188L14.204 5.312L15.612 4L23.612 12.64L15.612 21.28Z\" fill=\"currentColor\"></path></svg></div></div>";
+  document.querySelectorAll('.swiper-wrapper.cc-project').forEach(function (wrap) {
+    var sc = wrap.parentElement; if (!sc) return;
+    sc.setAttribute('data-lenis-prevent-wheel', ''); // let sideways trackpad scrolling through; vertical wheel still scrolls the page
+    // bleed off the right edge of the screen; the last card still lines up with the page column at the end
+    function bleed() {
+      sc.style.marginRight = '0px'; sc.style.paddingRight = '0px';
+      // flex wrappers between the carousel and its section must not grow to fit the row
+      for (var el = sc; el && el.tagName !== 'SECTION'; el = el.parentElement) el.style.minWidth = '0';
+      var row = sc.closest('.row'); if (row) row.style.alignSelf = 'stretch'; // in a left-aligned column the row would size to its content
+      // size the cards from the column width (3 across, or 80% on phones) and let the row contain them, so the end padding applies
+      wrap.style.width = '';
+      var colW = sc.clientWidth, g = parseFloat(getComputedStyle(wrap).columnGap) || 0;
+      var w = window.innerWidth < 768 ? colW * .8 : (colW - 2 * g) / 3;
+      wrap.style.width = 'max-content';
+      Array.prototype.forEach.call(wrap.children, function (s) { s.style.width = w + 'px'; });
+      var edge = Math.max(0, document.documentElement.clientWidth - sc.getBoundingClientRect().right);
+      sc.style.marginRight = -edge + 'px'; sc.style.paddingRight = edge + 'px';
+    }
+    bleed(); window.addEventListener('resize', bleed); window.addEventListener('load', bleed);
+    // arrow pill (the courses one; Projects gets a copy): each tap slides one card
+    var section = sc.closest('section'), pag = null;
+    if (section) section.querySelectorAll('.testimonial_pagination').forEach(function (p) { if (!pag && sc.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) pag = p; });
+    if (!pag) { var tmp = document.createElement('div'); tmp.innerHTML = PAG_HTML; pag = tmp.firstChild; pag.classList.add('cc-added'); sc.insertAdjacentElement('afterend', pag); }
+    var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
+    function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
+    function ends() { var max = sc.scrollWidth - sc.clientWidth - 2; if (prev) prev.classList.toggle('is-disabled', sc.scrollLeft <= 2); if (next) next.classList.toggle('is-disabled', sc.scrollLeft >= max); }
+    [prev, next].forEach(function (b, i) { if (!b) return; b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); b.setAttribute('aria-label', i ? 'Next' : 'Previous');
+      var go = function () { sc.scrollBy({ left: (i ? 1 : -1) * step(), behavior: 'smooth' }); };
+      b.addEventListener('click', go); b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
+    sc.addEventListener('scroll', ends, { passive: true }); window.addEventListener('resize', ends); setTimeout(ends, 50);
+    sc.addEventListener('wheel', function (e) {
+      // a vertical wheel over the carousel keeps scrolling the page smoothly
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); try { if (typeof lenis !== 'undefined') lenis.scrollTo(window.scrollY + e.deltaY * 1.0); else window.scrollBy(0, e.deltaY); } catch (x) { window.scrollBy(0, e.deltaY); } }
+    }, { passive: false });
+    var down = false, moved = false, x0 = 0, s0 = 0, v = 0, lx = 0, lt = 0, raf = 0;
+    sc.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true; moved = false; x0 = lx = e.clientX; s0 = sc.scrollLeft; lt = performance.now(); v = 0; cancelAnimationFrame(raf);
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - x0;
+      if (!moved && Math.abs(dx) > 5) { moved = true; sc.classList.add('is-dragging'); }
+      if (moved) { sc.scrollLeft = s0 - dx; var t = performance.now(); v = (lx - e.clientX) / Math.max(1, t - lt); lx = e.clientX; lt = t; }
+    });
+    window.addEventListener('pointerup', function () {
+      if (!down) return; down = false;
+      if (!moved) return;
+      // a little momentum, then let snapping settle it
+      (function glide() { v *= .94; sc.scrollLeft += v * 16; if (Math.abs(v) > .05) raf = requestAnimationFrame(glide); else sc.classList.remove('is-dragging'); })();
+    });
+    // a drag should not count as a click on the card underneath
+    sc.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+  });
 
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();

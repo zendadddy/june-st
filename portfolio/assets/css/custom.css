@@ -1,15 +1,18 @@
 /* Site-level additions on top of the Webflow stylesheet. Loaded after it on every page. */
 
 /* Nav gradient: taller than the bar, and its color follows whatever sits behind the nav (see assets/js/site.js). */
-@property --nav-sky { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
-.navigation { background-image: none; --nav-sky: #91d4ff; transition: transform .7s cubic-bezier(.16,1,.3,1), color .8s; }
+@property --nav-l { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
+@property --nav-c { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
+@property --nav-r { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
+.navigation { background-image: none; --nav-l: #91d4ff; --nav-c: #91d4ff; --nav-r: #91d4ff; transition: color .8s; }
 .navigation::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; z-index: -1; pointer-events: none;
   height: calc(100% + 4.5rem);
-  background-image: linear-gradient(var(--nav-sky), color-mix(in srgb, var(--nav-sky) 55%, transparent) 47%, transparent);
-  transition: --nav-sky 1.4s linear;
+  background-image: linear-gradient(90deg, var(--nav-l), var(--nav-c) 50%, var(--nav-r));
+  -webkit-mask-image: linear-gradient(#000 0%, #0000008c 47%, transparent); mask-image: linear-gradient(#000 0%, #0000008c 47%, transparent);
+  transition: --nav-l .9s ease, --nav-c .9s ease, --nav-r .9s ease;
 }
-.navigation:where(.w-variant-8e092ad3-0474-1212-fe97-fd6fc297d996) { --nav-sky: #ffea00; }
+.navigation:where(.w-variant-8e092ad3-0474-1212-fe97-fd6fc297d996) { --nav-l: #ffea00; --nav-c: #ffea00; --nav-r: #ffea00; }
 .navigation.is-on-dark { color: var(--_colors---all--white); }
 .navigation.is-on-dark .nav_link { color: inherit; }
 /* Sun mark links to the home page */
@@ -19,11 +22,13 @@
 /* Nav links: underline draws in from the left on hover, and leaves to the right. */
 .nav_link { position: relative; }
 .nav_link::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -0.15em; height: 1px;
+  content: ""; position: absolute; left: 0; right: 0; bottom: -0.15em; height: 1px; border-radius: 2px;
   background: currentColor; transform: scaleX(0); transform-origin: right center;
-  transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1), filter .3s ease, height .3s ease, bottom .3s ease, opacity .3s ease;
 }
-.nav_link:hover::after { transform: scaleX(1); transform-origin: left center; }
+/* draws in, then softens into a puffy shadow under the word */
+.nav_link:hover::after { transform: scaleX(1); transform-origin: left center; height: 4px; bottom: -0.3em; filter: blur(3px); opacity: .4;
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1), filter .7s ease .4s, height .7s ease .4s, bottom .7s ease .4s, opacity .7s ease .4s; }
 
 /* Home hero headline: wraps to two lines ("Shaping vision." / "Building with purpose.") */
 .hero h1 { text-wrap: initial; }
@@ -65,7 +70,7 @@ html.is-arriving .page-wrapper { visibility: hidden; }
 .pg { padding-bottom: 0; overflow-x: clip; }
 .pg_track { position: relative; width: 100%; }
 .pg_sticky { position: relative; }
-.pg_grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: clamp(.75rem, 1.4vw, 1.25rem); width: 100%; padding: 0 var(--_layout---columns--gutter); align-items: center; justify-items: center; }
+.pg_grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: clamp(.75rem, 1.4vw, 1.25rem); width: 100%; padding: 0 var(--_layout---columns--gutter); align-items: center; justify-items: center; }
 .pg_slot { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; }
 .pg_card { margin: 0; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 2px; background: #e9e7e2; will-change: transform; transform-origin: center; position: relative; z-index: calc(40 - var(--i));
   box-shadow: 0 1px 1px #0000000a, 0 2px 4px #0000000d, 0 8px 16px -4px #00000014, 0 22px 40px -12px #0000002e, 0 48px 80px -28px #00000038; }
@@ -73,11 +78,8 @@ html.is-arriving .page-wrapper { visibility: hidden; }
 .pg_card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pg_card.cc-wide { aspect-ratio: 4 / 3; }
 .pg_card.cc-tall { aspect-ratio: 3 / 4; }
-.pg_hint { position: absolute; left: 0; right: 0; top: 100%; margin: clamp(1.25rem, 3vh, 2rem) 0 0; text-align: center; color: var(--text--secondary); pointer-events: none; transition: opacity .8s ease; animation: pg-hint-breathe 3.6s ease-in-out infinite; }
-@keyframes pg-hint-breathe { 50% { translate: 0 3px; opacity: .55; } }
-.pg.is-settled .pg_hint { opacity: 0; animation: none; }
 .pg.is-pinned .pg_sticky { position: sticky; top: var(--pg-top, 10svh); }
-@media (max-width: 991px) { .pg_grid { grid-template-columns: repeat(6, 1fr); } .pg_slot:nth-child(n+25) { display: none; } }
+@media (max-width: 991px) { .pg_grid { grid-template-columns: repeat(6, 1fr); } .pg_slot:nth-child(n+19) { display: none; } }
 @media (max-width: 767px) { .pg_grid { grid-template-columns: repeat(3, 1fr); } .pg_slot:nth-child(n+10) { display: none; } }
 /* hover focus */
 .pg_card { transition: opacity .5s ease, box-shadow .7s ease; }
@@ -163,6 +165,25 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 /* Project cards: the brand's logo replaces the brand-name label */
 .project_brand { line-height: 0; margin: 0; }
 .project_logo { display: block; height: 2.6rem; width: auto; margin: -.95rem 0 -.75rem; }
+
+/* Home projects carousel: native horizontal scroll (trackpad, touch, drag), bleeding off the right edge */
+.swiper:has(> .swiper-wrapper.cc-project) { overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain;
+  scroll-padding-left: 0; cursor: grab; }
+.swiper:has(> .swiper-wrapper.cc-project)::-webkit-scrollbar { display: none; }
+.swiper:has(> .swiper-wrapper.cc-project).is-dragging { cursor: grabbing; scroll-snap-type: none; }
+.swiper:has(> .swiper-wrapper.cc-project).is-dragging .project { pointer-events: none; }
+.swiper-slide.cc-project { scroll-snap-align: start; }
+@media (max-width: 767px) { .swiper-slide.cc-project { width: 80%; } }
+
+/* Carousel arrow pills: the Projects copy sits under its row; arrows fade at the ends */
+.col:has(> .swiper > .swiper-wrapper.cc-project) { min-width: 0; }
+.testimonial_pagination.cc-added { display: inline-flex; margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+.testimonial_controls.is-disabled { opacity: .3; pointer-events: none; }
+.testimonial_controls { transition: opacity .4s ease; }
+
+/* Homepage PLAYGROUND tag reads horizontally */
+.pg.cc-hmarker .section_marker { position: static; width: auto; height: auto; flex-direction: row-reverse; justify-content: flex-end; align-items: center; overflow: visible; margin-bottom: 1.5rem; }
+.pg.cc-hmarker .section_marker .eyebrow.cc-marker { writing-mode: horizontal-tb; transform: none; white-space: nowrap; }
 
 /* Back to top button */
   .totop{position:fixed;right:clamp(1rem,.76vw + .81rem,1.5rem);bottom:clamp(1rem,.76vw + .81rem,1.5rem);width:4rem;height:4rem;z-index:90;display:flex;align-items:center;justify-content:center;color:var(--_colors---all--black);background:#fff;border:0;border-radius:50%;box-shadow:0 1px 2px #0000000d,0 4px 8px -2px #00000014,0 12px 24px -6px #00000024,0 28px 48px -16px #0000002e;text-decoration:none;opacity:0;transform:translateY(.75rem);pointer-events:none;transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1),background-color .3s,color .3s}
