@@ -36,7 +36,7 @@
     setTimeout(function () { location.href = href; }, 620);
   });
 
-  /* ---------- 2b. Header sun: ease its spin to a stop on hover, bounce on click ---------- */
+  /* ---------- 2b. Header sun: ease its spin to a stop on hover ---------- */
   var sun = document.querySelector('.nav_sun');
   if (sun) {
     function sunTimelines() {
@@ -53,8 +53,6 @@
     }
     sun.addEventListener('mouseenter', function () { sunTimelines().forEach(function (tl) { gsap.to(tl, { timeScale: 0, duration: .8, ease: 'power2.out', overwrite: true }); }); });
     sun.addEventListener('mouseleave', function () { sunTimelines().forEach(function (tl) { gsap.to(tl, { timeScale: 1, duration: 1.2, ease: 'power2.in', overwrite: true }); }); });
-    sun.addEventListener('click', function () { sun.classList.remove('is-bouncing'); void sun.offsetWidth; sun.classList.add('is-bouncing'); });
-    sun.addEventListener('animationend', function () { sun.classList.remove('is-bouncing'); });
   }
 
   /* ---------- 3. Nav: tuck away on scroll down, return on scroll up ---------- */
@@ -184,6 +182,38 @@
     measure();
   }
   if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
+
+  /* ---------- 6. Contact: live LA cams over the mirror photo ---------- */
+  var cam = document.querySelector('[data-livecam]');
+  if (cam) {
+    var list; try { list = JSON.parse(cam.getAttribute('data-livecam')); } catch (err) { list = []; }
+    var slides = [{ id: null, place: 'Los Angeles' }].concat(list);
+    var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
+    var idx = 0, player = null, dead = {}, apiReady = false, dir = 1;
+    function label(s) { placeEl.textContent = s.id ? 'Live · ' + s.place : s.place; if (s.id) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
+    function show(i) {
+      var n = slides.length, guard = 0; idx = (i + n) % n;
+      while (slides[idx].id && dead[slides[idx].id] && guard++ < n) idx = (idx + dir + n) % n;
+      var s = slides[idx]; label(s); cam.classList.remove('is-live');
+      if (!s.id) { if (player && player.pauseVideo) player.pauseVideo(); return; }
+      if (!player) {
+        var host = document.createElement('div'); screen.appendChild(host);
+        player = new YT.Player(host, { host: 'https://www.youtube-nocookie.com', videoId: s.id,
+          playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, modestbranding: 1, rel: 0, iv_load_policy: 3, disablekb: 1 },
+          events: {
+            onReady: function (e) { e.target.mute(); e.target.playVideo(); },
+            onStateChange: function (e) { if (e.data === 1 && slides[idx].id) cam.classList.add('is-live'); },
+            // offline, removed or not embeddable: remember it and move on in the same direction
+            onError: function () { dead[slides[idx].id] = true; show(idx + dir); }
+          } });
+      } else { player.loadVideoById(s.id); }
+    }
+    cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
+    // Load YouTube's player API. If it never arrives (blocked network, sandboxed preview), the photo stays and the arrows stay hidden.
+    var prevReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () { if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(slides[0]); };
+    var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
+  }
 
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
