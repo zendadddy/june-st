@@ -10,42 +10,38 @@
 
   /* ---------- 2. Page transition ----------
      Leaving: a soft white wave rises from the bottom; we navigate only once the screen is covered.
-     Arriving: the new page waits off-screen (on the same white) until its fonts and visible images are in,
-     then the whole page slides up from the bottom. A tiny script in <head> sets html.is-arriving before first paint. */
+     Arriving: the new page stays hidden on the same white until its fonts and visible images are in,
+     then the white lifts away. A tiny script in <head> sets html.is-arriving before first paint. */
   var root = document.documentElement;
   var wipe = document.createElement('div');
   wipe.className = 'page-wipe';
   wipe.innerHTML = '<svg class="page-wipe_wave" viewBox="0 0 1440 36" preserveAspectRatio="none" aria-hidden="true"><path d="M0,22 C480,8 960,8 1440,22 L1440,36 L0,36 Z"/></svg><div class="page-wipe_body"></div>';
   document.body.appendChild(wipe);
 
-  function afterArrive() {
-    root.classList.remove('is-arriving', 'is-rising');
-    // layout measured while the page sat off-screen is stale: re-measure scroll-linked things
+  function reveal() {
+    // put the white cover up instantly, show the page underneath, then lift the cover away
+    wipe.classList.add('is-covering');
+    root.classList.remove('is-arriving');
     try { if (window.ScrollTrigger) ScrollTrigger.refresh(); } catch (err) {}
     window.dispatchEvent(new Event('resize'));
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      wipe.classList.remove('is-covering'); wipe.classList.add('is-leaving');
+      var end = function () { wipe.classList.remove('is-leaving'); };
+      wipe.addEventListener('transitionend', function (e) { if (e.target === wipe) end(); }, { once: true });
+      setTimeout(end, 1200);
+    }); });
   }
   if (root.classList.contains('is-arriving')) {
-    if (reduce) { afterArrive(); }
+    if (reduce) { root.classList.remove('is-arriving'); }
     else {
-      var risen = false;
-      var rise = function () {
-        if (risen) return; risen = true;
-        requestAnimationFrame(function () { requestAnimationFrame(function () {
-          root.classList.add('is-rising');
-          var pw = document.querySelector('.page-wrapper');
-          var done = function (e) { if (!e || e.target === pw) { if (pw) pw.removeEventListener('transitionend', done); afterArrive(); } };
-          if (pw) pw.addEventListener('transitionend', done); setTimeout(done, 1400);
-        }); });
-      };
-      // ready = fonts loaded and every image currently in view decoded; never wait longer than 1.6s
-      var waits = [];
+      // ready = fonts loaded and every image currently in view loaded; never wait longer than 1.6s
+      var waits = [], vh = window.innerHeight, revealed = false;
       if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
-      var vh = window.innerHeight;
       document.querySelectorAll('.page-wrapper img').forEach(function (im) {
-        var r = im.getBoundingClientRect(); var top = r.top - vh; // the wrapper is shifted down one screen
-        if (top < vh && r.bottom - vh > -50 && !im.complete) { im.loading = 'eager'; waits.push(new Promise(function (res) { im.addEventListener('load', res, { once: true }); im.addEventListener('error', res, { once: true }); })); }
+        var r = im.getBoundingClientRect();
+        if (r.top < vh && r.bottom > -50 && !im.complete) { im.loading = 'eager'; waits.push(new Promise(function (res) { im.addEventListener('load', res, { once: true }); im.addEventListener('error', res, { once: true }); })); }
       });
-      Promise.race([Promise.all(waits), new Promise(function (res) { setTimeout(res, 1600); })]).then(rise);
+      Promise.race([Promise.all(waits), new Promise(function (res) { setTimeout(res, 1600); })]).then(function () { if (!revealed) { revealed = true; reveal(); } });
     }
   }
 
@@ -85,7 +81,7 @@
     setTimeout(go, 900);
   });
   // Back/forward cache: a page restored mid-wipe should be uncovered
-  window.addEventListener('pageshow', function (e) { if (e.persisted) { leaving = false; wipe.classList.remove('is-entering'); afterArrive(); } });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) { leaving = false; wipe.classList.remove('is-entering', 'is-covering', 'is-leaving'); root.classList.remove('is-arriving'); } });
 
   /* ---------- 2b. Header sun: ease its spin to a stop on hover ---------- */
   var sun = document.querySelector('.nav_sun');

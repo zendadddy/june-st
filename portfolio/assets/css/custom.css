@@ -54,12 +54,13 @@
 .page-wipe_body { position: absolute; inset: 0; background: var(--_colors---all--white); }
 .page-wipe.is-entering { transform: translateY(0); visibility: visible; }
 
-/* Arriving: the new page waits one screen below, on white, then slides up (html classes set in <head> and by site.js) */
-html.is-arriving { background: var(--_colors---all--white); overflow: hidden; }
-html.is-arriving body { overflow: hidden; }
-html.is-arriving .page-wrapper { transform: translate3d(0, 100vh, 0); }
-html.is-arriving.is-rising .page-wrapper { transform: translate3d(0, 0, 0); transition: transform 1.05s cubic-bezier(.16, 1, .3, 1); }
-@media (prefers-reduced-motion: reduce) { html.is-arriving .page-wrapper { transform: none; } }
+.page-wipe.is-covering { transform: translateY(0); visibility: visible; transition: none; }
+.page-wipe.is-leaving { transform: translateY(calc(-100% - 40px)); visibility: visible; transition: transform .9s cubic-bezier(.65, 0, .35, 1); }
+.page-wipe.is-leaving .page-wipe_wave { top: auto; bottom: -35px; transform: scaleY(-1); }
+
+/* Arriving: the new page stays hidden on white until it is ready, then the white lifts away (html class set in <head>, cleared by site.js) */
+html.is-arriving { background: var(--_colors---all--white); }
+html.is-arriving .page-wrapper { visibility: hidden; }
 
 /* Playground (Home + About): a loose stack of photos that pins in place, holds, deals itself into a grid, then holds again (logic in assets/js/site.js). */
 .pg { padding-bottom: 0; }
