@@ -532,7 +532,7 @@
     sc.setAttribute('data-lenis-prevent-wheel', ''); // let sideways trackpad scrolling through; vertical wheel still scrolls the page
     // bleed off the right edge of the screen; the last card still lines up with the page column at the end
     function bleed() {
-      sc.style.marginRight = '0px'; sc.style.paddingRight = '0px';
+      sc.style.marginRight = '0px'; sc.style.paddingRight = '0px'; sc.style.marginLeft = '0px'; sc.style.paddingLeft = '0px';
       // flex wrappers between the carousel and its section must not grow to fit the row
       for (var el = sc; el && el.tagName !== 'SECTION'; el = el.parentElement) el.style.minWidth = '0';
       var row = sc.closest('.row'); if (row) row.style.alignSelf = 'stretch'; // in a left-aligned column the row would size to its content
@@ -544,6 +544,9 @@
       Array.prototype.forEach.call(wrap.children, function (s) { s.style.width = w + 'px'; });
       var edge = Math.max(0, document.documentElement.clientWidth - sc.getBoundingClientRect().right);
       sc.style.marginRight = -edge + 'px'; sc.style.paddingRight = edge + 'px';
+      // same on the left: cards can scroll past the left edge of the screen, but rest aligned with the page column
+      var lead = Math.max(0, sc.getBoundingClientRect().left);
+      sc.style.marginLeft = -lead + 'px'; sc.style.paddingLeft = lead + 'px'; sc.style.scrollPaddingLeft = lead + 'px';
     }
     bleed(); window.addEventListener('resize', bleed); window.addEventListener('load', bleed);
     // arrow pill (the courses one; Projects gets a copy): each tap slides one card
