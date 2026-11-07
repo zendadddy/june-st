@@ -196,6 +196,19 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 .pg.cc-hmarker .section_marker { position: static; width: auto; height: auto; flex-direction: row-reverse; justify-content: flex-end; align-items: center; overflow: visible; margin-bottom: 1.5rem; }
 .pg.cc-hmarker .section_marker .eyebrow.cc-marker { writing-mode: horizontal-tb; transform: none; white-space: nowrap; }
 
+/* Mixed typefaces: accent words in Mondwest are scaled so their x-height matches PP Neue Montreal around them
+   (measured from the font files: x-height 0.5156 vs 0.4531 of the em, ratio 1.138). x-height match */
+span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
+
+/* Form fields: a single flat line instead of a box (contact form, password modal) */
+.input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: .75rem; padding-right: .75rem; box-shadow: none; transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease; }
+.input:hover, .input:focus { background-color: #0000000a; }
+.input:focus, .input.w-input:focus, .input:focus-visible { outline: none; border-color: transparent; border-bottom-color: currentColor; box-shadow: 0 1px 0 0 currentColor; }
+.input.cc-select { background-position: calc(100% - .5rem) 50%; }
+/* Submit stays disabled until something is typed */
+.form .btn:disabled, .form .btn.is-disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+.form .btn { transition: opacity .3s ease; }
+
 /* Back to top button */
   .totop{position:fixed;right:clamp(1rem,.76vw + .81rem,1.5rem);bottom:clamp(1rem,.76vw + .81rem,1.5rem);width:4rem;height:4rem;z-index:90;display:flex;align-items:center;justify-content:center;color:var(--_colors---all--black);background:#fff;border:0;border-radius:50%;box-shadow:0 1px 2px #0000000d,0 4px 8px -2px #00000014,0 12px 24px -6px #00000024,0 28px 48px -16px #0000002e;text-decoration:none;opacity:0;transform:translateY(.75rem);pointer-events:none;transition:opacity 1.2s cubic-bezier(.16,1,.3,1),transform 1.2s cubic-bezier(.16,1,.3,1),background-color .3s,color .3s}
   .totop.is-visible{opacity:1;transform:none;pointer-events:auto;animation:totop-breathe 6s ease-in-out 1.2s infinite}

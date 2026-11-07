@@ -582,6 +582,16 @@
     sc.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
   });
 
+  /* ---------- 9. Forms: submit is disabled while every field is empty ---------- */
+  document.querySelectorAll('form.form').forEach(function (form) {
+    if (form.closest('.gate-modal')) return; // the password modal has its own handling
+    var fields = Array.prototype.slice.call(form.querySelectorAll('input:not([type=submit]):not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select'));
+    var submit = form.querySelector('[type=submit]'); if (!submit || !fields.length) return;
+    function update() { var empty = fields.every(function (f) { return !String(f.value || '').trim(); }); submit.disabled = empty; submit.setAttribute('aria-disabled', empty ? 'true' : 'false'); }
+    form.addEventListener('input', update); form.addEventListener('change', update); update();
+    window.addEventListener('load', function () { update(); setTimeout(update, 300); }); // Webflow's form script re-enables the button when it starts up
+  });
+
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
   window.addEventListener('load', function () { sampleBackdrop(); setTimeout(sampleBackdrop, 300); });
