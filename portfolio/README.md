@@ -70,3 +70,18 @@ Copy `about.html` (it loads the generic page bundle), replace the contents of
 `<main class="page-main">`, keep everything else. The nav and footer are plain
 HTML repeated on every page, so a change to them means editing each file (or
 moving to a templating step later).
+
+## Password gate
+
+`projects.html` and every page in `projects/` are behind `gate.html`.
+
+- While locked, the Projects nav link and every project card point to the gate, and opening a project URL directly redirects there. After the right password, the visitor goes on to the page they wanted.
+- Access lasts 72 hours in that browser (`localStorage` key `fb-unlock`), then the gate asks again.
+- The password is stored only as a SHA-256 hash in `gate.html` (`PASS_HASH`). It is checked in lowercase with spaces trimmed. To change it, replace the hash with the output of:
+  `printf '%s' 'newpassword' | shasum -a 256`
+- This is soft protection: the check runs in the browser and the project files are still on the server, so someone technical can reach them. For real protection, also turn on your host's password protection (Netlify, Vercel or Cloudflare Access).
+
+## Other site-wide details
+
+- All lines are solid: the Webflow stylesheet's dashed and dotted borders were switched to solid in `assets/css/frank-bach-staging.webflow.shared.ebbb69877.css`.
+- Project thumbnails play a short glitch on hover. Change the effect with `<body data-thumb-hover="pixelate">` or `"dither"` (default `mosh`).

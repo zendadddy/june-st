@@ -3,6 +3,20 @@
   var nav = document.querySelector('.navigation');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- 0. Password gate: while locked, links to /projects and any project page go to gate.html ---------- */
+  var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
+  (function () {
+    var unlocked = false; try { unlocked = +localStorage.getItem('fb-unlock') > Date.now(); } catch (e) {}
+    if (unlocked) return;
+    var gate = new URL('gate.html', siteRoot);
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var u; try { u = new URL(a.getAttribute('href'), location.href); } catch (e) { return; }
+      if (u.origin !== siteRoot.origin) return;
+      var rel = u.pathname.slice(siteRoot.pathname.length);
+      if (/^projects(\.html|\/[a-z0-9-]+\.html)$/.test(rel)) { a.setAttribute('href', gate.pathname + '?next=' + encodeURIComponent(rel)); a.setAttribute('data-gated', ''); }
+    });
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
@@ -185,72 +199,104 @@
     nav.style.setProperty('--nav-sky', 'rgb(' + key + ')');
     nav.classList.toggle('is-on-dark', lum < 0.45);
   }
-  /* ---------- 5. Playground: full-bleed pile that pins, deals into a grid, holds; hover brings a card center stage ---------- */
+  /* ---------- 5. Playground ----------
+     Full-bleed grid of photos. It starts as a loose fan of large prints, pins, deals into the grid as you scroll, then holds.
+     Hover works at every stage: the card under the pointer glides to the center, larger, above the rest. */
   function initPlayground(pg) {
-    var grid = pg.querySelector('.pg_grid'), track = pg.querySelector('.pg_track');
+    var grid = pg.querySelector('.pg_grid'), track = pg.querySelector('.pg_track'), stage = pg.querySelector('.pg_sticky');
     var allSlots = Array.prototype.slice.call(pg.querySelectorAll('.pg_slot'));
     if (!grid || !track || !allSlots.length) return;
-    var slots = [], cards = [], homes = [], jitter = [], pinH = 0, settled = false, focus = -1, focusY = 0;
+    var slots = [], cards = [], homes = [], jitter = [], rest = [], pinH = 0, focus = -1;
+    var cur = 0, target = 0, ticking = false, pointer = null;
+    var canHover = window.matchMedia('(hover: hover)').matches;
     function rnd(n, k) { var s = Math.sin(n * k) * 43758.5453; return s - Math.floor(s); }
     function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-    function measure() {
-      slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
-      cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
-      allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
-      jitter = cards.map(function (c, n) { return { rot: (rnd(n, 12.9898) - .5) * 18, dx: (rnd(n, 78.233) - .5) * 120, dy: (rnd(n, 39.425) - .5) * 60 }; });
-      var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
-      var canPin = gh < vh * .92;
-      pg.classList.toggle('is-pinned', canPin);
-      pinH = canPin ? Math.round(vh * .8) : 0;
-      track.style.height = canPin ? (gh + pinH) + 'px' : '';
-      pg.style.setProperty('--pg-top', Math.max(12, (vh - gh) / 2) + 'px');
-      var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
-      homes = cards.map(function (c) { var r = c.getBoundingClientRect(); return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) }; });
-      layout();
-    }
+
     function progress() {
       var vh = window.innerHeight, p;
       if (pinH) { var top = parseFloat(pg.style.getPropertyValue('--pg-top')) || 0; p = ((top - track.getBoundingClientRect().top) / pinH - .12) / .76; }
       else { p = (vh * .8 - grid.getBoundingClientRect().top) / (vh * .7); }
       return Math.max(0, Math.min(1, p));
     }
-    function setFocus(n) {
-      if (focus === n) return;
-      if (focus > -1 && cards[focus]) cards[focus].classList.remove('is-focus');
-      focus = n; focusY = window.scrollY;
-      pg.classList.toggle('has-focus', n > -1);
-      if (n > -1) cards[n].classList.add('is-focus');
+    function measure() {
+      slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
+      cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
+      allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
+      var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
+      var canPin = gh < vh * .92;
+      pg.classList.toggle('is-pinned', canPin);
+      pinH = canPin ? Math.round(vh * 1.1) : 0;
+      track.style.height = canPin ? (gh + pinH) + 'px' : '';
+      pg.style.setProperty('--pg-top', Math.max(12, (vh - gh) / 2) + 'px');
+      var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
+      homes = cards.map(function (c) { var r = c.getBoundingClientRect(); return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) }; });
+      // the pile: large prints in a loose horizontal fan with gentle tilts
+      var spread = Math.min(gr.width * .5, 960);
+      jitter = cards.map(function (c, n) {
+        var w = c.offsetWidth || 1, h = c.offsetHeight || 1;
+        return { rot: (rnd(n, 12.9898) - .5) * 8, dx: (rnd(n, 78.233) - .5) * spread, dy: (rnd(n, 39.425) - .5) * vh * .06, s: (vh * .42) / Math.sqrt(w * h) };
+      });
+      cur = target = progress();
       layout();
+    }
+    // where each card sits when it is not the focused one (offset from its slot, scale)
+    function restOf(n, p, N) {
+      var local = Math.max(0, Math.min(1, p * 1.25 - (N > 1 ? n / (N - 1) : 0) * .25));
+      var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
+      return { tx: (h0.x + jt.dx) * k, ty: (h0.y + jt.dy) * k, rot: jt.rot * k, s: 1 + (jt.s - 1) * k };
     }
     function layout() {
       if (!homes.length) return;
-      var p = progress(), N = cards.length;
-      var nowSettled = p >= 1;
-      if (nowSettled !== settled) { settled = nowSettled; pg.classList.toggle('is-settled', settled); if (!settled) setFocus(-1); }
-      if (focus > -1 && Math.abs(window.scrollY - focusY) > 60) setFocus(-1);
+      var N = cards.length;
+      pg.classList.toggle('is-settled', cur >= .999);
       cards.forEach(function (c, n) {
+        var r = restOf(n, cur, N); rest[n] = r;
         if (n === focus) {
-          var r = slots[n].getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
+          var sr = slots[n].getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
           var s = Math.min(window.innerHeight * .62 / h, window.innerWidth * .42 / w);
-          var dx = window.innerWidth / 2 - (r.left + r.width / 2), dy = window.innerHeight / 2 - (r.top + r.height / 2);
+          var dx = window.innerWidth / 2 - (sr.left + sr.width / 2), dy = window.innerHeight / 2 - (sr.top + sr.height / 2);
           c.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + s.toFixed(3) + ')';
-          return;
+        } else {
+          c.style.transform = 'translate3d(' + r.tx.toFixed(1) + 'px,' + r.ty.toFixed(1) + 'px,0) rotate(' + r.rot.toFixed(2) + 'deg) scale(' + r.s.toFixed(3) + ')';
         }
-        // stagger so the last card lands exactly when p reaches 1
-        var local = Math.max(0, Math.min(1, p * 1.6 - (N > 1 ? n / (N - 1) : 0) * .6));
-        var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
-        c.style.transform = 'translate3d(' + ((h0.x + jt.dx) * k).toFixed(1) + 'px,' + ((h0.y + jt.dy) * k).toFixed(1) + 'px,0) rotate(' + (jt.rot * k).toFixed(2) + 'deg) scale(' + (1 + .1 * k).toFixed(3) + ')';
       });
     }
-    // hover is tracked on the slot (which never moves), so a card can travel to the center without flicker
-    if (window.matchMedia('(hover: hover)').matches) {
-      allSlots.forEach(function (slot) {
-        slot.addEventListener('mouseenter', function () { if (!settled) return; var n = slots.indexOf(slot); if (n > -1) setFocus(n); });
-        slot.addEventListener('mouseleave', function () { var n = slots.indexOf(slot); if (n === focus) setFocus(-1); });
-      });
+    // which card's resting footprint is under the pointer (top-most first; the focused card is judged by its resting place too)
+    function hitTest(x, y) {
+      for (var n = 0; n < cards.length; n++) {
+        var r = rest[n]; if (!r) continue;
+        var sr = slots[n].getBoundingClientRect(), c = cards[n];
+        var w = c.offsetWidth * r.s / 2, h = c.offsetHeight * r.s / 2;
+        var cx = sr.left + sr.width / 2 + r.tx, cy = sr.top + sr.height / 2 + r.ty;
+        if (x >= cx - w && x <= cx + w && y >= cy - h && y <= cy + h) return n;
+      }
+      return -1;
     }
-    var queued = false;
-    window.addEventListener('scroll', function () { if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; layout(); }); } }, { passive: true });
+    function animate(c) { c.classList.add('is-moving'); clearTimeout(c._mv); c._mv = setTimeout(function () { c.classList.remove('is-moving'); }, 750); }
+    function setFocus(n) {
+      if (focus === n) return;
+      if (focus > -1 && cards[focus]) { cards[focus].classList.remove('is-focus'); animate(cards[focus]); }
+      focus = n;
+      pg.classList.toggle('has-focus', n > -1);
+      if (n > -1) { cards[n].classList.add('is-focus'); animate(cards[n]); }
+      stage.style.cursor = n > -1 ? 'zoom-in' : '';
+      layout();
+    }
+    function updateHover() { if (!pointer) return; setFocus(hitTest(pointer.x, pointer.y)); }
+    if (canHover) {
+      stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); });
+      stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
+    }
+    // ease the shown progress toward the scroll position so wheel and trackpad steps don't judder
+    function tick() {
+      var d = target - cur;
+      if (Math.abs(d) < .0008) { cur = target; ticking = false; layout(); updateHover(); return; }
+      cur += d * .12; layout(); updateHover(); requestAnimationFrame(tick);
+    }
+    window.addEventListener('scroll', function () {
+      target = progress();
+      if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+    }, { passive: true });
     window.addEventListener('resize', function () { setFocus(-1); measure(); });
     window.addEventListener('load', measure);
     allSlots.forEach(function (s) { var im = s.querySelector('img'); if (im && !im.complete) im.addEventListener('load', measure, { once: true }); });
@@ -295,6 +341,59 @@
     window.onYouTubeIframeAPIReady = function () { if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(slides[0]); };
     var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
   }
+
+  /* ---------- 7. Project thumbnails: a short pixel glitch on hover ----------
+     Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). It plays for ~0.6s, then the photo settles clean. */
+  (function () {
+    if (reduce || !window.matchMedia('(hover: hover)').matches) return;
+    var mode = document.body.getAttribute('data-thumb-hover') || 'mosh';
+    var BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+    document.querySelectorAll('.project').forEach(function (card) {
+      var img = card.querySelector('img'); if (!img) return;
+      var holder = img.parentElement; if (getComputedStyle(holder).position === 'static') holder.style.position = 'relative';
+      var cv = document.createElement('canvas'); cv.className = 'thumb-fx'; cv.setAttribute('aria-hidden', 'true');
+      img.insertAdjacentElement('afterend', cv);
+      var ctx = cv.getContext('2d', { willReadFrequently: true });
+      var off = document.createElement('canvas'), octx = off.getContext('2d');
+      var tmp = document.createElement('canvas'), tctx = tmp.getContext('2d', { willReadFrequently: true });
+      var raf = 0, t0 = 0, D = 620;
+      function prep() {
+        var w = img.clientWidth, h = img.clientHeight; if (!w || !h || !img.naturalWidth) return false;
+        cv.width = off.width = w; cv.height = off.height = h;
+        var s = Math.max(w / img.naturalWidth, h / img.naturalHeight), dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+        octx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh); return true;
+      }
+      function mosh(i, w, h) {
+        ctx.drawImage(off, 0, 0);
+        var bands = 3 + Math.floor(i * 10);
+        for (var b = 0; b < bands; b++) {
+          var y = Math.floor(Math.random() * h), bh = Math.max(2, Math.floor(Math.random() * h * .16 * i + 2)), dx = (Math.random() - .5) * w * .6 * i;
+          if (Math.random() < .45) { var sx = Math.floor(Math.max(0, Math.min(w - 2, w / 2 + dx))); ctx.drawImage(off, sx, y, 2, bh, 0, y, Math.floor(w * (.4 + .6 * Math.random())), bh); }
+          else ctx.drawImage(off, 0, y, w, bh, dx, y, w, bh);
+        }
+        for (var k = 0; k < Math.floor(i * 8); k++) { var bw = 12 + Math.random() * w * .22, bh2 = 8 + Math.random() * h * .1, x = Math.random() * (w - bw), y2 = Math.random() * (h - bh2); ctx.drawImage(off, x, y2, bw, bh2, x + (Math.random() - .5) * w * .25 * i, y2, bw, bh2); }
+      }
+      function pixelate(i, w, h) {
+        var px = Math.max(1, Math.round(1 + i * 30)); tmp.width = Math.ceil(w / px); tmp.height = Math.ceil(h / px);
+        tctx.drawImage(off, 0, 0, tmp.width, tmp.height); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h); ctx.drawImage(tmp, 0, 0, tmp.width, tmp.height, 0, 0, w, h);
+      }
+      function dither(i, w, h) {
+        var s = 3; tmp.width = Math.ceil(w / s); tmp.height = Math.ceil(h / s); tctx.drawImage(off, 0, 0, tmp.width, tmp.height);
+        var d = tctx.getImageData(0, 0, tmp.width, tmp.height), a = d.data;
+        for (var y = 0; y < tmp.height; y++) for (var x = 0; x < tmp.width; x++) { var q = (y * tmp.width + x) * 4, l = (a[q] * .299 + a[q + 1] * .587 + a[q + 2] * .114) / 255, v = l > (BAYER[(y & 3) * 4 + (x & 3)] + .5) / 16 ? 250 : 46; a[q] += (v - a[q]) * i; a[q + 1] += (v - a[q + 1]) * i; a[q + 2] += (v - a[q + 2]) * i; }
+        tctx.putImageData(d, 0, 0); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h); ctx.drawImage(tmp, 0, 0, tmp.width, tmp.height, 0, 0, w, h);
+      }
+      var fx = mode === 'pixelate' ? pixelate : mode === 'dither' ? dither : mosh;
+      function frame(ts) {
+        if (!t0) t0 = ts; var t = (ts - t0) / D;
+        if (t >= 1) { cv.classList.remove('is-on'); raf = 0; return; }
+        var i = Math.sin(Math.PI * Math.min(1, t * 1.15)) ; // rises then resolves back to the clean photo
+        fx(Math.max(0, i), cv.width, cv.height); raf = requestAnimationFrame(frame);
+      }
+      card.addEventListener('mouseenter', function () { if (!img.complete || !prep()) return; cancelAnimationFrame(raf); t0 = 0; cv.classList.add('is-on'); raf = requestAnimationFrame(frame); });
+      card.addEventListener('mouseleave', function () { cancelAnimationFrame(raf); raf = 0; cv.classList.remove('is-on'); });
+    });
+  })();
 
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
