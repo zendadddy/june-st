@@ -3,18 +3,96 @@
   var nav = document.querySelector('.navigation');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- 0. Password gate: while locked, links to /projects and any project page go to gate.html ---------- */
+  /* ---------- 0. Password gate (modal) ----------
+     /projects and every project page need the password. While locked, clicking a link to them opens a white modal over the
+     current page instead of navigating. The right password unlocks everything for 72 hours in this browser.
+     Opening a project URL directly redirects to index.html?gate=<page>, which opens the modal on load.
+     Soft protection: the check runs in the browser. Change the password by replacing PASS_HASH (SHA-256 of the lowercase password). */
   var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
-  (function () {
-    var unlocked = false; try { unlocked = +localStorage.getItem('fb-unlock') > Date.now(); } catch (e) {}
-    if (unlocked) return;
-    var gate = new URL('gate.html', siteRoot);
-    document.querySelectorAll('a[href]').forEach(function (a) {
-      var u; try { u = new URL(a.getAttribute('href'), location.href); } catch (e) { return; }
-      if (u.origin !== siteRoot.origin) return;
-      var rel = u.pathname.slice(siteRoot.pathname.length);
-      if (/^projects(\.html|\/[a-z0-9-]+\.html)$/.test(rel)) { a.setAttribute('href', gate.pathname + '?next=' + encodeURIComponent(rel)); a.setAttribute('data-gated', ''); }
-    });
+  var gate = (function () {
+    var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // sha256("famouslastname")
+    var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects(\.html|\/[a-z0-9-]+\.html)$/;
+    function unlocked() { try { return +localStorage.getItem(KEY) > Date.now(); } catch (e) { return false; } }
+    function relOf(href) { try { var u = new URL(href, location.href); if (u.origin !== siteRoot.origin) return null; return u.pathname.slice(siteRoot.pathname.length); } catch (e) { return null; } }
+    function hex(a) { return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
+    function sha256Fallback(m) { // for pages opened from disk, where crypto.subtle is unavailable
+      var K = [], H = [], i, j; function frac(x) { return (x - Math.floor(x)) * 4294967296 | 0; }
+      for (var c = 2, n = 0; n < 64; c++) { for (j = 2; j * j <= c; j++) if (c % j === 0) break; if (j * j > c) { if (n < 8) H[n] = frac(Math.pow(c, 1 / 2)); K[n++] = frac(Math.pow(c, 1 / 3)); } }
+      var l = m.length, words = []; for (i = 0; i < l; i++) words[i >> 2] |= m[i] << (24 - (i % 4) * 8);
+      words[l >> 2] |= 0x80 << (24 - (l % 4) * 8); words[((l + 8 >> 6) << 4) + 15] = l * 8;
+      function r(x, s) { return (x >>> s) | (x << (32 - s)); }
+      for (i = 0; i < words.length; i += 16) {
+        var w = [], a = H.slice(0);
+        for (j = 0; j < 64; j++) {
+          if (j < 16) w[j] = words[i + j] | 0; else { var s0 = r(w[j - 15], 7) ^ r(w[j - 15], 18) ^ (w[j - 15] >>> 3), s1 = r(w[j - 2], 17) ^ r(w[j - 2], 19) ^ (w[j - 2] >>> 10); w[j] = (w[j - 16] + s0 + w[j - 7] + s1) | 0; }
+          var t1 = (a[7] + (r(a[4], 6) ^ r(a[4], 11) ^ r(a[4], 25)) + ((a[4] & a[5]) ^ (~a[4] & a[6])) + K[j] + w[j]) | 0, t2 = ((r(a[0], 2) ^ r(a[0], 13) ^ r(a[0], 22)) + ((a[0] & a[1]) ^ (a[0] & a[2]) ^ (a[1] & a[2]))) | 0;
+          a = [(t1 + t2) | 0].concat(a.slice(0, 7)); a[4] = (a[4] + t1) | 0;
+        }
+        for (j = 0; j < 8; j++) H[j] = (H[j] + a[j]) | 0;
+      }
+      return H.map(function (x) { return ('00000000' + (x >>> 0).toString(16)).slice(-8); }).join('');
+    }
+    function sha256(str) { var b = new TextEncoder().encode(str); if (window.crypto && crypto.subtle) return crypto.subtle.digest('SHA-256', b).then(function (d) { return hex(new Uint8Array(d)); }); return Promise.resolve(sha256Fallback(b)); }
+
+    var modal = null, next = 'projects.html', lastFocus = null;
+    function build() {
+      modal = document.createElement('div');
+      modal.className = 'gate-modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'gate-title'); modal.hidden = true;
+      modal.innerHTML = '<div class="gate-modal_backdrop" data-gate-close></div>' +
+        '<div class="gate-modal_card">' +
+          '<button type="button" class="gate-modal_close" aria-label="Close" data-gate-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
+          '<div class="u-vflex-center-top u-vgap-12"><h2 id="gate-title" class="u-align-center">Private <span class="h2 cc-alt">work</span></h2><p class="u-align-center u-color-secondary">My projects are under wraps for now.</p></div>' +
+          '<form class="form u-vflex-right-top gate-modal_form" autocomplete="off" novalidate>' +
+            '<div class="input-group u-w-100"><label for="gate-pass" class="u-sr-only">Password</label><input class="input w-input" type="password" id="gate-pass" placeholder="Password" required></div>' +
+            '<p class="gate-modal_error eyebrow-sm" role="alert" hidden>That’s not it. Try again?</p>' +
+            '<input type="submit" class="btn w-button" value="Unlock">' +
+          '</form>' +
+        '</div>';
+      document.body.appendChild(modal);
+      modal.querySelectorAll('[data-gate-close]').forEach(function (el) { el.addEventListener('click', close); });
+      var form = modal.querySelector('form'), input = modal.querySelector('input[type=password]'), err = modal.querySelector('.gate-modal_error'), card = modal.querySelector('.gate-modal_card');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault(); err.hidden = true;
+        sha256(input.value.trim().toLowerCase()).then(function (h) {
+          if (h !== PASS_HASH) { err.hidden = false; card.classList.remove('is-shake'); void card.offsetWidth; card.classList.add('is-shake'); input.select(); return; }
+          try { localStorage.setItem(KEY, String(Date.now() + HOURS * 3600 * 1000)); } catch (x) {}
+          var a = document.createElement('a'); a.href = new URL(next, siteRoot).href; document.body.appendChild(a); a.click(); // continue through the page wave
+        });
+      });
+      modal.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { close(); return; }
+        if (e.key !== 'Tab') return; // keep focus inside the modal
+        var f = modal.querySelectorAll('button, input'), first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+    }
+    function open(to) {
+      if (!modal) build();
+      next = GATED.test(to || '') ? to : 'projects.html';
+      lastFocus = document.activeElement;
+      modal.querySelector('.gate-modal_error').hidden = true; modal.querySelector('input[type=password]').value = '';
+      modal.hidden = false; document.documentElement.classList.add('has-gate');
+      try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
+      requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { modal.querySelector('input[type=password]').focus(); }, 60); });
+    }
+    function close() {
+      if (!modal || modal.hidden) return;
+      modal.classList.remove('is-open'); document.documentElement.classList.remove('has-gate');
+      try { if (typeof lenis !== 'undefined' && lenis.start) lenis.start(); } catch (e) {}
+      setTimeout(function () { modal.hidden = true; }, 450);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    // intercept gated links before the page-wave handler sees them
+    document.addEventListener('click', function (e) {
+      if (unlocked() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+      var rel = relOf(a.getAttribute('href')); if (!rel || !GATED.test(rel)) return;
+      e.preventDefault(); e.stopImmediatePropagation(); open(rel);
+    }, true);
+    // arriving from a gated page that redirected here
+    var q = new URLSearchParams(location.search), want = q.get('gate');
+    if (want !== null && !unlocked()) { open(want); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
+    return { open: open, close: close, unlocked: unlocked };
   })();
 
   /* ---------- 1. Always start a new page at the top ---------- */
@@ -207,7 +285,7 @@
     var allSlots = Array.prototype.slice.call(pg.querySelectorAll('.pg_slot'));
     if (!grid || !track || !allSlots.length) return;
     var slots = [], cards = [], homes = [], jitter = [], rest = [], pinH = 0, focus = -1;
-    var cur = 0, target = 0, ticking = false, pointer = null;
+    var cur = 0, target = 0, ticking = false, pointer = null, latched = false, floating = false, idle = 0;
     var canHover = window.matchMedia('(hover: hover)').matches;
     function rnd(n, k) { var s = Math.sin(n * k) * 43758.5453; return s - Math.floor(s); }
     function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
@@ -248,7 +326,7 @@
     function layout() {
       if (!homes.length) return;
       var N = cards.length;
-      pg.classList.toggle('is-settled', cur >= .999);
+      pg.classList.toggle('is-settled', cur >= .985);
       cards.forEach(function (c, n) {
         var r = restOf(n, cur, N); rest[n] = r;
         if (n === focus) {
@@ -290,12 +368,21 @@
     // ease the shown progress toward the scroll position so wheel and trackpad steps don't judder
     function tick() {
       var d = target - cur;
-      if (Math.abs(d) < .0008) { cur = target; ticking = false; layout(); updateHover(); return; }
-      cur += d * .12; layout(); updateHover(); requestAnimationFrame(tick);
+      if (Math.abs(d) < .0008) { cur = target; ticking = false; floating = false; layout(); updateHover(); return; }
+      cur += d * (floating ? .05 : .12); layout(); updateHover(); requestAnimationFrame(tick);
     }
+    // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
+    function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
     window.addEventListener('scroll', function () {
-      target = progress();
-      if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+      var p = progress();
+      if (p <= .001) latched = false;
+      target = latched ? 1 : p;
+      if (!floating) kick();
+      clearTimeout(idle);
+      idle = setTimeout(function () {
+        var q = progress();
+        if (pinH && q > .001 && q < .999 && !latched) { latched = true; floating = true; target = 1; kick(); }
+      }, 1000);
     }, { passive: true });
     window.addEventListener('resize', function () { setFocus(-1); measure(); });
     window.addEventListener('load', measure);
@@ -343,7 +430,7 @@
   }
 
   /* ---------- 7. Project thumbnails: a short pixel glitch on hover ----------
-     Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). It plays for ~0.6s, then the photo settles clean. */
+     Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). It runs while hovered and resolves on leave. */
   (function () {
     if (reduce || !window.matchMedia('(hover: hover)').matches) return;
     var mode = document.body.getAttribute('data-thumb-hover') || 'mosh';
@@ -384,14 +471,16 @@
         tctx.putImageData(d, 0, 0); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h); ctx.drawImage(tmp, 0, 0, tmp.width, tmp.height, 0, 0, w, h);
       }
       var fx = mode === 'pixelate' ? pixelate : mode === 'dither' ? dither : mosh;
+      // glitches for as long as the card is hovered, subtly, then resolves back to the clean photo on leave
+      var MAX = mode === 'mosh' ? .38 : mode === 'pixelate' ? .32 : .6, level = 0, want = 0, last = 0;
       function frame(ts) {
-        if (!t0) t0 = ts; var t = (ts - t0) / D;
-        if (t >= 1) { cv.classList.remove('is-on'); raf = 0; return; }
-        var i = Math.sin(Math.PI * Math.min(1, t * 1.15)) ; // rises then resolves back to the clean photo
-        fx(Math.max(0, i), cv.width, cv.height); raf = requestAnimationFrame(frame);
+        level += (want - level) * (want ? .12 : .2);
+        if (!want && level < .02) { level = 0; cv.classList.remove('is-on'); raf = 0; return; }
+        if (ts - last > 70) { last = ts; fx(level, cv.width, cv.height); } // ~14 fps reads as a glitch, not a blur
+        raf = requestAnimationFrame(frame);
       }
-      card.addEventListener('mouseenter', function () { if (!img.complete || !prep()) return; cancelAnimationFrame(raf); t0 = 0; cv.classList.add('is-on'); raf = requestAnimationFrame(frame); });
-      card.addEventListener('mouseleave', function () { cancelAnimationFrame(raf); raf = 0; cv.classList.remove('is-on'); });
+      card.addEventListener('mouseenter', function () { if (!img.complete || !prep()) return; want = MAX; cv.classList.add('is-on'); if (!raf) { last = 0; raf = requestAnimationFrame(frame); } });
+      card.addEventListener('mouseleave', function () { want = 0; if (!raf && cv.classList.contains('is-on')) raf = requestAnimationFrame(frame); });
     });
   })();
 
