@@ -6,6 +6,8 @@
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
+  window.addEventListener('load', function () { if (!location.hash && window.scrollY > 0 && !window.__userScrolled) window.scrollTo(0, 0); });
+  ['wheel', 'touchmove', 'keydown'].forEach(function (ev) { window.addEventListener(ev, function () { window.__userScrolled = true; }, { once: true, passive: true }); });
   window.addEventListener('pageshow', function (e) { if (e.persisted && !location.hash) window.scrollTo(0, 0); });
 
   /* ---------- 2. Page transition ----------
@@ -18,7 +20,12 @@
   wipe.innerHTML = '<svg class="page-wipe_wave" viewBox="0 0 1440 36" preserveAspectRatio="none" aria-hidden="true"><path d="M0,22 C480,8 960,8 1440,22 L1440,36 L0,36 Z"/></svg><div class="page-wipe_body"></div>';
   document.body.appendChild(wipe);
 
+  function toTop() {
+    window.scrollTo(0, 0);
+    try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(0, { immediate: true, force: true }); } catch (err) {}
+  }
   function reveal() {
+    toTop();
     // put the white cover up instantly, show the page underneath, then lift the cover away
     wipe.classList.add('is-covering');
     root.classList.remove('is-arriving');
@@ -178,57 +185,84 @@
     nav.style.setProperty('--nav-sky', 'rgb(' + key + ')');
     nav.classList.toggle('is-on-dark', lum < 0.45);
   }
-  /* ---------- 5. Playground: a stack of cards that pins, deals into a grid, then holds ---------- */
+  /* ---------- 5. Playground: full-bleed pile that pins, deals into a grid, holds; hover brings a card center stage ---------- */
   function initPlayground(pg) {
-    var cards = Array.prototype.slice.call(pg.querySelectorAll('.pg_card'));
-    var grid = pg.querySelector('.pg_grid'), track = pg.querySelector('.pg_track'), sticky = pg.querySelector('.pg_sticky');
-    if (!cards.length || !grid || !track) return;
-    // fixed jitter per card so the pile looks tossed, the same on every load
-    var jitter = cards.map(function (c, n) { var s = Math.sin(n * 12.9898) * 43758.5453, f = s - Math.floor(s), s2 = Math.sin(n * 78.233) * 12543.21, g = s2 - Math.floor(s2); return { rot: (f - .5) * 16, dx: (g - .5) * 80, dy: (f - .5) * 46 }; });
-    var homes = [], pinH = 0, gridH = 0;
+    var grid = pg.querySelector('.pg_grid'), track = pg.querySelector('.pg_track');
+    var allSlots = Array.prototype.slice.call(pg.querySelectorAll('.pg_slot'));
+    if (!grid || !track || !allSlots.length) return;
+    var slots = [], cards = [], homes = [], jitter = [], pinH = 0, settled = false, focus = -1, focusY = 0;
+    function rnd(n, k) { var s = Math.sin(n * k) * 43758.5453; return s - Math.floor(s); }
     function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
     function measure() {
-      cards.forEach(function (c) { c.style.transform = 'none'; });
-      var vh = window.innerHeight;
-      gridH = grid.getBoundingClientRect().height;
-      var canPin = gridH < vh * .92;
+      slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
+      cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
+      allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
+      jitter = cards.map(function (c, n) { return { rot: (rnd(n, 12.9898) - .5) * 18, dx: (rnd(n, 78.233) - .5) * 120, dy: (rnd(n, 39.425) - .5) * 60 }; });
+      var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
+      var canPin = gh < vh * .92;
       pg.classList.toggle('is-pinned', canPin);
-      // pinned: the track is the grid plus 0.8 screens of scroll to play the deal over
-      pinH = canPin ? Math.round(vh * 0.8) : 0;
-      track.style.height = canPin ? (gridH + pinH) + 'px' : '';
-      pg.style.setProperty('--pg-top', Math.max(12, (vh - gridH) / 2) + 'px');
+      pinH = canPin ? Math.round(vh * .8) : 0;
+      track.style.height = canPin ? (gh + pinH) + 'px' : '';
+      pg.style.setProperty('--pg-top', Math.max(12, (vh - gh) / 2) + 'px');
       var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
       homes = cards.map(function (c) { var r = c.getBoundingClientRect(); return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) }; });
       layout();
     }
+    function progress() {
+      var vh = window.innerHeight, p;
+      if (pinH) { var top = parseFloat(pg.style.getPropertyValue('--pg-top')) || 0; p = ((top - track.getBoundingClientRect().top) / pinH - .12) / .76; }
+      else { p = (vh * .8 - grid.getBoundingClientRect().top) / (vh * .7); }
+      return Math.max(0, Math.min(1, p));
+    }
+    function setFocus(n) {
+      if (focus === n) return;
+      if (focus > -1 && cards[focus]) cards[focus].classList.remove('is-focus');
+      focus = n; focusY = window.scrollY;
+      pg.classList.toggle('has-focus', n > -1);
+      if (n > -1) cards[n].classList.add('is-focus');
+      layout();
+    }
     function layout() {
       if (!homes.length) return;
-      var vh = window.innerHeight, p;
-      if (pinH) {
-        // 0 when the pin starts, 1 when it releases
-        var top = parseFloat(getComputedStyle(pg).getPropertyValue('--pg-top')) || 0;
-        p = (top - track.getBoundingClientRect().top) / pinH;
-        // brief hold on the pile (12%), deal across the middle, brief hold on the grid (12%)
-        p = (p - .12) / .76;
-      } else {
-        var r = grid.getBoundingClientRect();
-        p = (vh * .8 - r.top) / (vh * .7);
-      }
-      p = Math.max(0, Math.min(1, p));
+      var p = progress(), N = cards.length;
+      var nowSettled = p >= 1;
+      if (nowSettled !== settled) { settled = nowSettled; pg.classList.toggle('is-settled', settled); if (!settled) setFocus(-1); }
+      if (focus > -1 && Math.abs(window.scrollY - focusY) > 60) setFocus(-1);
       cards.forEach(function (c, n) {
-        var local = Math.max(0, Math.min(1, p * 1.4 - n * .05));
-        var k = 1 - ease(local), h = homes[n], jt = jitter[n];
-        c.style.transform = 'translate3d(' + ((h.x + jt.dx) * k).toFixed(1) + 'px,' + ((h.y + jt.dy) * k).toFixed(1) + 'px,0) rotate(' + (jt.rot * k).toFixed(2) + 'deg) scale(' + (1 + .08 * k).toFixed(3) + ')';
+        if (n === focus) {
+          var r = slots[n].getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
+          var s = Math.min(window.innerHeight * .62 / h, window.innerWidth * .42 / w);
+          var dx = window.innerWidth / 2 - (r.left + r.width / 2), dy = window.innerHeight / 2 - (r.top + r.height / 2);
+          c.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + s.toFixed(3) + ')';
+          return;
+        }
+        // stagger so the last card lands exactly when p reaches 1
+        var local = Math.max(0, Math.min(1, p * 1.6 - (N > 1 ? n / (N - 1) : 0) * .6));
+        var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
+        c.style.transform = 'translate3d(' + ((h0.x + jt.dx) * k).toFixed(1) + 'px,' + ((h0.y + jt.dy) * k).toFixed(1) + 'px,0) rotate(' + (jt.rot * k).toFixed(2) + 'deg) scale(' + (1 + .1 * k).toFixed(3) + ')';
+      });
+    }
+    // hover is tracked on the slot (which never moves), so a card can travel to the center without flicker
+    if (window.matchMedia('(hover: hover)').matches) {
+      allSlots.forEach(function (slot) {
+        slot.addEventListener('mouseenter', function () { if (!settled) return; var n = slots.indexOf(slot); if (n > -1) setFocus(n); });
+        slot.addEventListener('mouseleave', function () { var n = slots.indexOf(slot); if (n === focus) setFocus(-1); });
       });
     }
     var queued = false;
     window.addEventListener('scroll', function () { if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; layout(); }); } }, { passive: true });
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', function () { setFocus(-1); measure(); });
     window.addEventListener('load', measure);
-    cards.forEach(function (c) { var im = c.querySelector('img'); if (im && !im.complete) im.addEventListener('load', measure, { once: true }); });
+    allSlots.forEach(function (s) { var im = s.querySelector('img'); if (im && !im.complete) im.addEventListener('load', measure, { once: true }); });
     measure();
   }
   if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
+
+  /* Footer clouds: fade in once loaded */
+  document.querySelectorAll('img.footer_bg').forEach(function (im) {
+    var done = function () { im.classList.add('is-loaded'); };
+    if (im.complete && im.naturalWidth) done(); else { im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true }); }
+  });
 
   /* ---------- 6. Contact: live LA cams over the mirror photo ---------- */
   var cam = document.querySelector('[data-livecam]');
