@@ -216,7 +216,7 @@
     if (nav) {
     }
     lastY = y;
-    sampleBackdrop();
+    sampleSoon();
     ticking = false;
   }
   window.addEventListener('scroll', function () { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
@@ -310,6 +310,13 @@
     ['--nav-l', '--nav-c', '--nav-r'].forEach(function (v, i) { var c = cols[i]; nav.style.setProperty(v, 'rgb(' + Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b) + ')'); });
     var lum = cols.reduce(function (s, c) { return s + (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255; }, 0) / 3;
     nav.classList.toggle('is-on-dark', lum < 0.45);
+  }
+  // sample a few times a second while scrolling, and once more when scrolling stops (the colour eases over ~1s anyway)
+  var lastSample = 0, sampleTimer = 0;
+  function sampleSoon() {
+    var now = performance.now();
+    if (now - lastSample > 180) { lastSample = now; sampleBackdrop(); }
+    clearTimeout(sampleTimer); sampleTimer = setTimeout(function () { lastSample = performance.now(); sampleBackdrop(); }, 200);
   }
   /* ---------- 5. Playground ----------
      Full-bleed grid of photos. It starts as a loose fan of large prints, pins, deals into the grid as you scroll, then holds.
@@ -529,7 +536,6 @@
   var PAG_HTML = "<div class=\"testimonial_pagination\"><div class=\"testimonial_controls cc-prev\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 23 18\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M8.38769 17.28L9.79569 16L3.8117 9.6H22.4997V7.712H3.8117L9.79569 1.312L8.38769 0L0.387695 8.64L8.38769 17.28Z\" fill=\"currentColor\"></path></svg></div><div class=\"testimonial_controls cc-next\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 25 25\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M15.612 21.28L14.204 20L20.188 13.6L1.5 13.6V11.712H20.188L14.204 5.312L15.612 4L23.612 12.64L15.612 21.28Z\" fill=\"currentColor\"></path></svg></div></div>";
   document.querySelectorAll('.swiper-wrapper.cc-project').forEach(function (wrap) {
     var sc = wrap.parentElement; if (!sc) return;
-    sc.setAttribute('data-lenis-prevent-wheel', ''); // let sideways trackpad scrolling through; vertical wheel still scrolls the page
     // bleed off the right edge of the screen; the last card still lines up with the page column at the end
     function bleed() {
       sc.style.marginRight = '0px'; sc.style.paddingRight = '0px'; sc.style.marginLeft = '0px'; sc.style.paddingLeft = '0px';
@@ -553,6 +559,7 @@
     var section = sc.closest('section'), pag = null;
     if (section) section.querySelectorAll('.testimonial_pagination').forEach(function (p) { if (!pag && sc.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) pag = p; });
     if (!pag) { var tmp = document.createElement('div'); tmp.innerHTML = PAG_HTML; pag = tmp.firstChild; pag.classList.add('cc-added'); sc.insertAdjacentElement('afterend', pag); }
+    sc.parentElement.insertBefore(pag, sc); pag.classList.add('cc-top'); // arrows sit above the cards, on the right
     var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
     function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
     function ends() { var max = sc.scrollWidth - sc.clientWidth - 2; if (prev) prev.classList.toggle('is-disabled', sc.scrollLeft <= 2); if (next) next.classList.toggle('is-disabled', sc.scrollLeft >= max); }
@@ -560,10 +567,11 @@
       var go = function () { sc.scrollBy({ left: (i ? 1 : -1) * step(), behavior: 'smooth' }); };
       b.addEventListener('click', go); b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
     sc.addEventListener('scroll', ends, { passive: true }); window.addEventListener('resize', ends); setTimeout(ends, 50);
+    // clearly sideways trackpad swipes scroll the carousel natively (kept away from the smooth-scroll library);
+    // everything else is left alone, so vertical page scrolling over a carousel behaves exactly as elsewhere
     sc.addEventListener('wheel', function (e) {
-      // a vertical wheel over the carousel keeps scrolling the page smoothly
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); try { if (typeof lenis !== 'undefined') lenis.scrollTo(window.scrollY + e.deltaY * 1.0); else window.scrollBy(0, e.deltaY); } catch (x) { window.scrollBy(0, e.deltaY); } }
-    }, { passive: false });
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.2) e.stopPropagation();
+    }, { passive: true });
     var down = false, moved = false, x0 = 0, s0 = 0, v = 0, lx = 0, lt = 0, raf = 0;
     sc.addEventListener('pointerdown', function (e) {
       if (e.pointerType !== 'mouse' || e.button !== 0) return;

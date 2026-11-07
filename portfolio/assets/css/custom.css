@@ -177,6 +177,7 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 /* Contact: a tighter intro so the live cams peek in above the fold on laptops */
 .page-main > .section.contact-intro:first-child { padding-top: calc(var(--_custom---nav-height) + 2.5rem); padding-bottom: 3rem; }
 .contact-intro .u-vgap-64-40 { grid-row-gap: 2rem; }
+.contact-intro .u-vflex-stretch-top > .u-align-center { margin-top: -1.25rem; } /* "Book a call" sits close under the heading */
 .contact-intro .input.cc-textarea, .contact-intro .input-group.cc-textarea { min-height: 6.5rem; }
 
 /* Project cards: the brand's logo replaces the brand-name label */
@@ -195,7 +196,7 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 
 /* Carousel arrow pills: the Projects copy sits under its row; arrows fade at the ends */
 .col:has(> .swiper > .swiper-wrapper.cc-project) { min-width: 0; }
-.testimonial_pagination.cc-added { display: inline-flex; margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+.testimonial_pagination.cc-top { display: flex; width: fit-content; margin: 0 0 clamp(1rem, 2vw, 1.5rem) auto; }
 .testimonial_controls.is-disabled { opacity: .3; pointer-events: none; }
 .testimonial_controls { transition: opacity .4s ease; }
 
@@ -209,7 +210,7 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* Form fields: a single flat line instead of a box (contact form, password modal) */
 .input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: 0; padding-right: 0; box-shadow: none;
-  background-image: radial-gradient(ellipse 58% 100% at 50% 100%, #00000024 0%, #00000012 38%, transparent 72%); background-repeat: no-repeat;
+  background-image: radial-gradient(ellipse 58% 100% at 50% 100%, #00000014 0%, #0000000a 38%, transparent 72%); background-repeat: no-repeat;
   background-size: 100% 3.25rem; background-position: 50% calc(100% + 3.5rem);
   transition: border-color .3s ease, box-shadow .3s ease, padding .35s cubic-bezier(.22, 1, .36, 1), background-position .5s cubic-bezier(.22, 1, .36, 1); }
 /* text sits on the left edge at rest, and eases inward when the field is hovered or being typed in */
