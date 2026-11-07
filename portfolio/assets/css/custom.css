@@ -30,7 +30,7 @@
   transition: transform .55s cubic-bezier(.16, 1, .3, 1), filter .55s ease .05s, height .55s ease .05s, bottom .55s ease .05s, opacity .55s ease .05s; }
 
 /* Home hero headline: wraps to two lines ("Shaping vision." / "Building with purpose.") */
-.hero h1 { text-wrap: initial; }
+.hero h1 { text-wrap: initial; line-height: 1.12; }
 
 /* Home hero: on laptop/desktop, cap the height so the logo bar sits above the fold. */
 @media (min-width: 992px) {
@@ -145,7 +145,7 @@ img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 .gate-modal.is-open .gate-modal_backdrop { opacity: 1; }
 .gate-modal.is-open .gate-modal_card { opacity: 1; transform: none; }
 .gate-modal_close { position: absolute; top: .9rem; right: .9rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: inherit; cursor: pointer; border-radius: 50%; transition: background-color .3s, transform .6s cubic-bezier(.22, 1, .36, 1); }
-.gate-modal_close:hover { background: #0000000d; transform: rotate(90deg); }
+.gate-modal_close:hover { transform: rotate(90deg); }
 .gate-modal_error { color: #c2410c; align-self: flex-start; margin: 0; }
 .gate-modal_card.is-shake { animation: gate-shake .45s cubic-bezier(.36, .07, .19, .97); }
 @keyframes gate-shake { 20%, 60% { translate: -6px 0; } 40%, 80% { translate: 6px 0; } }
@@ -201,9 +201,13 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* Form fields: a single flat line instead of a box (contact form, password modal) */
-.input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: 0; padding-right: 0; box-shadow: none; transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease, padding .35s cubic-bezier(.22, 1, .36, 1); }
+.input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: 0; padding-right: 0; box-shadow: none;
+  background-image: radial-gradient(ellipse 58% 100% at 50% 100%, #00000024 0%, #00000012 38%, transparent 72%); background-repeat: no-repeat;
+  background-size: 100% 3.25rem; background-position: 50% calc(100% + 3.5rem);
+  transition: border-color .3s ease, box-shadow .3s ease, padding .35s cubic-bezier(.22, 1, .36, 1), background-position .5s cubic-bezier(.22, 1, .36, 1); }
 /* text sits on the left edge at rest, and eases inward when the field is hovered or being typed in */
-.input:hover, .input:focus { background-color: #0000000a; padding-left: .75rem; padding-right: .75rem; }
+/* a soft arc of shadow rises from the line when hovered or being typed in */
+.input:hover, .input:focus { background-position: 50% 100%; padding-left: .75rem; padding-right: .75rem; }
 .input:focus, .input.w-input:focus, .input:focus-visible { outline: none; border-color: transparent; border-bottom-color: currentColor; box-shadow: 0 1px 0 0 currentColor; }
 .input.cc-select { background-position: calc(100% - .5rem) 50%; }
 /* Submit stays disabled until something is typed */
