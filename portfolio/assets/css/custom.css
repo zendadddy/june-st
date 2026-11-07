@@ -201,8 +201,9 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* Form fields: a single flat line instead of a box (contact form, password modal) */
-.input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: .75rem; padding-right: .75rem; box-shadow: none; transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease; }
-.input:hover, .input:focus { background-color: #0000000a; }
+.input, .input.w-input, .input.cc-textarea { border: 0; border-bottom: 1px solid var(--background--invert); border-radius: 0; background-color: transparent; padding-left: 0; padding-right: 0; box-shadow: none; transition: border-color .3s ease, box-shadow .3s ease, background-color .3s ease, padding .35s cubic-bezier(.22, 1, .36, 1); }
+/* text sits on the left edge at rest, and eases inward when the field is hovered or being typed in */
+.input:hover, .input:focus { background-color: #0000000a; padding-left: .75rem; padding-right: .75rem; }
 .input:focus, .input.w-input:focus, .input:focus-visible { outline: none; border-color: transparent; border-bottom-color: currentColor; box-shadow: 0 1px 0 0 currentColor; }
 .input.cc-select { background-position: calc(100% - .5rem) 50%; }
 /* Submit stays disabled until something is typed */
