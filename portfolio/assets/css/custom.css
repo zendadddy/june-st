@@ -26,7 +26,7 @@
 .nav_link:hover::after { transform: scaleX(1); transform-origin: left center; }
 
 /* Home hero headline: wraps to two lines ("Shaping vision." / "Building with purpose.") */
-.hero h1 { max-width: 10.6em; margin-left: auto; margin-right: auto; text-wrap: initial; }
+.hero h1 { text-wrap: initial; }
 
 /* Home hero: on laptop/desktop, cap the height so the logo bar sits above the fold. */
 @media (min-width: 992px) {
