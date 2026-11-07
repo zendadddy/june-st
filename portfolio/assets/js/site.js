@@ -369,7 +369,9 @@
     function restOf(n, p, N) {
       var local = Math.max(0, Math.min(1, p * 1.25 - (N > 1 ? n / (N - 1) : 0) * .25));
       var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
-      return { tx: jt.sx * k, ty: jt.sy * k, rot: jt.rot * k, s: 1 + (jt.s - 1) * k };
+      // about one in five photos settles slightly off kilter in the finished grid
+      var tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1.5 + rnd(n, 5.33) * 2.5) : 0;
+      return { tx: jt.sx * k, ty: jt.sy * k, rot: jt.rot * k + tilt * (1 - k), s: 1 + (jt.s - 1) * k };
     }
     function layout() {
       if (!homes.length) return;
@@ -379,8 +381,14 @@
         var r = restOf(n, cur, N); rest[n] = r;
         if (n === focus) {
           var sr = slots[n].getBoundingClientRect(), w = c.offsetWidth, h = c.offsetHeight;
-          var s = Math.min(window.innerHeight * .62 / h, window.innerWidth * .42 / w);
-          var dx = window.innerWidth / 2 - (sr.left + sr.width / 2), dy = window.innerHeight / 2 - (sr.top + sr.height / 2);
+          // grow out of its own spot: drift only ~30% toward the centre, and stay fully on screen
+          var vw = document.documentElement.clientWidth, vh = window.innerHeight, M = 16;
+          var s = Math.min(vh * .5 / h, vw * .34 / w);
+          var cx0 = sr.left + sr.width / 2, cy0 = sr.top + sr.height / 2;
+          var cx = cx0 + (vw / 2 - cx0) * .3, cy = cy0 + (vh / 2 - cy0) * .3;
+          var hw = w * s / 2, hh = h * s / 2;
+          cx = Math.max(M + hw, Math.min(vw - M - hw, cx)); cy = Math.max(M + hh, Math.min(vh - M - hh, cy));
+          var dx = cx - cx0, dy = cy - cy0;
           c.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + s.toFixed(3) + ')';
         } else {
           c.style.transform = 'translate3d(' + r.tx.toFixed(1) + 'px,' + r.ty.toFixed(1) + 'px,0) rotate(' + r.rot.toFixed(2) + 'deg) scale(' + r.s.toFixed(3) + ')';
@@ -559,7 +567,11 @@
     var section = sc.closest('section'), pag = null;
     if (section) section.querySelectorAll('.testimonial_pagination').forEach(function (p) { if (!pag && sc.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) pag = p; });
     if (!pag) { var tmp = document.createElement('div'); tmp.innerHTML = PAG_HTML; pag = tmp.firstChild; pag.classList.add('cc-added'); sc.insertAdjacentElement('afterend', pag); }
-    sc.parentElement.insertBefore(pag, sc); pag.classList.add('cc-top'); // arrows sit above the cards, on the right
+    // one bar above the cards: 'View all' on the left, the arrows on the right
+    var bar = document.createElement('div'); bar.className = 'carousel-bar';
+    sc.parentElement.insertBefore(bar, sc);
+    var seeAll = sc.parentElement.querySelector(':scope > .see-all'); if (seeAll) bar.appendChild(seeAll);
+    bar.appendChild(pag); pag.classList.add('cc-top');
     var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
     function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
     function ends() { var max = sc.scrollWidth - sc.clientWidth - 2; if (prev) prev.classList.toggle('is-disabled', sc.scrollLeft <= 2); if (next) next.classList.toggle('is-disabled', sc.scrollLeft >= max); }
