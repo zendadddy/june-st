@@ -4,14 +4,14 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- 0. Password gate (modal) ----------
-     /projects and every project page need the password. While locked, clicking a link to them opens a white modal over the
+     Every project page needs the password (the /projects overview is open). While locked, clicking a link to one opens a white modal over the
      current page instead of navigating. The right password unlocks everything for 72 hours in this browser.
      Opening a project URL directly redirects to index.html?gate=<page>, which opens the modal on load.
      Soft protection: the check runs in the browser. Change the password by replacing PASS_HASH (SHA-256 of the lowercase password). */
   var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
   var gate = (function () {
     var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // sha256("famouslastname")
-    var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects(\.html|\/[a-z0-9-]+\.html)$/;
+    var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects\/[a-z0-9-]+\.html$/; // individual project pages; /projects itself is open
     function unlocked() { try { return +localStorage.getItem(KEY) > Date.now(); } catch (e) { return false; } }
     function relOf(href) { try { var u = new URL(href, location.href); if (u.origin !== siteRoot.origin) return null; return u.pathname.slice(siteRoot.pathname.length); } catch (e) { return null; } }
     function hex(a) { return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
@@ -201,15 +201,12 @@
     sun.addEventListener('mouseleave', function () { sunTimelines().forEach(function (tl) { gsap.to(tl, { timeScale: 1, duration: 1.2, ease: 'power2.in', overwrite: true }); }); });
   }
 
-  /* ---------- 3. Nav: tuck away on scroll down, return on scroll up ---------- */
+  /* ---------- 3. Nav: stays in view; scroll drives the backdrop color sampling ---------- */
   var lastY = window.scrollY, hidden = false, ticking = false;
   function onScroll() {
     var y = window.scrollY;
     var dy = y - lastY;
     if (nav) {
-      if (y < window.innerHeight * 0.75) { if (hidden) { nav.classList.remove('is-tucked'); hidden = false; } }
-      else if (dy > 6 && !hidden) { nav.classList.add('is-tucked'); hidden = true; }
-      else if (dy < -6 && hidden) { nav.classList.remove('is-tucked'); hidden = false; }
     }
     lastY = y;
     sampleBackdrop();
@@ -429,8 +426,8 @@
     var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
   }
 
-  /* ---------- 7. Project thumbnails: a short pixel glitch on hover ----------
-     Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). It runs while hovered and resolves on leave. */
+  /* ---------- 7. Project thumbnails: a single glitched frame on hover ----------
+     Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). Hover shows one fixed glitched frame; leaving restores the photo. */
   (function () {
     if (reduce || !window.matchMedia('(hover: hover)').matches) return;
     var mode = document.body.getAttribute('data-thumb-hover') || 'mosh';
@@ -471,16 +468,16 @@
         tctx.putImageData(d, 0, 0); ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, w, h); ctx.drawImage(tmp, 0, 0, tmp.width, tmp.height, 0, 0, w, h);
       }
       var fx = mode === 'pixelate' ? pixelate : mode === 'dither' ? dither : mosh;
-      // glitches for as long as the card is hovered, subtly, then resolves back to the clean photo on leave
-      var MAX = mode === 'mosh' ? .38 : mode === 'pixelate' ? .32 : .6, level = 0, want = 0, last = 0;
-      function frame(ts) {
-        level += (want - level) * (want ? .12 : .2);
-        if (!want && level < .02) { level = 0; cv.classList.remove('is-on'); raf = 0; return; }
-        if (ts - last > 70) { last = ts; fx(level, cv.width, cv.height); } // ~14 fps reads as a glitch, not a blur
-        raf = requestAnimationFrame(frame);
-      }
-      card.addEventListener('mouseenter', function () { if (!img.complete || !prep()) return; want = MAX; cv.classList.add('is-on'); if (!raf) { last = 0; raf = requestAnimationFrame(frame); } });
-      card.addEventListener('mouseleave', function () { want = 0; if (!raf && cv.classList.contains('is-on')) raf = requestAnimationFrame(frame); });
+      // two states: hover shows one fixed glitched frame, leaving shows the clean photo
+      var MAX = mode === 'mosh' ? .38 : mode === 'pixelate' ? .32 : .6, seed = 1 + Array.prototype.indexOf.call(document.querySelectorAll('.project'), card);
+      function seeded(s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+      card.addEventListener('mouseenter', function () {
+        if (!img.complete || !prep()) return;
+        var real = Math.random; Math.random = seeded(seed * 7919); // the same glitch every time for this card
+        try { fx(MAX, cv.width, cv.height); } finally { Math.random = real; }
+        cv.classList.add('is-on');
+      });
+      card.addEventListener('mouseleave', function () { cv.classList.remove('is-on'); });
     });
   })();
 

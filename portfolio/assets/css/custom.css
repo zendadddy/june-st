@@ -15,8 +15,6 @@
 /* Sun mark links to the home page */
 .nav_sun { pointer-events: auto; display: block; color: inherit; z-index: 11; width: 3.4rem; cursor: pointer; }
 
-/* Tucked away while scrolling down */
-.navigation.is-tucked { transform: translateY(-115%); }
 
 /* Nav links: underline draws in from the left on hover, and leaves to the right. */
 .nav_link { position: relative; }
@@ -97,7 +95,7 @@ img.footer_bg { transition: opacity 1.2s ease; }
 img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 
 /* Rough paper edge along the top of the home logo bar, same torn edge as the quote section (clip-bg). */
-.logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: .5rem; }
+.logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: 1.25rem; }
 .logo_marquee::before {
   content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; pointer-events: none;
   background: var(--background--primary);
@@ -129,12 +127,12 @@ img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 .gate-modal { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1rem; }
 .gate-modal[hidden] { display: none; }
 .gate-modal_backdrop { position: absolute; inset: 0; background: #2e2e2e33; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity .5s ease; }
-.gate-modal_card { position: relative; width: min(28rem, 100%); background: #fff; color: var(--_colors---all--black); padding: clamp(2rem, 4vw, 3rem); display: flex; flex-direction: column; gap: 2rem;
+.gate-modal_card { position: relative; width: min(33.6rem, 100%); background: #fff; color: var(--_colors---all--black); padding: clamp(2.4rem, 4.8vw, 3.6rem); display: flex; flex-direction: column; gap: 2.4rem;
   box-shadow: 0 1px 2px #0000000d, 0 8px 16px -4px #00000014, 0 30px 60px -18px #00000033, 0 70px 120px -40px #00000040;
   opacity: 0; transform: translateY(14px) scale(.985); transition: opacity .55s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); }
 .gate-modal.is-open .gate-modal_backdrop { opacity: 1; }
 .gate-modal.is-open .gate-modal_card { opacity: 1; transform: none; }
-.gate-modal_close { position: absolute; top: .75rem; right: .75rem; width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: inherit; cursor: pointer; border-radius: 50%; transition: background-color .3s, transform .6s cubic-bezier(.22, 1, .36, 1); }
+.gate-modal_close { position: absolute; top: .9rem; right: .9rem; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: inherit; cursor: pointer; border-radius: 50%; transition: background-color .3s, transform .6s cubic-bezier(.22, 1, .36, 1); }
 .gate-modal_close:hover { background: #0000000d; transform: rotate(90deg); }
 .gate-modal_error { color: #c2410c; align-self: flex-start; margin: 0; }
 .gate-modal_card.is-shake { animation: gate-shake .45s cubic-bezier(.36, .07, .19, .97); }

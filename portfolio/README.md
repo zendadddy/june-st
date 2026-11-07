@@ -73,15 +73,16 @@ moving to a templating step later).
 
 ## Password gate
 
-`projects.html` and every page in `projects/` are behind `gate.html`.
+Every page in `projects/` is password-protected. The `projects.html` overview stays open.
 
-- While locked, the Projects nav link and every project card point to the gate, and opening a project URL directly redirects there. After the right password, the visitor goes on to the page they wanted.
-- Access lasts 72 hours in that browser (`localStorage` key `fb-unlock`), then the gate asks again.
-- The password is stored only as a SHA-256 hash in `gate.html` (`PASS_HASH`). It is checked in lowercase with spaces trimmed. To change it, replace the hash with the output of:
+- While locked, clicking any project card (on Home, Projects, Courses or a case study) opens a white "Private work" modal over the current page. The X, Escape or clicking outside closes it.
+- Opening a project URL directly lands on `projects.html` with the modal open. The old `gate.html` address forwards there too.
+- The right password continues to the project that was clicked. Access lasts 72 hours in that browser (`localStorage` key `fb-unlock`), then the modal asks again.
+- The password is stored only as a SHA-256 hash: `PASS_HASH` in `assets/js/site.js` (section 0). It is checked in lowercase with spaces trimmed. To change it, replace the hash with the output of:
   `printf '%s' 'newpassword' | shasum -a 256`
 - This is soft protection: the check runs in the browser and the project files are still on the server, so someone technical can reach them. For real protection, also turn on your host's password protection (Netlify, Vercel or Cloudflare Access).
 
 ## Other site-wide details
 
 - All lines are solid: the Webflow stylesheet's dashed and dotted borders were switched to solid in `assets/css/frank-bach-staging.webflow.shared.ebbb69877.css`.
-- Project thumbnails play a short glitch on hover. Change the effect with `<body data-thumb-hover="pixelate">` or `"dither"` (default `mosh`).
+- Project thumbnails show a single glitched frame on hover and the clean photo otherwise. Change the effect with `<body data-thumb-hover="pixelate">` or `"dither"` (default `mosh`).
