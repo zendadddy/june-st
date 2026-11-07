@@ -632,6 +632,12 @@
     window.addEventListener('load', function () { update(); setTimeout(update, 300); }); // Webflow's form script re-enables the button when it starts up
   });
 
+  /* ---------- 10. Hero loop: still photo for reduced motion ---------- */
+  document.querySelectorAll('video.hero_photo').forEach(function (v) {
+    if (reduce) { v.removeAttribute('autoplay'); v.pause(); return; }
+    var p = v.play(); if (p && p.catch) p.catch(function () {}); // some browsers block autoplay; the poster still shows
+  });
+
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
   window.addEventListener('load', function () { sampleBackdrop(); setTimeout(sampleBackdrop, 300); });
