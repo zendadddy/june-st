@@ -204,8 +204,9 @@ a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; 
 
 /* Carousel arrow pills: the Projects copy sits under its row; arrows fade at the ends */
 .col:has(> .swiper > .swiper-wrapper.cc-project) { min-width: 0; }
-.carousel-title { margin: 0 0 clamp(.75rem, 1.5vw, 1rem); }
+.carousel-title { margin: 0 0 .25rem; }
 .carousel-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: clamp(1rem, 2vw, 1.5rem); }
+.carousel-title + .carousel-bar { margin-top: -.25rem; }
 .testimonial_pagination.cc-top { display: flex; width: fit-content; margin: 0 0 0 auto; }
 .carousel-bar .see-all { margin-top: 0; }
 .testimonial_controls.is-disabled { opacity: .3; pointer-events: none; }
