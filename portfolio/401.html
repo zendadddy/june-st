@@ -59,10 +59,9 @@
 </script><!-- Back to top: fixed circle, "TOP" repeated along the ring, rotates with scroll -->
 <a href="#" class="totop" aria-label="Back to top" data-totop>
   <svg class="totop_ring" viewBox="0 0 100 100" aria-hidden="true">
-    <defs><path id="totop-path" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"/></defs>
-    <text class="totop_text"><textPath href="#totop-path" textLength="232">TOP · TOP · TOP · TOP · TOP · TOP · </textPath></text>
+    <defs><path id="totop-path" d="M50,50 m-33,0 a33,33 0 1,1 66,0 a33,33 0 1,1 -66,0"/></defs>
+    <text class="totop_text"><textPath href="#totop-path" startOffset="25%" text-anchor="middle">TOP</textPath></text>
   </svg>
-  <svg class="u-icon cc-24 totop_arrow" fill="none" viewBox="0 0 25 24" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15.112 20.78L13.704 19.5L19.688 13.1L1 13.1V11.212H19.688L13.704 4.812L15.112 3.5L23.112 12.14L15.112 20.78Z" fill="currentColor"/></svg>
 </a>
 <script>
 (function(){
@@ -71,7 +70,7 @@
   function update(){
     var y=window.scrollY||document.documentElement.scrollTop||0;
     ring.style.transform='rotate('+(y/5)+'deg)';
-    el.classList.toggle('is-visible', y>window.innerHeight*0.5);
+    el.classList.toggle('is-visible', y>window.innerHeight*1.5);
     ticking=false;
   }
   window.addEventListener('scroll',function(){ if(!ticking){ requestAnimationFrame(update); ticking=true; } },{passive:true});

@@ -11,7 +11,7 @@
   /* ---------- 2. Page transition: a soft white wave rises from the bottom ---------- */
   var wipe = document.createElement('div');
   wipe.className = 'page-wipe';
-  wipe.innerHTML = '<svg class="page-wipe_wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0,80 C240,20 480,140 720,80 C960,20 1200,140 1440,80 L1440,120 L0,120 Z"/></svg><div class="page-wipe_body"></div>';
+  wipe.innerHTML = '<svg class="page-wipe_wave" viewBox="0 0 1440 36" preserveAspectRatio="none" aria-hidden="true"><path d="M0,22 C480,8 960,8 1440,22 L1440,36 L0,36 Z"/></svg><div class="page-wipe_body"></div>';
   document.body.appendChild(wipe);
   // Arrive: the wipe starts covering the page and lifts away.
   if (!reduce) {
@@ -36,13 +36,34 @@
     setTimeout(function () { location.href = href; }, 620);
   });
 
+  /* ---------- 2b. Header sun: ease its spin to a stop on hover, bounce on click ---------- */
+  var sun = document.querySelector('.nav_sun');
+  if (sun) {
+    function sunTimelines() {
+      if (typeof gsap === 'undefined') return [];
+      var els = sun.querySelectorAll('svg g'), seen = [], out = [];
+      els.forEach(function (g) {
+        gsap.getTweensOf(g).forEach(function (t) {
+          var tl = (t.parent && t.parent !== gsap.globalTimeline && !t.parent.scrollTrigger) ? t.parent : t;
+          if (tl.scrollTrigger || (t.vars && t.vars.scrollTrigger)) return; // leave the scroll-linked turn alone
+          if (seen.indexOf(tl) === -1) { seen.push(tl); out.push(tl); }
+        });
+      });
+      return out;
+    }
+    sun.addEventListener('mouseenter', function () { sunTimelines().forEach(function (tl) { gsap.to(tl, { timeScale: 0, duration: .8, ease: 'power2.out', overwrite: true }); }); });
+    sun.addEventListener('mouseleave', function () { sunTimelines().forEach(function (tl) { gsap.to(tl, { timeScale: 1, duration: 1.2, ease: 'power2.in', overwrite: true }); }); });
+    sun.addEventListener('click', function () { sun.classList.remove('is-bouncing'); void sun.offsetWidth; sun.classList.add('is-bouncing'); });
+    sun.addEventListener('animationend', function () { sun.classList.remove('is-bouncing'); });
+  }
+
   /* ---------- 3. Nav: tuck away on scroll down, return on scroll up ---------- */
   var lastY = window.scrollY, hidden = false, ticking = false;
   function onScroll() {
     var y = window.scrollY;
     var dy = y - lastY;
     if (nav) {
-      if (y < 80) { if (hidden) { nav.classList.remove('is-tucked'); hidden = false; } }
+      if (y < window.innerHeight * 0.75) { if (hidden) { nav.classList.remove('is-tucked'); hidden = false; } }
       else if (dy > 6 && !hidden) { nav.classList.add('is-tucked'); hidden = true; }
       else if (dy < -6 && hidden) { nav.classList.remove('is-tucked'); hidden = false; }
     }
@@ -112,40 +133,57 @@
     nav.style.setProperty('--nav-sky', 'rgb(' + key + ')');
     nav.classList.toggle('is-on-dark', lum < 0.45);
   }
-  /* ---------- 5. Playground: stack of cards that deals into a grid ---------- */
-  var pg = document.querySelector('[data-playground]');
-  if (pg && !reduce) {
+  /* ---------- 5. Playground: a stack of cards that pins, deals into a grid, then holds ---------- */
+  function initPlayground(pg) {
     var cards = Array.prototype.slice.call(pg.querySelectorAll('.pg_card'));
-    var grid = pg.querySelector('.pg_grid');
-    // fixed, hand-feel jitter per card so the stack looks tossed, not random each load
-    var jitter = cards.map(function (c, n) { var s = Math.sin(n * 12.9898) * 43758.5453; var f = s - Math.floor(s); var s2 = Math.sin(n * 78.233) * 12543.21; var g = s2 - Math.floor(s2); return { rot: (f - .5) * 14, dx: (g - .5) * 70, dy: (f - .5) * 40 }; });
-    var homes = [];
+    var grid = pg.querySelector('.pg_grid'), track = pg.querySelector('.pg_track'), sticky = pg.querySelector('.pg_sticky');
+    if (!cards.length || !grid || !track) return;
+    // fixed jitter per card so the pile looks tossed, the same on every load
+    var jitter = cards.map(function (c, n) { var s = Math.sin(n * 12.9898) * 43758.5453, f = s - Math.floor(s), s2 = Math.sin(n * 78.233) * 12543.21, g = s2 - Math.floor(s2); return { rot: (f - .5) * 16, dx: (g - .5) * 80, dy: (f - .5) * 46 }; });
+    var homes = [], pinH = 0, gridH = 0;
+    function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
     function measure() {
       cards.forEach(function (c) { c.style.transform = 'none'; });
-      var gr = grid.getBoundingClientRect();
-      var cx = gr.left + gr.width / 2, cy = gr.top + Math.min(gr.height, window.innerHeight) / 2;
+      var vh = window.innerHeight;
+      gridH = grid.getBoundingClientRect().height;
+      var canPin = gridH < vh * .92;
+      pg.classList.toggle('is-pinned', canPin);
+      // pinned: the track is the grid plus 1.6 screens of scroll to play the deal over
+      pinH = canPin ? Math.round(vh * 1.6) : 0;
+      track.style.height = canPin ? (gridH + pinH) + 'px' : '';
+      pg.style.setProperty('--pg-top', Math.max(12, (vh - gridH) / 2) + 'px');
+      var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
       homes = cards.map(function (c) { var r = c.getBoundingClientRect(); return { x: cx - (r.left + r.width / 2), y: cy - (r.top + r.height / 2) }; });
-      layoutPg();
+      layout();
     }
-    function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-    function layoutPg() {
+    function layout() {
       if (!homes.length) return;
-      var r = grid.getBoundingClientRect(), vh = window.innerHeight;
-      // 0 while the grid's top is in the lower part of the screen, 1 once it reaches 25% from the top
-      var raw = (vh * 0.85 - r.top) / (vh * 0.6);
-      var p = Math.max(0, Math.min(1, raw));
+      var vh = window.innerHeight, p;
+      if (pinH) {
+        // 0 when the pin starts, 1 when it releases
+        var top = parseFloat(getComputedStyle(pg).getPropertyValue('--pg-top')) || 0;
+        p = (top - track.getBoundingClientRect().top) / pinH;
+        // hold the pile for the first 22%, deal across the middle, hold the grid for the last 22%
+        p = (p - .22) / .56;
+      } else {
+        var r = grid.getBoundingClientRect();
+        p = (vh * .8 - r.top) / (vh * .7);
+      }
+      p = Math.max(0, Math.min(1, p));
       cards.forEach(function (c, n) {
-        var stagger = Math.max(0, Math.min(1, p * 1.35 - n * 0.04));
-        var k = 1 - ease(stagger);
-        var h = homes[n], jt = jitter[n];
-        c.style.transform = 'translate3d(' + ((h.x + jt.dx) * k).toFixed(1) + 'px,' + ((h.y + jt.dy) * k).toFixed(1) + 'px,0) rotate(' + (jt.rot * k).toFixed(2) + 'deg) scale(' + (1 + .06 * k).toFixed(3) + ')';
+        var local = Math.max(0, Math.min(1, p * 1.4 - n * .05));
+        var k = 1 - ease(local), h = homes[n], jt = jitter[n];
+        c.style.transform = 'translate3d(' + ((h.x + jt.dx) * k).toFixed(1) + 'px,' + ((h.y + jt.dy) * k).toFixed(1) + 'px,0) rotate(' + (jt.rot * k).toFixed(2) + 'deg) scale(' + (1 + .08 * k).toFixed(3) + ')';
       });
     }
-    window.addEventListener('scroll', function () { requestAnimationFrame(layoutPg); }, { passive: true });
+    var queued = false;
+    window.addEventListener('scroll', function () { if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; layout(); }); } }, { passive: true });
     window.addEventListener('resize', measure);
     window.addEventListener('load', measure);
+    cards.forEach(function (c) { var im = c.querySelector('img'); if (im && !im.complete) im.addEventListener('load', measure, { once: true }); });
     measure();
   }
+  if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
 
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
