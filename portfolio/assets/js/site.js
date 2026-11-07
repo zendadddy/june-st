@@ -8,18 +8,48 @@
   if (!location.hash) window.scrollTo(0, 0);
   window.addEventListener('pageshow', function (e) { if (e.persisted && !location.hash) window.scrollTo(0, 0); });
 
-  /* ---------- 2. Page transition: a soft white wave rises from the bottom ---------- */
+  /* ---------- 2. Page transition ----------
+     Leaving: a soft white wave rises from the bottom; we navigate only once the screen is covered.
+     Arriving: the new page waits off-screen (on the same white) until its fonts and visible images are in,
+     then the whole page slides up from the bottom. A tiny script in <head> sets html.is-arriving before first paint. */
+  var root = document.documentElement;
   var wipe = document.createElement('div');
   wipe.className = 'page-wipe';
   wipe.innerHTML = '<svg class="page-wipe_wave" viewBox="0 0 1440 36" preserveAspectRatio="none" aria-hidden="true"><path d="M0,22 C480,8 960,8 1440,22 L1440,36 L0,36 Z"/></svg><div class="page-wipe_body"></div>';
   document.body.appendChild(wipe);
-  // Arrive: the wipe starts covering the page and lifts away.
-  if (!reduce) {
-    wipe.classList.add('is-covering');
-    requestAnimationFrame(function () { requestAnimationFrame(function () { wipe.classList.remove('is-covering'); wipe.classList.add('is-leaving'); }); });
-    wipe.addEventListener('transitionend', function onEnd(e) { if (e.target === wipe && wipe.classList.contains('is-leaving')) { wipe.classList.remove('is-leaving'); wipe.removeEventListener('transitionend', onEnd); } });
+
+  function afterArrive() {
+    root.classList.remove('is-arriving', 'is-rising');
+    // layout measured while the page sat off-screen is stale: re-measure scroll-linked things
+    try { if (window.ScrollTrigger) ScrollTrigger.refresh(); } catch (err) {}
+    window.dispatchEvent(new Event('resize'));
   }
-  // Depart: on internal link clicks, raise the wipe, then navigate.
+  if (root.classList.contains('is-arriving')) {
+    if (reduce) { afterArrive(); }
+    else {
+      var risen = false;
+      var rise = function () {
+        if (risen) return; risen = true;
+        requestAnimationFrame(function () { requestAnimationFrame(function () {
+          root.classList.add('is-rising');
+          var pw = document.querySelector('.page-wrapper');
+          var done = function (e) { if (!e || e.target === pw) { if (pw) pw.removeEventListener('transitionend', done); afterArrive(); } };
+          if (pw) pw.addEventListener('transitionend', done); setTimeout(done, 1400);
+        }); });
+      };
+      // ready = fonts loaded and every image currently in view decoded; never wait longer than 1.6s
+      var waits = [];
+      if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+      var vh = window.innerHeight;
+      document.querySelectorAll('.page-wrapper img').forEach(function (im) {
+        var r = im.getBoundingClientRect(); var top = r.top - vh; // the wrapper is shifted down one screen
+        if (top < vh && r.bottom - vh > -50 && !im.complete) { im.loading = 'eager'; waits.push(new Promise(function (res) { im.addEventListener('load', res, { once: true }); im.addEventListener('error', res, { once: true }); })); }
+      });
+      Promise.race([Promise.all(waits), new Promise(function (res) { setTimeout(res, 1600); })]).then(rise);
+    }
+  }
+
+  // Leaving
   function isInternal(a) {
     var href = a.getAttribute('href') || '';
     if (!href || href.charAt(0) === '#' || /^(mailto:|tel:|javascript:)/i.test(href)) return false;
@@ -27,14 +57,35 @@
     if (a.hasAttribute('download') || a.hasAttribute('data-no-wipe')) return false;
     try { var u = new URL(href, location.href); return u.origin === location.origin && (u.pathname !== location.pathname || u.hash === ''); } catch (err) { return false; }
   }
-  document.addEventListener('click', function (e) {
-    if (reduce || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    var a = e.target.closest('a'); if (!a || !isInternal(a)) return;
-    e.preventDefault();
-    var href = a.href;
-    wipe.classList.remove('is-leaving'); wipe.classList.add('is-entering');
-    setTimeout(function () { location.href = href; }, 620);
+  // Prefetch: on hover/touch for any internal link, and the nav pages once this page is idle
+  var fetched = {};
+  function prefetch(url) {
+    var u = url.split('#')[0]; if (fetched[u] || u === location.href.split('#')[0]) return; fetched[u] = true;
+    var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u; l.as = 'document'; document.head.appendChild(l);
+  }
+  ['pointerenter', 'touchstart', 'focusin'].forEach(function (ev) {
+    document.addEventListener(ev, function (e) { var a = e.target.closest && e.target.closest('a'); if (a && isInternal(a)) prefetch(a.href); }, { passive: true, capture: true });
   });
+  window.addEventListener('load', function () {
+    var idle = window.requestIdleCallback || function (f) { setTimeout(f, 1200); };
+    idle(function () { document.querySelectorAll('.navigation a[href], .nav_sun[href]').forEach(function (a) { if (isInternal(a)) prefetch(a.href); }); });
+  });
+
+  var leaving = false;
+  document.addEventListener('click', function (e) {
+    if (reduce || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest('a'); if (!a || !isInternal(a)) return;
+    e.preventDefault(); leaving = true;
+    var href = a.href; prefetch(href);
+    try { sessionStorage.setItem('fb-arrive', '1'); } catch (err) {}
+    wipe.classList.add('is-entering');
+    var gone = false;
+    var go = function () { if (!gone) { gone = true; location.href = href; } };
+    wipe.addEventListener('transitionend', function (ev) { if (ev.target === wipe) go(); }, { once: true });
+    setTimeout(go, 900);
+  });
+  // Back/forward cache: a page restored mid-wipe should be uncovered
+  window.addEventListener('pageshow', function (e) { if (e.persisted) { leaving = false; wipe.classList.remove('is-entering'); afterArrive(); } });
 
   /* ---------- 2b. Header sun: ease its spin to a stop on hover ---------- */
   var sun = document.querySelector('.nav_sun');
@@ -146,8 +197,8 @@
       gridH = grid.getBoundingClientRect().height;
       var canPin = gridH < vh * .92;
       pg.classList.toggle('is-pinned', canPin);
-      // pinned: the track is the grid plus 1.6 screens of scroll to play the deal over
-      pinH = canPin ? Math.round(vh * 1.6) : 0;
+      // pinned: the track is the grid plus 0.8 screens of scroll to play the deal over
+      pinH = canPin ? Math.round(vh * 0.8) : 0;
       track.style.height = canPin ? (gridH + pinH) + 'px' : '';
       pg.style.setProperty('--pg-top', Math.max(12, (vh - gridH) / 2) + 'px');
       var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
@@ -161,8 +212,8 @@
         // 0 when the pin starts, 1 when it releases
         var top = parseFloat(getComputedStyle(pg).getPropertyValue('--pg-top')) || 0;
         p = (top - track.getBoundingClientRect().top) / pinH;
-        // hold the pile for the first 22%, deal across the middle, hold the grid for the last 22%
-        p = (p - .22) / .56;
+        // brief hold on the pile (12%), deal across the middle, brief hold on the grid (12%)
+        p = (p - .12) / .76;
       } else {
         var r = grid.getBoundingClientRect();
         p = (vh * .8 - r.top) / (vh * .7);
