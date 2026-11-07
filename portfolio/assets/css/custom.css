@@ -1,5 +1,13 @@
 /* Site-level additions on top of the Webflow stylesheet. Loaded after it on every page. */
 
+/* Titles: more generous line spacing when headings wrap (paragraphs and labels keep their original spacing) */
+:root, .u-theme-dark, .u-theme-light {
+  --_typography---heading-1--line-height: 1.08;
+  --_typography---heading-2--line-height: 1.12;
+  --_typography---heading-3--line-height: 1.12;
+  --_typography---heading-4--line-height: 1.2;
+}
+
 /* Nav gradient: taller than the bar, and its color follows whatever sits behind the nav (see assets/js/site.js). */
 @property --nav-l { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
 @property --nav-c { syntax: "<color>"; inherits: true; initial-value: #91d4ff; }
