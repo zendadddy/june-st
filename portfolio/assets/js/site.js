@@ -417,7 +417,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault(); e.stopImmediatePropagation(); var bad = fields.filter(function (f) { return !ok(f); }); if (bad.length) { bad.forEach(function (f) { show(f, true); }); bad[0].focus(); return; }
       var label = btn.value; btn.disabled = true; btn.value = 'Sending…'; if (fail) fail.style.display = 'none';
-      fetch(form.action, { method: 'POST', body: new FormData(form) }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
         .then(function (d) { if (!d.ok) throw 0; form.style.display = 'none'; if (done) done.style.display = 'block'; })
         .catch(function () { if (fail) fail.style.display = 'block'; })
         .then(function () { btn.disabled = false; btn.value = label; });
