@@ -769,3 +769,9 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
   .pg .pg_slot:nth-child(8) { grid-area: 5 / 1 / 6 / 6; margin-top: -8vw; }
   .pg .pg_slot:nth-child(9) { grid-area: 5 / 6 / 6 / 11; margin: 6vw 0 0 3vw; }
 }
+
+/* section-break: below the logos, a thin torn edge opens a very pale paper tone that fades back to the page by the section's end */
+.logo_marquee + .section { position: relative; margin-top: 2.25rem; background: linear-gradient(180deg, #f6f2ea 0%, #f7f4ed 45%, #fbfaf7 100%); }
+.logo_marquee + .section::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.5rem; background: #f6f2ea; pointer-events: none;
+  -webkit-mask: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg") center top / max(100%, 1100px) auto no-repeat;
+          mask: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg") center top / max(100%, 1100px) auto no-repeat; }
