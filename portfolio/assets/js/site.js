@@ -755,15 +755,29 @@
     // one black "ink" circle that flows between the arrows on hover: the leading edge moves first, the trailing edge catches up
     (function () {
       var ink = document.createElement('span'); ink.className = 'arrow-ink'; ink.setAttribute('aria-hidden', 'true'); pag.insertBefore(ink, pag.firstChild);
-      var side = null;
+      var side = null, hovering = false, ctls = [].slice.call(pag.querySelectorAll('.testimonial_controls'));
       function to(ctl) {
         var l = ctl.offsetLeft, r = pag.clientWidth - l - ctl.offsetWidth, s = ctl.classList.contains('cc-next') ? 'next' : 'prev';
         if (side && side !== s) pag.classList.toggle('ink-right', s === 'next'); else if (!side) { pag.classList.add('ink-jump'); void ink.offsetWidth; }
         ink.style.left = l + 'px'; ink.style.right = r + 'px'; side = s;
+        ctls.forEach(function (c) { c.classList.toggle('is-inked', c === ctl); });
         pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
       }
-      pag.querySelectorAll('.testimonial_controls').forEach(function (c) { c.addEventListener('pointerenter', function () { if (!c.classList.contains('is-disabled')) to(c); }); });
-      pag.addEventListener('pointerleave', function () { pag.classList.remove('ink-on'); side = null; });
+      // at rest the ink sits under "next" (or "previous" once the end is reached)
+      function rest() {
+        if (hovering) return;
+        var nx = pag.querySelector('.cc-next'), pv = pag.querySelector('.cc-prev');
+        var c = nx && !nx.classList.contains('is-disabled') ? nx : (pv && !pv.classList.contains('is-disabled') ? pv : null);
+        if (c) to(c); else { pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); }); }
+      }
+      ctls.forEach(function (c) {
+        c.addEventListener('pointerenter', function () { hovering = true; if (!c.classList.contains('is-disabled')) to(c); });
+        c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') rest(); }); // an arrow folded in or out
+      });
+      pag.addEventListener('pointerleave', function () { hovering = false; rest(); });
+      var rq = 0; sc.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; rest(); }); }, { passive: true });
+      window.addEventListener('resize', rest);
+      requestAnimationFrame(function () { requestAnimationFrame(rest); }); window.addEventListener('load', rest);
     })();
     if (seeAll) head.appendChild(seeAll);
     // cards fade in from the right the first time the carousel scrolls into view

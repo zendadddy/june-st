@@ -317,7 +317,7 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 /* Carousel arrows: outlined pill; one black "ink" circle flows between the arrows on hover (site.js), arrow turns white */
 .testimonial_pagination.cc-top { position: relative; isolation: isolate; }
 .testimonial_pagination.cc-top .testimonial_controls { position: relative; z-index: 1; transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, color .35s ease; }
-.testimonial_pagination.cc-top .testimonial_controls:hover { color: #fff; }
+.testimonial_pagination.cc-top .testimonial_controls:hover, .testimonial_pagination.cc-top .testimonial_controls.is-inked { color: #fff; }
 .arrow-ink { position: absolute; z-index: 0; top: var(--_spacing---rems--0-5rem); bottom: var(--_spacing---rems--0-5rem); left: 0; right: 0; border-radius: 99px; background: #000; pointer-events: none;
   opacity: 0; transform: scale(.4);
   transition-property: left, right, opacity, transform; transition-duration: .5s, .5s, .3s, .4s;
