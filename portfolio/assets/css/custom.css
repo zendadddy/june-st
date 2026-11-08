@@ -682,3 +682,4 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .about.section::before { content: ""; position: absolute; z-index: 0; inset: 0 0 auto 0; height: min(120svh, 70rem); pointer-events: none;
     background: linear-gradient(180deg, #ffffff1a 0%, #ffffff40 35%, #ffffff66 60%, #ffffff00 100%); }
 } /* light white veil over the sky video on larger screens */
+.soon-modal .gate-modal_card .soon-modal_icon[hidden] { display: none; } /* only the newsletter popup shows the face icon */
