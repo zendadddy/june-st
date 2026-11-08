@@ -1148,7 +1148,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .pg_card:has(.pg_link) { pointer-events: auto; cursor: pointer; }
 .pg_link { display: block; width: 100%; height: 100%; }
 .pg_link img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.testimonial_logo.tm_logo-invert.tm_logo-uxcon { --ink-ratio: .5; } /* UXCon: wordmark with "vienna" above */
+.testimonial_logo.tm_logo-invert.tm_logo-uxcon { --ink-ratio: .78; } /* UXCon: wordmark with "vienna" above */
 
 /* captions scale with the card's height, so every card (tall, square or wide) shows its caption at the same size when zoomed */
 .pg_card:has(.pg_credit) { container-type: size; }
