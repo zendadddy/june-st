@@ -891,7 +891,7 @@
     function full(on) {
       cam.classList.toggle('is-full', on); document.documentElement.classList.toggle('cam-full', on);
       try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}
-      if (on) closeBtn.focus({ preventScroll: true });
+      if (on) closeBtn.focus({ preventScroll: true, focusVisible: false });
     }
     screen.addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
     closeBtn.addEventListener('click', function (e) { e.stopPropagation(); full(false); });
