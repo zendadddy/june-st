@@ -891,7 +891,7 @@
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
             onStateChange: function (e) {
               // camReveal only after it has been playing for a moment, so YouTube's play/pause flash never shows
-              if (e.data === 1) { clearTimeout(wait); clearTimeout(camReveal); camReveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); cam.classList.remove('is-switching'); good(list[idx].id); }, 4100); } // YouTube shows its pause button for ~3s after starting: stay behind the skeleton until it's gone
+              if (e.data === 1) { clearTimeout(wait); clearTimeout(camReveal); camReveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); cam.classList.remove('is-switching'); good(list[idx].id); }, 4600); } // YouTube shows its pause button for ~3s after starting: stay behind the skeleton until it's gone
               else if (e.data === 0) skip(); // the stream ended
             },
             onError: function () { clearTimeout(wait); skip(true); }
