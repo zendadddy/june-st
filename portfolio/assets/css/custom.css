@@ -62,7 +62,7 @@
 /* Homepage hero photo: stage shot, cropped to keep the speaker in view, with a soft wash for the white headline */
 .hero.cc-photo { color: var(--_colors---all--white); background: #0b0f2a; }
 .hero.cc-photo .hero_photo { object-fit: cover; object-position: 62% 55%; }
-@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 60% 55%; } }
+@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 50% 55%; } } /* phones: the hall framed dead centre, aisle under the headline */
 .hero.cc-photo::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #0a0d2899 0%, #0a0d2833 38%, #0a0d2833 62%, #0a0d2880 100%); }
 .hero.cc-photo .container { position: relative; z-index: 1; }
@@ -459,8 +459,10 @@ p, li { text-wrap: pretty; }
   .navigation .nav_list .nav_link::after { display: none; }
   .navigation .nav_list .nav_link:hover { top: 0; text-shadow: none; }
   /* leaving through the menu: the links fade while the panel stays as the white cover */
-  .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0; transform: translateY(-10px); transition: opacity .25s ease, transform .3s ease; transition-delay: 0s; }
-  .navigation.is-menu-leaving .nav_menu { opacity: 0; transition: opacity .2s ease; }
+  .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0 !important; transform: translateY(-8px); transition: opacity .38s ease, transform .45s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(var(--i, 0) * .04s); }
+  .navigation.is-menu-leaving .nav_list .nav_link.is-picked { transition-delay: .14s; } /* the page you picked lingers a beat */
+  .navigation.is-menu-leaving .nav_menu, .navigation.is-menu-leaving .nav_layout > .nav_link { opacity: 0; transition: opacity .35s ease; }
+  html.has-menu .navigation.is-menu-leaving ~ .nav_sun, html.has-menu:has(.is-menu-leaving) .nav_sun { opacity: 0; transition: opacity .35s ease; }
 }
 
 /* Nav: name, links and Menu sit level with the centre of the sun */
@@ -482,7 +484,9 @@ p, li { text-wrap: pretty; }
 
 /* Phones: the nav and sun slide up out of view while scrolling down, and back on scrolling up (site.js section 3) */
 @media (max-width: 767px) {
-  .navigation, .nav_sun { transition: transform .45s cubic-bezier(.22, 1, .36, 1), color .8s; }
+  /* coming back: quicker and eased out; leaving: a slow, soft glide with a fade */
+  .navigation, .nav_sun { transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .5s ease, color .8s; }
+  html.nav-hidden .navigation, html.nav-hidden .nav_sun { opacity: 0; transition: transform .9s cubic-bezier(.45, 0, .25, 1), opacity .7s ease .1s, color .8s; }
   html.nav-hidden .navigation { transform: translateY(calc(-100% - 2rem)); }
   html.nav-hidden .nav_sun { transform: translate(-50%, calc(-100% - 2.5rem)); }
 }
@@ -491,3 +495,6 @@ p, li { text-wrap: pretty; }
 /* Spacing: phones and tablets tighter, desktop unchanged. Section padding (and the big gaps that use it) runs
    44px at 390 -> ~72px at 768 -> 120px from 1440, instead of 64 -> 84 -> 120 */
 :root { --_layout---section--padding: clamp(2.75rem, 7.24vw + 1rem, 7.5rem); }
+
+/* Touch: no blue tap flash on links and buttons; every link has its own pressed/hover treatment */
+a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }

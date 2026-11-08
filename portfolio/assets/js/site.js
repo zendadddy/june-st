@@ -222,9 +222,9 @@
       var a = e.target.closest('a'); if (!a || e.defaultPrevented || !root.classList.contains('has-menu')) return;
       if (a.target && a.target !== '_self') return;
       e.preventDefault(); e.stopImmediatePropagation();
-      nav.classList.add('is-menu-leaving');
+      a.classList.add('is-picked'); nav.classList.add('is-menu-leaving');
       try { sessionStorage.setItem('fb-arrive', '1'); } catch (err) {}
-      setTimeout(function () { location.href = a.href; }, 260);
+      setTimeout(function () { location.href = a.href; }, 560); // let the text fade out first
     });
     window.addEventListener('resize', function () { if (window.innerWidth >= 768 && root.classList.contains('has-menu')) set(false); });
     window.addEventListener('pageshow', function () { nav.classList.remove('is-menu-leaving'); set(false); });
@@ -383,7 +383,7 @@
   }
 
   /* ---------- 3. Nav: stays in view; scroll drives the backdrop color sampling ---------- */
-  var lastY = window.scrollY, hidden = false, ticking = false;
+  var lastY = window.scrollY, hidden = false, ticking = false, navTravel = 0;
   function onScroll() {
     var y = window.scrollY;
     var dy = y - lastY;
@@ -391,8 +391,11 @@
       // phones: tuck the nav away while scrolling down, bring it back on any scroll up (always shown near the top or with the menu open)
       var small = window.innerWidth < 768, menuOpen = root.classList.contains('has-menu');
       if (!small || menuOpen || y < 80) { if (hidden) { hidden = false; root.classList.remove('nav-hidden'); } }
-      else if (dy > 4 && !hidden) { hidden = true; root.classList.add('nav-hidden'); }
-      else if (dy < -4 && hidden) { hidden = false; root.classList.remove('nav-hidden'); }
+      else { // hide only after a deliberate scroll down (~32px); come back after a small scroll up
+        navTravel = (dy > 0) === (navTravel > 0) ? navTravel + dy : dy;
+        if (!hidden && navTravel > 32) { hidden = true; root.classList.add('nav-hidden'); }
+        else if (hidden && navTravel < -8) { hidden = false; root.classList.remove('nav-hidden'); }
+      }
     }
     lastY = y;
     sampleSoon();
