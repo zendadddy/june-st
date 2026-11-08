@@ -557,7 +557,8 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .snail-modal .snail_letter { position: relative; width: min(34rem, 100%); max-height: calc(100svh - 2rem); overflow-y: auto; overscroll-behavior: contain;
   margin: 0; padding: clamp(2.25rem, 5vw, 3rem) clamp(1.5rem, 4.5vw, 2.75rem) clamp(1.5rem, 4vw, 2.25rem); background-color: #fbf6ea; color: #2e2a24; border-radius: 2px;
   box-shadow: 0 2px 4px #0000000f, 0 24px 60px -18px #0000005c;
-  background-image: repeating-linear-gradient(180deg, transparent 0 1.85rem, #e7dcc4 1.85rem calc(1.85rem + 1px)); background-position: 0 1.2rem;
+  --row: 1.75rem; --rule-y: 0px;
+  background-image: linear-gradient(180deg, transparent calc(var(--row) - 1px), #e4d8bd 0); background-size: 100% var(--row); background-position: 0 var(--rule-y); background-attachment: local;
   opacity: 0; transform: translateY(36px) rotate(-3deg) scale(.97); transition: transform .8s cubic-bezier(.22, 1, .36, 1), opacity .45s ease; outline: none; }
 .snail-modal.is-open .snail_letter { opacity: 1; transform: rotate(-.6deg); }
 .snail-modal .gate-modal_close { color: #2e2a24; top: .5rem; right: .5rem; }
@@ -578,3 +579,13 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Snail mail Q&A is parked until there is a mailing address: delete this line to bring the stamp back */
 .snail-trigger { display: none !important; }
+
+/* ruled letter: one line height for all running text so every line sits on a rule (site.js snaps block starts) */
+.snail-modal .snail_letter > p, .snail-modal .snail_letter li, .snail-modal .snail_eyebrow { line-height: var(--row); }
+.snail-modal .snail_letter > p { margin: 0 0 var(--row); }
+.snail-modal .snail_letter > p:last-child { margin-bottom: 0; }
+.snail-modal .snail_steps { margin: 0 0 var(--row); }
+.snail-modal .snail_steps li { margin: 0; }
+.snail-modal .snail_eyebrow { margin: 0; }
+.snail-modal .snail_title { line-height: calc(var(--row) * 1.5); margin: 0 0 calc(var(--row) * .5); }
+.snail-modal .snail_envelope { margin-bottom: var(--row); }

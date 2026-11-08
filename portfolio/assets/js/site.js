@@ -311,9 +311,27 @@
     letter.insertBefore(close, letter.firstChild); letter.setAttribute('tabindex', '-1');
     var title = letter.querySelector('.snail_title'); if (title) title.id = 'snail-title';
     modal.appendChild(letter); document.body.appendChild(modal);
+    // ruled paper: every text block's baseline is snapped onto the same grid as the drawn lines
+    function baselineOf(el) { // offset of el's first baseline from the letter's top (offsetTop ignores the tilt)
+      var probe = document.createElement('span'); probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+      var host = el.matches('ol, ul') ? el.querySelector('li') : el; host.insertBefore(probe, host.firstChild);
+      var y = 0, n = probe; while (n && n !== letter) { y += n.offsetTop; n = n.offsetParent; }
+      probe.remove(); return y;
+    }
+    function rule() {
+      var blocks = [].slice.call(letter.querySelectorAll(':scope > .snail_eyebrow, :scope > .snail_title, :scope > p, :scope > ol'));
+      if (!blocks.length) return;
+      blocks.forEach(function (b) { b.style.paddingTop = '0px'; });
+      var p = letter.querySelector(':scope > p'), row = parseFloat(getComputedStyle(p).lineHeight) || 28;
+      var origin = baselineOf(blocks[0]);
+      blocks.slice(1).forEach(function (b) { var off = ((origin - baselineOf(b)) % row + row) % row; if (off > .5) b.style.paddingTop = off + 'px'; });
+      letter.style.setProperty('--row', row + 'px');
+      letter.style.setProperty('--rule-y', (((origin + 3 - row) % row) + row) % row + 'px');
+    }
     var last = null;
     function open() {
       last = document.activeElement; modal.hidden = false; document.documentElement.classList.add('has-gate'); trig.classList.add('is-found'); trig.setAttribute('aria-expanded', 'true');
+      rule();
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
       requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { close.focus(); }, 80); });
     }
@@ -323,6 +341,8 @@
       setTimeout(function () { modal.hidden = true; }, 450); if (last && last.focus) last.focus();
     }
     trig.addEventListener('click', open);
+    window.addEventListener('resize', function () { if (!modal.hidden) rule(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (!modal.hidden) rule(); });
     modal.querySelectorAll('[data-snail-close]').forEach(function (el) { el.addEventListener('click', shut); });
     modal.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { shut(); return; }
