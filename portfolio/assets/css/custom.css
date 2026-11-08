@@ -479,3 +479,11 @@ p, li { text-wrap: pretty; }
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v7M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v7M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat; }
 .acc-toggle[aria-expanded="true"] .acc-toggle_icon { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E"); }
 @media (prefers-reduced-motion: reduce) { .acc-box { transition: none; } }
+
+/* Phones: the nav and sun slide up out of view while scrolling down, and back on scrolling up (site.js section 3) */
+@media (max-width: 767px) {
+  .navigation, .nav_sun { transition: transform .45s cubic-bezier(.22, 1, .36, 1), color .8s; }
+  html.nav-hidden .navigation { transform: translateY(calc(-100% - 2rem)); }
+  html.nav-hidden .nav_sun { transform: translate(-50%, calc(-100% - 2.5rem)); }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) { .navigation, .nav_sun { transition: none; } }

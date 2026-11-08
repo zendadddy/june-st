@@ -388,6 +388,11 @@
     var y = window.scrollY;
     var dy = y - lastY;
     if (nav) {
+      // phones: tuck the nav away while scrolling down, bring it back on any scroll up (always shown near the top or with the menu open)
+      var small = window.innerWidth < 768, menuOpen = root.classList.contains('has-menu');
+      if (!small || menuOpen || y < 80) { if (hidden) { hidden = false; root.classList.remove('nav-hidden'); } }
+      else if (dy > 4 && !hidden) { hidden = true; root.classList.add('nav-hidden'); }
+      else if (dy < -4 && hidden) { hidden = false; root.classList.remove('nav-hidden'); }
     }
     lastY = y;
     sampleSoon();
