@@ -611,7 +611,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Homepage "Take a pause": the rock photo is framed on the peak, the two people and the sky */
 /* more sky: the photo sits narrower on the left and fades into a sky gradient sampled from its own right edge */
-.section[data-svg="breath"] { background: linear-gradient(180deg, #488790 0%, #54939d 22%, #5fa2aa 42%, #6cb0b6 62%, #7dbfc4 82%, #8ac6c9 100%); }
+.section[data-svg="breath"] { background: #3a87d2 url(../about-sky-poster.jpg) 100% 50% / cover no-repeat; } /* the same sky as the About page */
 .pause-photo { left: 0; right: auto; width: 74%; object-fit: cover; object-position: 50% 8%;
   -webkit-mask-image: linear-gradient(90deg, #000 72%, transparent 100%); mask-image: linear-gradient(90deg, #000 72%, transparent 100%); }
 @media (max-width: 767px) { .pause-photo { width: 80%; object-position: 50% 4%; } }
