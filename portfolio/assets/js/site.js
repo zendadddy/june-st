@@ -251,7 +251,7 @@
       box.classList.add('acc-box');
       var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'acc-toggle eyebrow';
       btn.setAttribute('aria-expanded', 'false');
-      btn.innerHTML = '<span class="acc-toggle_label">Show all ' + rows.length + '</span><span class="acc-toggle_icon" aria-hidden="true"></span>';
+      btn.innerHTML = '<span class="acc-toggle_label">Show all</span><span class="acc-toggle_icon" aria-hidden="true"></span>';
       ul.after(btn);
       var item = { box: box, rows: rows, btn: btn, open: false };
       function collapsedH() { var last = rows[SHOW - 1]; return last.offsetTop + last.offsetHeight - rows[0].offsetTop; }
@@ -261,7 +261,7 @@
       };
       btn.addEventListener('click', function () {
         item.open = !item.open; btn.setAttribute('aria-expanded', String(item.open)); box.classList.toggle('is-open', item.open);
-        btn.querySelector('.acc-toggle_label').textContent = item.open ? 'Show less' : 'Show all ' + rows.length;
+        btn.querySelector('.acc-toggle_label').textContent = item.open ? 'Show less' : 'Show all';
         if (!item.open) { // collapsing from far down the list: keep the toggle in view
           var top = section.getBoundingClientRect().top; var bt = btn.getBoundingClientRect().top;
           item.layout();
@@ -763,12 +763,10 @@
         ctls.forEach(function (c) { c.classList.toggle('is-inked', c === ctl); });
         pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
       }
-      // at rest the ink sits under "next" (or "previous" once the end is reached)
+      // at rest there is no ink: it only appears under the arrow being hovered
       function rest() {
         if (hovering) return;
-        var nx = pag.querySelector('.cc-next'), pv = pag.querySelector('.cc-prev');
-        var c = nx && !nx.classList.contains('is-disabled') ? nx : (pv && !pv.classList.contains('is-disabled') ? pv : null);
-        if (c) to(c); else { pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); }); }
+        pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); });
       }
       ctls.forEach(function (c) {
         c.addEventListener('pointerenter', function () { hovering = true; if (!c.classList.contains('is-disabled')) to(c); });
