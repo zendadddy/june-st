@@ -1029,3 +1029,8 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 
 /* pg-center-last: desktop playground on 14 half-columns so a short last row can be centred */
 @media (min-width: 992px) { .pg .pg_grid { grid-template-columns: repeat(14, 1fr); } .pg .pg_slot { grid-column-end: span 2; } }
+
+/* About podcast: the frosted circle is back around the play triangle */
+.about_video-btn { width: clamp(3.75rem, 6.5vw, 5.5rem); background: #ffffff38; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); filter: none; }
+.about_video-btn svg { width: 36%; height: 36%; margin: 0 0 0 6%; }
+.about_video-link:hover .about_video-btn { background: #ffffff55; transform: scale(1.1); }
