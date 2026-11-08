@@ -705,9 +705,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Torn edges run 2px past both sides so iPhone rounding never leaves white slivers at the screen edges */
 .footer::before, .logo_marquee::before { left: -2px; right: -2px; -webkit-mask-size: calc(100% + 4px) auto; mask-size: calc(100% + 4px) auto; }
-.footer, .logo_marquee { overflow-x: clip; }
+.page-wrapper { overflow-x: clip; } /* clip sideways overflow at the page, not on the footer (Safari would clip the torn edge too) */
 /* Pages that end in text: room for the footer's torn edge so it never cuts into the last lines */
-.page-main > .section:last-child:not(.u-p-0) { padding-bottom: calc(var(--_layout---section--padding) + 2.75rem); }
+.page-main > .section:last-child:not(.u-p-0) { padding-bottom: calc(var(--_layout---section--padding) + 1rem); }
 
 /* Phones: breathing room under the photo collage before "Hey, I'm Frank" */
 @media (max-width: 767px) { h3.u-align-center.h2:has(+ .home-intro) { margin-top: 2.25rem; } }
