@@ -951,3 +951,23 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 /* live cams: zoomed in further so the stream's own captions, logos and timestamps around the edges fall outside the frame */
 .livecam_screen iframe { transform: translate(-50%, -50%) scale(1.5); }
 @media (max-width: 767px) { .livecam_screen iframe { transform: translate(-50%, -50%) scale(1.7); } }
+
+/* livecam-arrows: a clear left/right pair to change cams, and nothing from YouTube (pause, title) ever reacts to the pointer */
+.livecam_screen::after { content: ""; position: absolute; inset: 0; z-index: 2; }
+.livecam_controls { display: flex; gap: .5rem; }
+.livecam_btn { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
+.livecam_btn:hover { background: #00000080; transform: scale(1.06); }
+.livecam_btn svg { width: 1.1rem; height: auto; }
+.livecam:not(.is-live) .livecam_controls, .livecam.is-offline .livecam_controls { opacity: 0; pointer-events: none; }
+.livecam_controls { transition: opacity .4s ease; }
+
+/* livecam-overlay-arrows: the arrows sit over the camera view, one each side, and appear on hover (always on touch screens) */
+.livecam .livecam_ui { inset: 0; left: 0; right: 0; bottom: 0; display: block; pointer-events: none; }
+.livecam .livecam_note { position: absolute; left: var(--_layout---columns--size, 1.5rem); bottom: clamp(1rem, 2vw, 2rem); pointer-events: auto; }
+.livecam .livecam_controls { position: static; }
+.livecam .livecam_btn { position: absolute; top: 50%; translate: 0 -50%; pointer-events: auto; opacity: 0; transition: opacity .3s ease, background-color .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
+.livecam .livecam_btn[data-dir="-1"] { left: clamp(1rem, 3vw, 2.5rem); }
+.livecam .livecam_btn[data-dir="1"] { right: clamp(1rem, 3vw, 2.5rem); }
+.livecam.is-live:hover .livecam_btn, .livecam.is-live .livecam_btn:focus-visible { opacity: 1; }
+@media (hover: none) { .livecam.is-live .livecam_btn { opacity: .85; } }
+.livecam .livecam_src { display: none; }

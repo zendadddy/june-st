@@ -798,41 +798,46 @@
     if (im.complete && im.naturalWidth) done(); else { im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true }); }
   });
 
-  /* ---------- 6. Contact: live LA cams over the mirror photo ---------- */
+  /* ---------- 6. Contact: live LA cams over the mirror photo ----------
+     Only cams that are actually streaming are shown: a cam that errors, ends, or hasn't started playing within 8s is skipped.
+     The arrows step through the live cams; the photo shows only until the first cam is up (or if none are). */
   var cam = document.querySelector('[data-livecam]');
   if (cam) {
     var list; try { list = JSON.parse(cam.getAttribute('data-livecam')); } catch (err) { list = []; }
-    var slides = [{ id: null, place: 'Los Angeles' }].concat(list);
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
-    var idx = 0, player = null, dead = {}, apiReady = false, dir = 1;
-    function label(s) { placeEl.textContent = s.id ? 'Live · ' + s.place : s.place; if (s.id) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
+    var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, started = false;
+    function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
+    function alive() { return list.filter(function (s) { return !dead[s.id]; }); }
+    function offline() { cam.classList.remove('is-live'); cam.classList.add('is-offline'); label(null); if (player && player.stopVideo) player.stopVideo(); }
+    function skip() { dead[list[idx].id] = true; if (alive().length) show(idx + dir); else offline(); }
     function show(i) {
-      var n = slides.length, guard = 0; idx = (i + n) % n;
-      while (slides[idx].id && dead[slides[idx].id] && guard++ < n) idx = (idx + dir + n) % n;
-      var s = slides[idx]; label(s); cam.classList.remove('is-live');
-      if (!s.id) { if (player && player.pauseVideo) player.pauseVideo(); return; }
+      if (!alive().length) { offline(); return; }
+      var n = list.length; idx = ((i % n) + n) % n;
+      while (dead[list[idx].id]) idx = ((idx + dir) % n + n) % n;
+      var s = list[idx]; cam.classList.remove('is-live'); clearTimeout(wait);
+      wait = setTimeout(function () { if (!cam.classList.contains('is-live')) skip(); }, 8000); // never started: treat as offline
       if (!player) {
         var host = document.createElement('div'); screen.appendChild(host);
         player = new YT.Player(host, { host: 'https://www.youtube-nocookie.com', videoId: s.id,
-          playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, modestbranding: 1, rel: 0, iv_load_policy: 3, disablekb: 1 },
+          playerVars: { autoplay: 1, mute: 1, controls: 0, playsinline: 1, modestbranding: 1, rel: 0, iv_load_policy: 3, disablekb: 1, fs: 0 },
           events: {
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
-            onStateChange: function (e) { if (e.data === 1 && slides[idx].id) cam.classList.add('is-live'); },
-            // offline, removed or not embeddable: remember it and move on in the same direction
-            onError: function () { dead[slides[idx].id] = true; var alive = slides.some(function (s) { return s.id && !dead[s.id]; }); if (alive) show(idx + dir); else { cam.classList.add('is-offline'); show(0); } }
+            onStateChange: function (e) {
+              if (e.data === 1) { clearTimeout(wait); cam.classList.add('is-live'); label(list[idx]); }
+              else if (e.data === 0) skip(); // the stream ended
+              else if (e.data === 2 && cam.classList.contains('is-live')) e.target.playVideo(); // never sit paused
+            },
+            onError: function () { clearTimeout(wait); skip(); }
           } });
       } else { player.loadVideoById(s.id); }
     }
-    cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
-    // Load YouTube's player API. If it never arrives (blocked network, sandboxed preview), the photo stays and the arrows stay hidden.
+    cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady || !alive().length) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
+    // Load YouTube's player API. If it never arrives (blocked network), the photo stays and the arrows stay hidden.
     var prevReady = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
-      if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(slides[0]);
-      // tune in to the first live cam on its own once the section scrolls into view
-      if ('IntersectionObserver' in window && slides.length > 1) {
-        var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { seen.disconnect(); dir = 1; show(1); } }, { threshold: .35 });
-        seen.observe(cam);
-      }
+      if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(null);
+      var go = function () { if (started) return; started = true; dir = 1; show(0); };
+      if ('IntersectionObserver' in window) { var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { seen.disconnect(); go(); } }, { threshold: .35 }); seen.observe(cam); } else go();
     };
     var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
   }
