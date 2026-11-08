@@ -628,3 +628,14 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero .container > .row > .col { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding-left: 0; padding-right: 0; }
 .hero .u-vflex-center-top { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
 .hero h1 { text-align: center; margin-left: auto; margin-right: auto; }
+
+/* ---- Phones ---- */
+/* About: the floating photos around "Hi, I'm Frank" are left out */
+@media (max-width: 767px) { .about_paper, .about_head, .about_garage, .about_illustration { display: none !important; } }
+/* Carousel arrows about 10% smaller */
+@media (max-width: 767px) {
+  .testimonial_pagination.cc-top { padding: .45rem; }
+  .testimonial_pagination.cc-top .testimonial_controls:not(.is-disabled) { width: 2.25rem; height: 2.25rem; }
+  .testimonial_pagination.cc-top .testimonial_controls svg { transform: scale(.9); }
+  .arrow-ink { top: .45rem; bottom: .45rem; }
+}

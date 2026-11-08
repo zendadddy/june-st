@@ -603,12 +603,15 @@
       else { p = (vh * .8 - grid.getBoundingClientRect().top) / (vh * .7); }
       return Math.max(0, Math.min(1, p));
     }
+    var simple = false; // phones: no pile and no pin, just the grid drifting with a little parallax
     function measure() {
+      simple = window.innerWidth < 768;
+      pg.classList.toggle('is-simple', simple);
       slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
       cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
       allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
       var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
-      var canPin = gh < vh * .92;
+      var canPin = !simple && gh < vh * .92;
       pg.classList.toggle('is-pinned', canPin);
       pinH = canPin ? Math.round(vh * 1.35) : 0;
       track.style.height = canPin ? (gh + pinH) + 'px' : '';
@@ -643,6 +646,16 @@
     function layout() {
       if (!homes.length) return;
       var N = cards.length;
+      if (simple) { // each photo drifts at its own gentle rate around the middle of the screen
+        var vh0 = window.innerHeight; pg.classList.add('is-settled');
+        cards.forEach(function (c, n) {
+          var sr = slots[n].getBoundingClientRect(), mid = sr.top + sr.height / 2 - vh0 / 2;
+          var rate = .03 + rnd(n, 2.171) * .06, tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1.5 + rnd(n, 5.33) * 2.5) : 0;
+          c.style.transform = 'translate3d(0,' + (-mid * rate).toFixed(1) + 'px,0) rotate(' + tilt.toFixed(2) + 'deg)';
+          if (c._blur) { c._blur = 0; c.style.filter = ''; }
+        });
+        return;
+      }
       pg.classList.toggle('is-settled', cur >= .985);
       cards.forEach(function (c, n) {
         var r = restOf(n, cur, N); rest[n] = r;
@@ -700,6 +713,7 @@
     // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
     function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
     window.addEventListener('scroll', function () {
+      if (simple) { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; layout(); }); } return; }
       var p = progress();
       if (p <= .001) latched = false;
       target = latched ? 1 : p;
