@@ -677,12 +677,11 @@
     function layout() {
       if (!homes.length) return;
       var N = cards.length;
-      if (simple) { // each photo drifts at its own gentle rate around the middle of the screen
-        var vh0 = window.innerHeight; pg.classList.add('is-settled');
+      if (simple) { // phones: a sideways strip; each photo keeps only its little resting tilt
+        pg.classList.add('is-settled');
         cards.forEach(function (c, n) {
-          var sr = slots[n].getBoundingClientRect(), mid = sr.top + sr.height / 2 - vh0 / 2;
-          var rate = .03 + rnd(n, 2.171) * .06, tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1.5 + rnd(n, 5.33) * 2.5) : 0;
-          c.style.transform = 'translate3d(0,' + (-mid * rate).toFixed(1) + 'px,0) rotate(' + tilt.toFixed(2) + 'deg)';
+          var tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1 + rnd(n, 5.33) * 1.5) : 0;
+          c.style.transform = tilt ? 'rotate(' + tilt.toFixed(2) + 'deg)' : '';
           if (c._blur) { c._blur = 0; c.style.filter = ''; }
         });
         return;
@@ -744,7 +743,7 @@
     // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
     function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
     window.addEventListener('scroll', function () {
-      if (simple) { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; layout(); }); } return; }
+      if (simple) return;
       var p = progress();
       if (p <= .001) latched = false;
       target = latched ? 1 : p;
@@ -761,6 +760,44 @@
     measure();
   }
   if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
+
+  /* Playground viewer (phones): tap a photo to open it full screen; swipe between photos; tap the X, the backdrop or press Esc to close */
+  document.querySelectorAll('[data-playground]').forEach(function (pg) {
+    var imgs = Array.prototype.slice.call(pg.querySelectorAll('.pg_card img'));
+    if (!imgs.length) return;
+    var lb = null, track = null, count = null, lastFocus = null;
+    function build() {
+      lb = document.createElement('div'); lb.className = 'pg-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Playground photos');
+      lb.innerHTML = '<button class="pg-lb_close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button><div class="pg-lb_track"></div><div class="pg-lb_count" aria-live="polite"></div>';
+      track = lb.querySelector('.pg-lb_track'); count = lb.querySelector('.pg-lb_count');
+      imgs.forEach(function (im) {
+        var it = document.createElement('div'); it.className = 'pg-lb_item';
+        var big = document.createElement('img'); big.alt = im.alt || ''; big.loading = 'lazy'; big.decoding = 'async'; big.src = im.currentSrc || im.src;
+        it.appendChild(big); track.appendChild(it);
+      });
+      lb.querySelector('.pg-lb_close').addEventListener('click', close);
+      track.addEventListener('click', function (e) { if (e.target.tagName !== 'IMG') close(); });
+      track.addEventListener('scroll', function () { var i = Math.round(track.scrollLeft / (track.clientWidth || 1)); count.textContent = (i + 1) + ' / ' + imgs.length; }, { passive: true });
+      document.body.appendChild(lb);
+    }
+    function open(i) {
+      if (!lb) build();
+      lastFocus = document.activeElement;
+      document.documentElement.classList.add('pg-lb-open');
+      track.style.scrollSnapType = 'none'; track.scrollLeft = i * track.clientWidth; track.style.scrollSnapType = '';
+      count.textContent = (i + 1) + ' / ' + imgs.length;
+      requestAnimationFrame(function () { lb.classList.add('is-open'); lb.querySelector('.pg-lb_close').focus({ preventScroll: true }); });
+    }
+    function close() {
+      if (!lb || !lb.classList.contains('is-open')) return;
+      lb.classList.remove('is-open'); document.documentElement.classList.remove('pg-lb-open');
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    imgs.forEach(function (im, i) {
+      im.closest('.pg_card').addEventListener('click', function () { if (window.innerWidth < 768) open(i); });
+    });
+  });
 
   /* Footer clouds: fade in once loaded */
   document.querySelectorAll('img.footer_bg').forEach(function (im) {
