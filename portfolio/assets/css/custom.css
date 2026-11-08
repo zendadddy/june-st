@@ -683,3 +683,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
     background: linear-gradient(180deg, #ffffff1a 0%, #ffffff40 35%, #ffffff66 60%, #ffffff00 100%); }
 } /* light white veil over the sky video on larger screens */
 .soon-modal .gate-modal_card .soon-modal_icon[hidden] { display: none; } /* only the newsletter popup shows the face icon */
+
+/* No hairline gap above the footer: iPhone Safari can leave a sub-pixel white seam between the last section and the footer */
+.footer { margin-top: -2px; position: relative; z-index: 1; }
