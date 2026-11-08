@@ -308,8 +308,8 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   .u-theme-dark .totop{color:var(--_colors---all--black)}
   @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}
 
-/* Logos ride the arc like a merry-go-round (positions set in site.js); room below for the dip at the edges */
-.logo_marquee { padding-bottom: calc(1.5rem + 4.5vw); }
+/* Logos ride the rim of a wheel (positions set in site.js); room below for the curve, and logos sink out of view under the bar's bottom edge */
+.logo_marquee { padding-bottom: calc(1.5rem + 6vw); clip-path: inset(-50vh 0 0 0); }
 .logo_marquee .logo_img { will-change: transform, opacity; transform-origin: 50% 50%; }
 
 /* Carousel arrows: solid black pill, white arrows */
