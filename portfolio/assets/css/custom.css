@@ -702,3 +702,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* About: caption under the podcast clip */
 .about_video-note { padding-top: .9rem; }
 .about_video-note p { margin: 0; opacity: .6; }
+
+/* Torn edges run 2px past both sides so iPhone rounding never leaves white slivers at the screen edges */
+.footer::before, .logo_marquee::before { left: -2px; right: -2px; -webkit-mask-size: calc(100% + 4px) auto; mask-size: calc(100% + 4px) auto; }
+.footer, .logo_marquee { overflow-x: clip; }
+/* Pages that end in text: room for the footer's torn edge so it never cuts into the last lines */
+.page-main > .section:last-child:not(.u-p-0) { padding-bottom: calc(var(--_layout---section--padding) + 2.75rem); }
