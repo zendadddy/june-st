@@ -936,6 +936,11 @@
     expandBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.5"/></svg>';
     cam.querySelector('.livecam_ui').appendChild(expandBtn);
     expandBtn.addEventListener('click', function (e) { e.stopPropagation(); full(true); });
+    // controls (arrows, full screen, X) show while the pointer is moving over the cam, and fade after 2s of stillness
+    var idleT = 0;
+    function wake() { cam.classList.add('is-awake'); clearTimeout(idleT); idleT = setTimeout(function () { cam.classList.remove('is-awake'); }, 2000); }
+    ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (ev) { cam.addEventListener(ev, wake, { passive: true }); });
+    cam.addEventListener('pointerleave', function () { clearTimeout(idleT); cam.classList.remove('is-awake'); });
     function full(on) {
       cam.classList.toggle('is-full', on); document.documentElement.classList.toggle('cam-full', on);
       try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}

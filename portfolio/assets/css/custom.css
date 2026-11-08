@@ -1155,3 +1155,18 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .pg_credit { font-size: 3.3cqh; }
 .pg_card.cc-wide .pg_credit { font-size: 4.1cqh; } /* wide cards zoom less, so their caption type is a touch larger to match */
 .pg_credit-arrow { width: .8em; height: .8em; vertical-align: -.05em; margin-left: .1em; }
+
+/* cam-idle: arrows, full screen and X only while the pointer is active over the cam (also in full screen, and after a tap on phones) */
+.livecam .livecam_btn, .livecam .livecam_expand, .livecam .livecam_close { transition: opacity .45s ease, background-color .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1) !important; }
+.livecam:not(:hover):not(.is-awake) .livecam_btn, .livecam:not(:hover):not(.is-awake) .livecam_expand, .livecam:not(:hover):not(.is-awake) .livecam_close { opacity: 0 !important; pointer-events: none !important; }
+.livecam:is(:hover, .is-awake).is-live .livecam_btn, .livecam:is(:hover, .is-awake).is-live:not(.is-full) .livecam_expand, .livecam:is(:hover, .is-awake).is-full .livecam_close { opacity: 1 !important; visibility: visible; pointer-events: auto !important; }
+
+
+/* logo marquee: scrolls on its own (desktop), starting on Anthropic, 48px further left */
+@media (min-width: 768px) {
+  .logo_marquee .logo_row { margin-left: -48px; }
+  .logo_marquee .logo_col { animation: logo-marquee 70s linear infinite; }
+  .logo_marquee:hover .logo_col { animation-play-state: paused; }
+}
+@keyframes logo-marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .logo_marquee .logo_col { animation: none; } }
