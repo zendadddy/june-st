@@ -1026,3 +1026,6 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 form[data-contact] [type=submit] { opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .35s; }
 form[data-contact].is-typing [type=submit] { opacity: 1; visibility: visible; transform: none; transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1); }
 form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
+
+/* pg-center-last: desktop playground on 14 half-columns so a short last row can be centred */
+@media (min-width: 992px) { .pg .pg_grid { grid-template-columns: repeat(14, 1fr); } .pg .pg_slot { grid-column-end: span 2; } }

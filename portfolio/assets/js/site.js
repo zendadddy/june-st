@@ -671,6 +671,9 @@
     function measure() {
       simple = window.innerWidth < 768;
       pg.classList.toggle('is-simple', simple);
+      // a short last row sits centred, with even gaps either side (desktop grid is 14 half-columns, each photo spans 2)
+      allSlots.forEach(function (s) { s.style.gridColumnStart = ''; });
+      if (window.innerWidth >= 992) { var vis = allSlots.filter(function (s) { return s.offsetParent !== null; }), rem = vis.length % 7; if (rem) vis[vis.length - rem].style.gridColumnStart = String(7 - rem + 1); }
       slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
       cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
       allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
