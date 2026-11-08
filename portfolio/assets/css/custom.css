@@ -1093,3 +1093,6 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* Take a pause: a faint soft-blue veil over the sky video */
 .section[data-svg="breath"]::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, #86a9db73 0%, #95b6e173 100%); }
 .section[data-svg="breath"] > .container { position: relative; z-index: 1; }
+
+/* desktop: a taller glow hero, the headline centred in more open space with the logos still above the fold */
+@media (min-width: 992px) { .page-main > .hero.section.cc-glow { padding-top: max(212px, 30vh); padding-bottom: max(130px, 25vh); } }
