@@ -21,6 +21,14 @@
     run(); window.addEventListener('load', run);
   })();
 
+  /* modal forms: the button wakes up only once the field is filled in (a real-looking email, or any password) */
+  function syncModalBtn(form) {
+    var f = form && form.querySelector('input[type=email], input[type=password]'), b = form && form.querySelector('input[type=submit]');
+    if (!f || !b || b.value === 'Sending…') return;
+    b.disabled = f.type === 'email' ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : !f.value;
+  }
+  document.addEventListener('input', function (e) { var f = e.target.closest && e.target.closest('.gate-modal_form'); if (f) syncModalBtn(f); });
+
   /* ---------- 0. Password gate (modal) ----------
      Every project page needs the password (the /projects overview is open). While locked, clicking a link to one opens a white modal over the
      current page instead of navigating. The right password unlocks everything for 72 hours in this browser.
@@ -95,7 +103,7 @@
       if (!modal) build();
       next = GATED.test(to || '') ? to : 'projects.html';
       lastFocus = document.activeElement;
-      modal.querySelector('.gate-modal_error').hidden = true; modal.querySelector('input[type=password]').value = '';
+      modal.querySelector('.gate-modal_error').hidden = true; modal.querySelector('input[type=password]').value = ''; syncModalBtn(modal.querySelector('form'));
       modal.hidden = false; document.documentElement.classList.add('has-gate');
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
       requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { modal.querySelector('input[type=password]').focus(); }, 60); });
@@ -159,7 +167,7 @@
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { say('That email doesn’t look right. Try again?'); card.classList.remove('is-shake'); void card.offsetWidth; card.classList.add('is-shake'); email.focus(); return; }
         btn.disabled = true; btn.value = 'Sending…'; msg.hidden = true;
         subscribe(v, form.querySelector('input[name=' + MC_BOT + ']').value, function (r) {
-          btn.disabled = false; btn.value = 'Notify me';
+          btn.value = 'Notify me'; syncModalBtn(form);
           var m = String(r.msg || '').replace(/<[^>]*>/g, '').replace(/^\d+\s*-\s*/, '');
           if (r.result === 'success') { form.classList.add('is-done'); say('You’re on the list. Check your inbox to confirm.', true); return; }
           if (/already subscribed/i.test(m)) { form.classList.add('is-done'); say('You’re already on the list. I’ll be in touch.', true); return; }
@@ -186,7 +194,7 @@
     };
     function open(kind) {
       if (!modal) build();
-      var c = COPY[kind] || COPY.courses;
+      var c = COPY[kind] || COPY.courses; syncModalBtn(modal.querySelector('form'));
       modal.querySelector('#soon-title').innerHTML = c[0]; modal.querySelector('.soon-modal_text').textContent = c[1];
       var icon = modal.querySelector('.soon-modal_icon'); icon.hidden = kind !== 'newsletter';
       // find the assets folder from the page's own favicon link (works wherever the site is hosted, at any page depth)
