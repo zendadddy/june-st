@@ -24,7 +24,8 @@
   /* modal forms: the button wakes up only once the field is filled in (a real-looking email, or any password) */
   function syncModalBtn(form) {
     var f = form && form.querySelector('input[type=email], input[type=password]'), b = form && form.querySelector('input[type=submit]');
-    if (!f || !b || b.value === 'Sending…') return;
+    if (!f || !b) return; form.classList.toggle('is-typing', !!f.value || form.classList.contains('is-done'));
+    if (b.value === 'Sending…') return;
     b.disabled = f.type === 'email' ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : !f.value;
   }
   document.addEventListener('input', function (e) { var f = e.target.closest && e.target.closest('.gate-modal_form'); if (f) syncModalBtn(f); });

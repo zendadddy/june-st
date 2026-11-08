@@ -1038,3 +1038,11 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 /* play circle: brightens quickly on hover, then eases back to glass slowly and smoothly */
 .about_video-btn { transition: transform .7s cubic-bezier(.22, 1, .36, 1), background-color .9s cubic-bezier(.4, 0, .2, 1); }
 .about_video-link:hover .about_video-btn { transition: transform .45s cubic-bezier(.22, 1, .36, 1), background-color .3s ease; }
+
+/* logo marquee: starts on Anthropic, then Claude, at the left (the row was centred, so the first logos began off screen) */
+@media (min-width: 768px) { .logo_marquee .logo_row { justify-content: flex-start; } }
+
+/* modal-typing: in the popups the button appears only once you start typing (dimmed until the entry looks complete) */
+.gate-modal_form input[type=submit] { transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .35s; }
+.gate-modal_form:not(.is-typing) input[type=submit] { opacity: 0; visibility: hidden; transform: translateX(6px); }
+.gate-modal_form.is-typing input[type=submit] { visibility: visible; transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1); }
