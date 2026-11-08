@@ -221,13 +221,15 @@
     var nav = document.querySelector('.navigation'), btn = nav && nav.querySelector('.nav_menu'), list = nav && nav.querySelector('.nav_list');
     if (!btn || !list) return;
     var label = btn.querySelector('div') || btn, root = document.documentElement;
+    label.innerHTML = '<span class="nav_menu_word">Menu</span>';
     var X_ICON = '<svg class="nav_menu_x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg>'; // same X as the modals
     list.id = list.id || 'site-menu';
     btn.setAttribute('role', 'button'); btn.setAttribute('tabindex', '0'); btn.setAttribute('aria-controls', list.id); btn.setAttribute('aria-expanded', 'false');
     [].forEach.call(list.querySelectorAll('a'), function (a, i) { a.style.setProperty('--i', i); });
+    label.insertAdjacentHTML('beforeend', X_ICON); label.classList.add('nav_menu_label');
     function set(open) {
       root.classList.toggle('has-menu', open); nav.classList.toggle('is-menu-open', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) { label.innerHTML = X_ICON; btn.setAttribute('aria-label', 'Close menu'); } else { label.textContent = 'Menu'; btn.removeAttribute('aria-label'); }
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) btn.setAttribute('aria-label', 'Close menu'); else btn.removeAttribute('aria-label'); // the word and the X cross-fade in CSS
       try { if (typeof lenis !== 'undefined') { if (open && lenis.stop) lenis.stop(); if (!open && lenis.start) lenis.start(); } } catch (e) {}
       if (open) { var first = list.querySelector('a'); if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 60); }
     }
