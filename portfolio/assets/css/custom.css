@@ -993,3 +993,8 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .footer_tear { left: -6px; width: calc(100% + 12px); }
 /* password and newsletter popups: a little taller and roomier */
 .gate-modal_card { padding-top: clamp(3rem, 6vw, 4.5rem); padding-bottom: clamp(3.25rem, 6.5vw, 5rem); gap: 2.75rem; }
+
+/* Contact cam tag 12px higher; the "Work for brands people love" line 6px lower (homepage and Projects) */
+.livecam .livecam_note { bottom: calc(clamp(1rem, 2vw, 2rem) + 12px); }
+.u-nudge-up { top: -9px; }
+.row.cc-intro-center p { position: relative; top: 6px; }
