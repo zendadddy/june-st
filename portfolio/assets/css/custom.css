@@ -889,3 +889,6 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 
 /* modal buttons read as asleep until the field is filled in */
 .gate-modal_form input[type=submit]:disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+
+/* phones: the logo cross's vertical line fades in at the top and out at the bottom */
+@media (max-width: 767px) { .logo_marquee .logo_col::before { background: linear-gradient(180deg, #e9e6e100 0%, #e9e6e1 22%, #e9e6e1 78%, #e9e6e100 100%); } }
