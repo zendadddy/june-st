@@ -39,6 +39,7 @@
 
 /* Home hero headline: wraps to two lines ("Shaping vision." / "Building with purpose.") */
 .hero h1 { text-wrap: initial; line-height: 1.12; }
+.hero.cc-photo h1 { text-shadow: 0 2px 28px #0a0d2866, 0 1px 4px #0a0d2840; } /* gentle shade so the headline lifts off the photo */
 
 /* Home hero: on laptop/desktop, cap the height so the logo bar sits above the fold. */
 @media (min-width: 992px) {
@@ -72,7 +73,7 @@ html.is-arriving .hero .btn { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { html:not(.is-arriving) .hero .btn { animation: none; } }
 /* Hero "Let's talk": on hover the white fill clears to frosted glass, so the photo shows through blurred */
 .hero .btn { -webkit-backdrop-filter: blur(0px); backdrop-filter: blur(0px); transition: background-color .6s cubic-bezier(.22, 1, .36, 1), color .6s ease, backdrop-filter .6s ease, -webkit-backdrop-filter .6s ease, box-shadow .6s ease; }
-.hero .btn:hover { background-color: #ffffff2e; color: #fff; -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); box-shadow: inset 0 0 0 1px #ffffff59; }
+.hero .btn:hover { background-color: #ffffff2e; color: #fff; -webkit-backdrop-filter: blur(6px) saturate(1.15); backdrop-filter: blur(6px) saturate(1.15); box-shadow: inset 0 0 0 1px #ffffff59; }
 
 /* Page transition wipe: white wave rising from the bottom when leaving a page */
 .page-wipe { position: fixed; left: 0; right: 0; top: 0; height: 100%; z-index: 200; pointer-events: none; transform: translateY(calc(100% + 40px)); visibility: hidden; transition: transform .75s cubic-bezier(.65, 0, .35, 1); will-change: transform; }
@@ -125,11 +126,26 @@ img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 /* Rough paper edge along the top of the home logo bar, same torn edge as the quote section (clip-bg). */
 .logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: 1.25rem; }
 .logo_marquee::before {
-  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; pointer-events: none;
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 4.5vw); pointer-events: none;
   background: var(--background--primary);
-  -webkit-mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg"); mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg");
+  -webkit-mask-image: url("../logo-arc-clip.svg"); mask-image: url("../logo-arc-clip.svg");
   -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
+/* light arc: a warm glow hugging the curved edge, brightest at the crest, breathing slowly */
+.logo_marquee::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 4.5vw); z-index: -1; pointer-events: none; transform: translateY(-3px);
+  -webkit-mask-image: url("../logo-arc-clip.svg"); mask-image: url("../logo-arc-clip.svg");
+  -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  background: radial-gradient(ellipse 50% 220% at 50% 0%, #fffaf0 0%, #ffe4bce0 45%, #ffe4bc00 100%);
+  animation: logo-arc 9s ease-in-out infinite;
+}
+.logo_marquee > .container::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1rem - 3vw); height: calc(6rem + 12vw); z-index: -2; pointer-events: none;
+  background: radial-gradient(ellipse 58% 100% at 50% 100%, #fff1dcaa 0%, #ffdcb055 38%, #ffdcb000 72%);
+  mix-blend-mode: screen; animation: logo-arc 9s ease-in-out infinite;
+}
+@keyframes logo-arc { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .logo_marquee::after, .logo_marquee > .container::before { animation: none; } }
 
 /* Contact: live LA cams over the mirror photo, toggled with arrows (logic in assets/js/site.js). */
 .livecam { overflow: hidden; }
