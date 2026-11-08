@@ -1173,3 +1173,14 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 
 /* Contact on phones: the cam sits closer under the form */
 @media (max-width: 767px) { .section:has(+ .livecam) { padding-bottom: .5rem; } .section:has(+ .livecam) form[data-contact]:not(.is-typing) [type=submit] { display: none; } }
+
+/* phones: no card in the collage gets taller than ~half the screen width, whatever slot it lands in */
+@media (max-width: 767px) {
+  .pg .pg_card { width: min(100%, 40vw); }
+  .pg .pg_card.cc-portrait { width: min(100%, 42vw); }
+  .pg .pg_card.cc-square { width: min(100%, 46vw); }
+  .pg .pg_card.cc-wide { width: min(100%, 62vw); }
+}
+
+/* phones: less room under the footer links */
+@media (max-width: 767px) { .footer { padding-bottom: 2.75rem; } }
