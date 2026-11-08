@@ -1096,3 +1096,4 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 
 /* desktop: a taller glow hero, the headline centred in more open space with the logos still above the fold */
 @media (min-width: 992px) { .page-main > .hero.section.cc-glow { padding-top: max(212px, 30vh); padding-bottom: max(130px, 25vh); } }
+.w-form-done .form-done_title .form-done_text { display: inline; } /* sent note on one line */
