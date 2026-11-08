@@ -48,7 +48,7 @@
       modal.innerHTML = '<div class="gate-modal_backdrop" data-gate-close></div>' +
         '<div class="gate-modal_card">' +
           '<button type="button" class="gate-modal_close" aria-label="Close" data-gate-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
-          '<div class="u-vflex-left-top u-vgap-12"><h2 id="gate-title" class="gate-title"><svg class="gate-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.5"/></svg>Private <span class="h2 cc-alt">work</span></h2><p class="u-color-secondary">My projects are under wraps for now.</p></div>' +
+          '<div class="u-vflex-left-top u-vgap-12"><h2 id="gate-title" class="gate-title"><svg class="gate-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.5"/></svg><span>Private <span class="h2 cc-alt">work</span></span></h2><p class="u-color-secondary">My projects are under wraps for now.</p></div>' +
           '<form class="form u-vflex-right-top gate-modal_form" autocomplete="off" novalidate>' +
             '<div class="input-group u-w-100"><label for="gate-pass" class="u-sr-only">Password</label><input class="input w-input" type="password" id="gate-pass" placeholder="Password" required></div>' +
             '<p class="gate-modal_error eyebrow-sm" role="alert" hidden>That’s not it. Try again?</p>' +
