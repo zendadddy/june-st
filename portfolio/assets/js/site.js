@@ -811,7 +811,7 @@
     function tick() { if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit' }); }
     tick(); setInterval(tick, 15000);
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
-    var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, started = false;
+    var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, reveal = 0, started = false;
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
     function alive() { return list.filter(function (s) { return !dead[s.id]; }); }
     function offline() { cam.classList.remove('is-live'); cam.classList.add('is-offline'); label(null); if (player && player.stopVideo) player.stopVideo(); }
@@ -820,7 +820,7 @@
       if (!alive().length) { offline(); return; }
       var n = list.length; idx = ((i % n) + n) % n;
       while (dead[list[idx].id]) idx = ((idx + dir) % n + n) % n;
-      var s = list[idx]; cam.classList.remove('is-live'); clearTimeout(wait);
+      var s = list[idx]; cam.classList.remove('is-live'); clearTimeout(wait); clearTimeout(reveal);
       wait = setTimeout(function () { if (!cam.classList.contains('is-live')) skip(); }, 8000); // never started: treat as offline
       if (!player) {
         var host = document.createElement('div'); screen.appendChild(host);
@@ -829,9 +829,9 @@
           events: {
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
             onStateChange: function (e) {
-              if (e.data === 1) { clearTimeout(wait); cam.classList.add('is-live'); label(list[idx]); }
+              // reveal only after it has been playing for a moment, so YouTube's play/pause flash never shows
+              if (e.data === 1) { clearTimeout(wait); clearTimeout(reveal); reveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); }, 1600); }
               else if (e.data === 0) skip(); // the stream ended
-              else if (e.data === 2 && cam.classList.contains('is-live')) e.target.playVideo(); // never sit paused
             },
             onError: function () { clearTimeout(wait); skip(); }
           } });
