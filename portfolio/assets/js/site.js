@@ -825,7 +825,9 @@
       // exactly three cards on screen at every size: from the column's left edge to a gap's width inside the window's
       // right edge, so the 4th card starts right at the edge and never peeks in
       var g = parseFloat(getComputedStyle(wrap).columnGap) || 0, left = sc.getBoundingClientRect().left;
-      var w = Math.max(80, (document.documentElement.clientWidth - left - g - 2 * g) / 3);
+      var vw = document.documentElement.clientWidth;
+      var w = vw < 768 ? (vw - left - 2 * g) / 2.25 // phones: two full cards and a quarter of the third
+                       : Math.max(80, (vw - left - g - 2 * g) / 3);
       wrap.style.width = 'max-content';
       Array.prototype.forEach.call(wrap.children, function (s) { s.style.width = w + 'px'; });
       var edge = Math.max(0, document.documentElement.clientWidth - sc.getBoundingClientRect().right);

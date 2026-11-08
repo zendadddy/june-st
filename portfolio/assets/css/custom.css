@@ -444,8 +444,8 @@ p, li { text-wrap: pretty; }
   .logo_marquee .logo_col ~ .logo_col { display: none; }
   /* thin grey cross between the four logos, running edge to edge */
   .logo_marquee .logo_col::before, .logo_marquee .logo_col::after { content: ""; position: absolute; pointer-events: none; }
-  .logo_marquee .logo_col::before { left: 50%; top: 0; bottom: 0; width: 1px; background: #d6d3ce; }
-  .logo_marquee .logo_col::after { top: calc(50% + .125rem); left: calc(-1 * var(--_layout---columns--size, 1rem)); right: calc(-1 * var(--_layout---columns--size, 1rem)); height: 1px; background: #d6d3ce; }
+  .logo_marquee .logo_col::before { left: 50%; top: 0; bottom: 0; width: 1px; background: #e9e6e1; }
+  .logo_marquee .logo_col::after { top: calc(50% + .125rem); left: calc(-1 * var(--_layout---columns--size, 1rem)); right: calc(-1 * var(--_layout---columns--size, 1rem)); height: 1px; background: #e9e6e1; }
   .logo_marquee .logo_img { display: none; max-width: 84%; height: 3.3rem; width: auto; object-fit: contain; }
   .logo_marquee .logo_img[alt="Anthropic"] { display: block; order: 1; height: 2.8rem; }
   .logo_marquee .logo_img[alt="Instagram"] { display: block; order: 2; }
@@ -603,8 +603,8 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* Homepage carousels: exactly three cards on screen at every size (card width set in site.js); phones get smaller type to suit */
 @media (max-width: 767px) {
   .swiper-slide.cc-project .project .u-vgap-24 { grid-row-gap: .55rem; row-gap: .55rem; }
-  .swiper-slide.cc-project .project h4:not(.u-sr-only) { font-size: .8rem; line-height: 1.25; }
-  .swiper-slide.cc-project .project_logo { height: 1.35rem; margin: -.45rem 0 -.4rem; }
+  .swiper-slide.cc-project .project h4:not(.u-sr-only) { font-size: .9rem; line-height: 1.25; }
+  .swiper-slide.cc-project .project_logo { height: 1.55rem; margin: -.5rem 0 -.45rem; }
   .swiper-slide.cc-project .project .project_brand + h4 { margin-top: 0; }
 }
 
