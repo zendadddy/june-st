@@ -933,3 +933,8 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 /* Projects page: the side line sits on the middle of the "Select projects" heading */
 .row.cc-intro-center { align-items: center; }
 .row.cc-intro-center p { margin: 0; }
+
+/* carousel arrows: the black ink dot is snappier, about twice as quick, with a crisper ease */
+.arrow-ink { transition-duration: .26s, .26s, .16s, .22s; transition-timing-function: cubic-bezier(.5, 0, .1, 1), cubic-bezier(.5, 0, .1, 1), ease-out, cubic-bezier(.2, 1.2, .4, 1); transition-delay: 0s, .05s, 0s, 0s; }
+.testimonial_pagination.cc-top.ink-right .arrow-ink { transition-delay: .05s, 0s, 0s, 0s; }
+.testimonial_pagination.cc-top .testimonial_controls { transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .2s ease, color .18s ease; }
