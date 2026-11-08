@@ -362,3 +362,6 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 .about_sky { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: min(120svh, 70rem); object-fit: cover; object-position: 50% 30%; pointer-events: none;
   filter: saturate(.8) brightness(1.1);
   -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%); }
+
+/* about-band: the podcast clip band is a shorter, wider strip on larger screens */
+@media (min-width: 768px) { .section.u-aspect-widescreen:has(> .about_video) { aspect-ratio: 2.4 / 1; } }
