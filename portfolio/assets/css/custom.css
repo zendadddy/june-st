@@ -638,3 +638,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* Phones: no 16:9 ratio on the homepage hero. With a height set as well, iPhone Safari sized the hero from its height
    (about 680px wide on a 390px screen), which pushed the headline and button off to the right. */
 @media (max-width: 767px) { .hero.section { aspect-ratio: auto !important; width: 100%; max-width: 100vw; min-width: 0; } }
+
+/* Phones: more room under "Let's talk" before the torn edge */
+@media (max-width: 767px) { .page-main > .hero.section:first-child { padding-bottom: 5.5rem; } }
