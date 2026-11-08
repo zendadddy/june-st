@@ -368,3 +368,16 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* about-band: the podcast clip band is a shorter, wider strip on larger screens */
 @media (min-width: 768px) { .section.u-aspect-widescreen:has(> .about_video) { aspect-ratio: 2.4 / 1; } }
+
+/* ---- Tablet & mobile pass ---- */
+/* stacked columns get breathing room when they fall under one another on phones */
+@media (max-width: 767px) { .col.xs-stack-gap { margin-top: 2rem; } }
+/* when the vertical section marker hides on phones, the content beside it takes the full width */
+@media (max-width: 479px) { .col.u-xs-hidden + .col.col-lg-10, .col.u-xs-hidden + .col.col-lg-11 { flex-basis: 100%; max-width: 100%; } }
+/* footer: below desktop the colophon stacks and the link row wraps, centered */
+@media (max-width: 991px) {
+  .footer_colophon { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: .5rem; text-align: center; }
+  .footer_list { flex-wrap: wrap; justify-content: center; row-gap: .35rem; max-width: 100%; }
+}
+/* quotes over photos stay readable when the text crosses bright parts of the image */
+@media (max-width: 991px) { .section[data-css="clip-bg"] blockquote { text-shadow: 0 1px 2px #0000004d, 0 2px 18px #00000073; } }
