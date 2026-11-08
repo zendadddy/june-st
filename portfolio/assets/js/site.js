@@ -3,6 +3,24 @@
   var nav = document.querySelector('.navigation');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- 00. Touch screens: taps are not hovers ----------
+     On devices without a real hover, every :hover style is removed from the page's stylesheets, so a tap never
+     leaves a link lifted, dimmed or underlined. Selectors that also cover :focus-visible etc. keep those parts. */
+  (function () {
+    if (!window.matchMedia || !matchMedia('(hover: none)').matches) return;
+    function strip(list) {
+      for (var i = list.length - 1; i >= 0; i--) {
+        var r = list[i];
+        if (r.cssRules && !r.selectorText) { try { strip(r.cssRules); } catch (e) {} continue; } // @media, @supports, @layer
+        if (!r.selectorText || r.selectorText.indexOf(':hover') === -1) continue;
+        var keep = r.selectorText.split(/,(?![^(]*\))/).filter(function (s) { return s.indexOf(':hover') === -1; });
+        try { if (keep.length) r.selectorText = keep.join(','); else (r.parentRule || r.parentStyleSheet).deleteRule(i); } catch (e) {}
+      }
+    }
+    function run() { [].forEach.call(document.styleSheets, function (sh) { try { strip(sh.cssRules); } catch (e) {} }); }
+    run(); window.addEventListener('load', run);
+  })();
+
   /* ---------- 0. Password gate (modal) ----------
      Every project page needs the password (the /projects overview is open). While locked, clicking a link to one opens a white modal over the
      current page instead of navigating. The right password unlocks everything for 72 hours in this browser.
@@ -777,7 +795,7 @@
         pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); });
       }
       ctls.forEach(function (c) {
-        c.addEventListener('pointerenter', function () { hovering = true; if (!c.classList.contains('is-disabled')) to(c); });
+        c.addEventListener('pointerenter', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; hovering = true; if (!c.classList.contains('is-disabled')) to(c); }); // touch taps don't summon the ink
         c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') rest(); }); // an arrow folded in or out
       });
       pag.addEventListener('pointerleave', function () { hovering = false; rest(); });

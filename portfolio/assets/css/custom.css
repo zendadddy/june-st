@@ -498,3 +498,11 @@ p, li { text-wrap: pretty; }
 
 /* Touch: no blue tap flash on links and buttons; every link has its own pressed/hover treatment */
 a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+/* Phones: a shorter footer. The ray drawing is 1.1x the screen (was 2x), logo a bit narrower and the footer no longer fills a whole screen */
+@media (max-width: 767px) {
+  .footer { min-height: 0; }
+  .footer_sun { width: 112%; margin-left: -6%; margin-right: -6%; }
+  .footer_center-time { height: 250px; transform: scale(.84); } /* the clock's stacked labels keep their spacing inside the smaller ring */
+  .footer_logo { width: 78%; }
+}
