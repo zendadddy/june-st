@@ -618,3 +618,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Phones: the homepage "Work for brands people love" line is left out */
 @media (max-width: 767px) { p.u-nudge-up { display: none; } }
+
+/* Footer: the slashes between links get breathing room either side */
+.footer_list-item:not(:last-child)::after { margin: 0 .55em; }
