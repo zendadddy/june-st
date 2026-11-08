@@ -781,3 +781,5 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 
 .testimonial_logo.tm_logo-invert.tm_logo-meta { --ink-ratio: .38; } /* Meta: the mark and wordmark fill ~38% of the file height */
 .testimonial_logo.tm_logo-invert.tm_logo-instagram { --ink-ratio: .36; } /* Instagram: the script fills ~36% of the file height */
+.testimonial_logo.tm_logo-invert.tm_logo-netflix { --ink-ratio: .8; } /* Netflix: the wordmark fills its file; sized to match the others by eye */
+.testimonial_logo.tm_logo-invert.tm_logo-soundcloud { --ink-ratio: .5; } /* SoundCloud: stacked cloud and name */
