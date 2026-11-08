@@ -431,7 +431,7 @@ p, li { text-wrap: pretty; }
   .row.w-dyn-items .project .u-vgap-24 { grid-row-gap: .75rem; row-gap: .75rem; }
   .row.w-dyn-items .project h4:not(.u-sr-only) { font-size: 1rem; line-height: 1.25; }
   .row.w-dyn-items .project .eyebrow { font-size: .875rem; }
-  .row.w-dyn-items .project_logo { height: 1.9rem; margin: -.7rem 0 -.55rem; }
+  .row.w-dyn-items .project_logo { height: 2.25rem; margin: -.8rem 0 -.6rem; }
 }
 
 /* Nav: the current page's link is greyed out and not clickable, on desktop and in the mobile menu */
@@ -605,7 +605,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 767px) {
   .swiper-slide.cc-project .project .u-vgap-24 { grid-row-gap: .55rem; row-gap: .55rem; }
   .swiper-slide.cc-project .project h4:not(.u-sr-only) { font-size: .9rem; line-height: 1.25; }
-  .swiper-slide.cc-project .project_logo { height: 1.55rem; margin: -.5rem 0 -.45rem; }
+  .swiper-slide.cc-project .project_logo { height: 1.85rem; margin: -.6rem 0 -.5rem; }
   .swiper-slide.cc-project .project .project_brand + h4 { margin-top: 0; }
 }
 
@@ -686,3 +686,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* No hairline gap above the footer: iPhone Safari can leave a sub-pixel white seam between the last section and the footer */
 .footer { margin-top: -2px; position: relative; z-index: 1; }
+
+/* Footer: the same torn paper edge as the logo bar, in the footer's top colour, on every page */
+.footer { overflow: visible; }
+.footer::before { content: ""; position: absolute; z-index: 2; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; pointer-events: none; background: #534d6a;
+  -webkit-mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg"); mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg");
+  -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; } /* torn paper edge on top of the footer */
