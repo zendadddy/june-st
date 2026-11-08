@@ -267,6 +267,18 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   @keyframes totop-breathe{50%{scale:1.04}}
   .totop.is-visible:hover{opacity:1}
   .totop:hover{background:var(--background--invert);color:var(--text--invert)}
+  /* the circle is a soft orb behind the arrow: it breathes and its edge drifts, slowly */
+  .totop{background:transparent!important;box-shadow:none!important;isolation:isolate;animation:none!important}
+  .totop::before{content:"";position:absolute;inset:0;z-index:-1;background:#fff;border-radius:50%;
+    box-shadow:0 1px 2px #0000000d,0 4px 8px -2px #00000014,0 12px 24px -6px #00000024,0 28px 48px -16px #0000002e;
+    transition:background .5s ease;animation:totop-orb 10s ease-in-out infinite}
+  .totop:hover::before{background:var(--background--invert)}
+  @keyframes totop-orb{
+    0%,100%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%;scale:1;box-shadow:0 1px 2px #0000000d,0 4px 8px -2px #00000014,0 12px 24px -6px #00000024,0 28px 48px -16px #0000002e}
+    25%{border-radius:54% 46% 52% 48%/47% 53% 47% 53%;scale:1.05}
+    50%{border-radius:47% 53% 46% 54%/53% 47% 54% 46%;scale:1.08;box-shadow:0 1px 2px #0000000d,0 6px 12px -2px #00000014,0 16px 32px -6px #00000026,0 36px 60px -16px #00000033}
+    75%{border-radius:52% 48% 55% 45%/48% 54% 46% 52%;scale:1.04}}
+  @media (prefers-reduced-motion:reduce){.totop::before{animation:none}}
   .totop_arrow{display:block;transition:translate .5s cubic-bezier(.22,1,.36,1)}
   .totop:hover .totop_arrow{translate:0 -2px}
   .totop_text{font-family:var(--_typography---eyebrow--font);font-size:21px;font-weight:var(--_typography---eyebrow--font-weight);letter-spacing:.16em;text-transform:uppercase;fill:currentColor}
