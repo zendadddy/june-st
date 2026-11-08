@@ -947,3 +947,7 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 /* header sun on hover: a little blurrier and 10% larger (scaled on the svg, so the nav's own transform is untouched) */
 .nav_sun svg { transition: filter .6s cubic-bezier(.22, 1, .36, 1), transform .6s cubic-bezier(.22, 1, .36, 1); transform-origin: 50% 50%; }
 .nav_sun:hover svg { filter: blur(3.5px); transform: scale(1.1); }
+
+/* live cams: zoomed in further so the stream's own captions, logos and timestamps around the edges fall outside the frame */
+.livecam_screen iframe { transform: translate(-50%, -50%) scale(1.5); }
+@media (max-width: 767px) { .livecam_screen iframe { transform: translate(-50%, -50%) scale(1.7); } }

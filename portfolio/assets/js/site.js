@@ -819,7 +819,7 @@
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
             onStateChange: function (e) { if (e.data === 1 && slides[idx].id) cam.classList.add('is-live'); },
             // offline, removed or not embeddable: remember it and move on in the same direction
-            onError: function () { dead[slides[idx].id] = true; show(idx + dir); }
+            onError: function () { dead[slides[idx].id] = true; var alive = slides.some(function (s) { return s.id && !dead[s.id]; }); if (alive) show(idx + dir); else { cam.classList.add('is-offline'); show(0); } }
           } });
       } else { player.loadVideoById(s.id); }
     }
