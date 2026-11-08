@@ -676,3 +676,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Phones: footer links float above the clouds: a little less room above the logo, links tucked under it, clouds get the space below */
 @media (max-width: 767px) { .footer { padding-top: 3rem; padding-bottom: 6.5rem; } .footer .footer_colophon { margin-top: -1.1rem; } }
+
+/* Tablet and desktop: a light white veil over the About sky video too */
+@media (min-width: 768px) {
+  .about.section::before { content: ""; position: absolute; z-index: 0; inset: 0 0 auto 0; height: min(120svh, 70rem); pointer-events: none;
+    background: linear-gradient(180deg, #ffffff1a 0%, #ffffff40 35%, #ffffff66 60%, #ffffff00 100%); }
+} /* light white veil over the sky video on larger screens */
