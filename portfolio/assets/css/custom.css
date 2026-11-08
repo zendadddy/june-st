@@ -324,3 +324,6 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* Courses "Coming soon" modal (site.js 0b): same card as the password gate */
 .soon-modal_signup:empty { display: none; }
+.soon-modal_msg { margin: 0; align-self: flex-start; color: #c2410c; }
+.soon-modal_msg.is-ok { color: var(--_colors---all--black); font-family: inherit; font-size: 1.125rem; letter-spacing: normal; text-transform: none; line-height: 1.5; }
+.soon-modal_form.is-done .input-group, .soon-modal_form.is-done input[type=submit] { display: none; }

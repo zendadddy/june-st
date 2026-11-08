@@ -106,7 +106,17 @@
      Course cards (a.project_link with href="#") open a modal styled like the password gate.
      The mailing list form goes in .soon-modal_signup. */
   (function () {
+    var MC_URL = 'https://francoisbach.us19.list-manage.com/subscribe/post-json?u=b2ac57f991427e5f4a30aab6f&id=8286cccf33&f_id=00efaae4f0',
+        MC_BOT = 'b_b2ac57f991427e5f4a30aab6f_8286cccf33';
     var modal = null, lastFocus = null;
+    // Mailchimp only answers cross-site sign-ups as JSONP, so the form loads a script with a callback
+    function subscribe(email, bot, done) {
+      var cb = 'mcCb' + Date.now(), s = document.createElement('script'), t = setTimeout(function () { finish({ result: 'error', msg: 'timeout' }); }, 12000);
+      function finish(r) { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); done(r || {}); }
+      window[cb] = finish; s.onerror = function () { finish({ result: 'error', msg: 'network' }); };
+      s.src = MC_URL + '&EMAIL=' + encodeURIComponent(email) + '&' + MC_BOT + '=' + encodeURIComponent(bot) + '&c=' + cb;
+      document.body.appendChild(s);
+    }
     function build() {
       modal = document.createElement('div');
       modal.className = 'gate-modal soon-modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'soon-title'); modal.hidden = true;
@@ -115,14 +125,34 @@
           '<button type="button" class="gate-modal_close" aria-label="Close" data-soon-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
           '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title">Coming <span class="h2 cc-alt">soon</span></h2>' +
           '<p class="u-color-secondary">These courses are all on the way. Join my mailing list and I’ll let you know when they’re live.</p></div>' +
-          '<div class="soon-modal_signup"></div>' +
+          '<div class="soon-modal_signup"><form class="form u-vflex-right-top gate-modal_form soon-modal_form" novalidate>' +
+            '<div class="input-group u-w-100"><label for="soon-email" class="u-sr-only">Email address</label><input class="input w-input" type="email" id="soon-email" name="EMAIL" placeholder="Email address" autocomplete="email" required></div>' +
+            '<div aria-hidden="true" style="position:absolute;left:-5000px"><input type="text" name="' + MC_BOT + '" tabindex="-1" value=""></div>' +
+            '<p class="soon-modal_msg eyebrow-sm" role="status" hidden></p>' +
+            '<input type="submit" class="btn w-button" value="Notify me">' +
+          '</form></div>' +
         '</div>';
       document.body.appendChild(modal);
       modal.querySelectorAll('[data-soon-close]').forEach(function (el) { el.addEventListener('click', close); });
+      var form = modal.querySelector('form'), email = form.querySelector('input[type=email]'), msg = form.querySelector('.soon-modal_msg'), btn = form.querySelector('input[type=submit]'), card = modal.querySelector('.gate-modal_card');
+      function say(text, ok) { msg.textContent = text; msg.hidden = false; msg.classList.toggle('is-ok', !!ok); }
+      form.addEventListener('submit', function (e) {
+        e.preventDefault(); var v = email.value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { say('That email doesn’t look right. Try again?'); card.classList.remove('is-shake'); void card.offsetWidth; card.classList.add('is-shake'); email.focus(); return; }
+        btn.disabled = true; btn.value = 'Sending…'; msg.hidden = true;
+        subscribe(v, form.querySelector('input[name=' + MC_BOT + ']').value, function (r) {
+          btn.disabled = false; btn.value = 'Notify me';
+          var m = String(r.msg || '').replace(/<[^>]*>/g, '').replace(/^\d+\s*-\s*/, '');
+          if (r.result === 'success') { form.classList.add('is-done'); say('You’re on the list. Check your inbox to confirm.', true); return; }
+          if (/already subscribed/i.test(m)) { form.classList.add('is-done'); say('You’re already on the list. I’ll be in touch.', true); return; }
+          if (/too many/i.test(m)) { say('Too many tries just now. Please wait a few minutes.'); return; }
+          say(m && m !== 'timeout' && m !== 'network' ? m : 'Something went wrong. Please try again.');
+        });
+      });
       modal.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') { close(); return; }
         if (e.key !== 'Tab') return;
-        var f = modal.querySelectorAll('button, input, a[href], select, textarea'), first = f[0], last = f[f.length - 1];
+        var f = modal.querySelectorAll('button, input:not([tabindex="-1"]), a[href], select, textarea'), first = f[0], last = f[f.length - 1];
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
     }
