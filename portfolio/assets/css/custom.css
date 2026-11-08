@@ -553,15 +553,14 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .stamp_sun { display: block; width: 1.9rem; }
 .stamp_sun svg { display: block; width: 100%; height: auto; color: #b25a2a; }
 .stamp_value { font-size: .5rem; letter-spacing: .06em; line-height: 1; white-space: nowrap; font-family: var(--_typography---font-families--secondary, monospace); }
-/* the letter unfolds under the form */
-.snail { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .9s cubic-bezier(.22, 1, .36, 1); }
-.snail.is-open { grid-template-rows: 1fr; }
-.snail_clip { overflow: hidden; min-height: 0; padding: 0 .6rem; margin: 0 -.6rem; }
-.snail_letter { margin: 2.5rem 0 1.5rem; padding: clamp(1.5rem, 4vw, 2.5rem); background: #fbf6ea; color: #2e2a24; border-radius: 2px;
-  box-shadow: 0 1px 2px #0000000f, 0 10px 30px -10px #00000033; transform: translateY(28px) rotate(-2.2deg); opacity: 0;
-  transition: transform 1s cubic-bezier(.22, 1, .36, 1) .1s, opacity .6s ease .1s;
-  background-image: repeating-linear-gradient(180deg, transparent 0 1.85rem, #e7dcc4 1.85rem calc(1.85rem + 1px)); background-position: 0 1.2rem; }
-.snail.is-open .snail_letter { transform: rotate(-.6deg); opacity: 1; }
+/* the letter opens as a modal: same backdrop and close as the other modals, the card is the lined letter */
+.snail-modal .snail_letter { position: relative; width: min(34rem, 100%); max-height: calc(100svh - 2rem); overflow-y: auto; overscroll-behavior: contain;
+  margin: 0; padding: clamp(2.25rem, 5vw, 3rem) clamp(1.5rem, 4.5vw, 2.75rem) clamp(1.5rem, 4vw, 2.25rem); background-color: #fbf6ea; color: #2e2a24; border-radius: 2px;
+  box-shadow: 0 2px 4px #0000000f, 0 24px 60px -18px #0000005c;
+  background-image: repeating-linear-gradient(180deg, transparent 0 1.85rem, #e7dcc4 1.85rem calc(1.85rem + 1px)); background-position: 0 1.2rem;
+  opacity: 0; transform: translateY(36px) rotate(-3deg) scale(.97); transition: transform .8s cubic-bezier(.22, 1, .36, 1), opacity .45s ease; outline: none; }
+.snail-modal.is-open .snail_letter { opacity: 1; transform: rotate(-.6deg); }
+.snail-modal .gate-modal_close { color: #2e2a24; top: .5rem; right: .5rem; }
 .snail_eyebrow { margin: 0 0 .75rem; color: #b25a2a; }
 .snail_title { margin: 0 0 .75rem; }
 .snail_letter p { margin: 0 0 1rem; }
@@ -574,4 +573,5 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .snail_address-todo { opacity: .55; }
 .snail_ig { margin: 0; }
 @media (max-width: 479px) { .snail_address { padding-left: 0; } }
-@media (prefers-reduced-motion: reduce) { .snail, .snail_letter, .snail-trigger { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .snail-modal .snail_letter, .snail-trigger { transition: none; } }
+.contact-intro .snail { display: none; } /* the letter lives in the modal; this inline copy only exists until site.js moves it */

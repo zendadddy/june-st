@@ -296,19 +296,39 @@
   })();
 
   /* ---------- 0e. Contact: the secret snail-mail stamp ----------
-     A faint postage stamp (the sun) in the Get in touch section; tapping it unfolds the Snail mail Q&A letter. */
+     A faint postage stamp (the sun) in the Get in touch section; tapping it opens the Snail mail Q&A letter as a modal. */
   (function () {
-    var trig = document.querySelector('.snail-trigger'), panel = document.getElementById('snail-mail'); if (!trig || !panel) return;
+    var trig = document.querySelector('.snail-trigger'), src = document.getElementById('snail-mail'); if (!trig || !src) return;
     var sun = document.querySelector('.nav_sun svg');
     document.querySelectorAll('[data-sun]').forEach(function (s) { if (sun) { var c = sun.cloneNode(true); c.removeAttribute('width'); c.removeAttribute('height'); s.appendChild(c); } });
-    trig.addEventListener('click', function () {
-      var open = !panel.classList.contains('is-open');
-      panel.classList.toggle('is-open', open); trig.classList.toggle('is-found', open);
-      trig.setAttribute('aria-expanded', String(open)); panel.setAttribute('aria-hidden', String(!open));
-      if (open) setTimeout(function () {
-        try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(panel, { offset: -110, duration: 1.2 }); else panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
-      }, 280);
-      try { if (window.ScrollTrigger) setTimeout(function () { ScrollTrigger.refresh(); }, 900); } catch (e) {}
+    var letter = src.querySelector('.snail_letter'); src.remove();
+    var modal = document.createElement('div');
+    modal.className = 'gate-modal snail-modal'; modal.id = 'snail-mail'; modal.hidden = true;
+    modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'snail-title');
+    modal.innerHTML = '<div class="gate-modal_backdrop" data-snail-close></div>';
+    var close = document.createElement('button'); close.type = 'button'; close.className = 'gate-modal_close'; close.setAttribute('aria-label', 'Close'); close.setAttribute('data-snail-close', '');
+    close.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg>';
+    letter.insertBefore(close, letter.firstChild); letter.setAttribute('tabindex', '-1');
+    var title = letter.querySelector('.snail_title'); if (title) title.id = 'snail-title';
+    modal.appendChild(letter); document.body.appendChild(modal);
+    var last = null;
+    function open() {
+      last = document.activeElement; modal.hidden = false; document.documentElement.classList.add('has-gate'); trig.classList.add('is-found'); trig.setAttribute('aria-expanded', 'true');
+      try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
+      requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { close.focus(); }, 80); });
+    }
+    function shut() {
+      if (modal.hidden) return; modal.classList.remove('is-open'); document.documentElement.classList.remove('has-gate'); trig.setAttribute('aria-expanded', 'false');
+      try { if (typeof lenis !== 'undefined' && lenis.start) lenis.start(); } catch (e) {}
+      setTimeout(function () { modal.hidden = true; }, 450); if (last && last.focus) last.focus();
+    }
+    trig.addEventListener('click', open);
+    modal.querySelectorAll('[data-snail-close]').forEach(function (el) { el.addEventListener('click', shut); });
+    modal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { shut(); return; }
+      if (e.key !== 'Tab') return;
+      var f = modal.querySelectorAll('button, a[href]'), a = f[0], z = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
     });
   })();
 
