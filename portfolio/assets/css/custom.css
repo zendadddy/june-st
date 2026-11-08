@@ -692,3 +692,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .footer::before { content: ""; position: absolute; z-index: 2; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; pointer-events: none; background: #534d6a;
   -webkit-mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg"); mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg");
   -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; } /* torn paper edge on top of the footer */
+
+/* Homepage: the torn edge between Expertise and Testimonials overlaps both sides so no white seam shows on iPhone */
+.blue-to-orange-gradient + svg { display: block; position: relative; z-index: 1; margin: -2px 0 -2px; }
+.blue-to-orange-gradient + svg + .home-bottom-gradient { position: relative; }
+.blue-to-orange-gradient + svg path { fill: #fa7d13 !important; } /* same sRGB orange as the gradient above (the inline display-p3 value renders more vivid on iPhones) */
+.blue-to-orange-gradient + svg rect { fill: #0d1633 !important; }
