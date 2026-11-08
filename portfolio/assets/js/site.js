@@ -1001,7 +1001,7 @@
       var g = parseFloat(getComputedStyle(wrap).columnGap) || 0, left = sc.getBoundingClientRect().left;
       var vw = document.documentElement.clientWidth;
       var w = vw < 768 ? (vw - left - 2 * g) / 2.25 // phones: two full cards and a quarter of the third
-                       : Math.max(80, (vw - left - g - 2 * g) / 3);
+                       : Math.max(80, (vw - left - 3 * g) / 3.25); // desktop: three full cards and a quarter of the fourth
       wrap.style.width = 'max-content';
       Array.prototype.forEach.call(wrap.children, function (s) { s.style.width = w + 'px'; });
       var edge = Math.max(0, document.documentElement.clientWidth - sc.getBoundingClientRect().right);
