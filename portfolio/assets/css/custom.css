@@ -381,3 +381,26 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 }
 /* quotes over photos stay readable when the text crosses bright parts of the image */
 @media (max-width: 991px) { .section[data-css="clip-bg"] blockquote { text-shadow: 0 1px 2px #0000004d, 0 2px 18px #00000073; } }
+
+/* ---- Responsive best practices ---- */
+/* keep phones from inflating text on their own; type scales only through our own clamp() sizes */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* headings break into even lines at every width; paragraphs avoid a lone word on the last line */
+h1, h2, h3, h4, blockquote { text-wrap: balance; overflow-wrap: break-word; }
+.hero h1 { text-wrap: initial; } /* the hero keeps its deliberate two-line break */
+p, li { text-wrap: pretty; }
+/* phones: award / talk / press rows wrap onto two lines instead of cutting titles off with an ellipsis */
+@media (max-width: 767px) {
+  .accolade_link .u-clamp-1 { display: block; -webkit-line-clamp: unset; line-clamp: unset; overflow: visible; white-space: normal; }
+  .accolade_link .row { align-items: baseline; }
+}
+/* touch screens: hover lifts stick after a tap, so links stay put there */
+@media (hover: none) {
+  .nav_link:hover, .linktree-btn:hover, a:not([class]):hover { top: 0; text-shadow: none; }
+}
+/* touch screens: small text links get a finger-sized (about 44px tall) invisible hit area */
+@media (pointer: coarse) {
+  .nav_link::before, .footer_link::before, .see-all::before, a:not([class])::before { top: -14px; bottom: -14px; left: -8px; right: -8px; }
+  .footer_dd-label { position: relative; }
+  .footer_dd-label::before { content: ""; position: absolute; top: -14px; bottom: -14px; left: -8px; right: -8px; }
+}
