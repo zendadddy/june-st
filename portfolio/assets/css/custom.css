@@ -1034,3 +1034,7 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 .about_video-btn { width: clamp(3.75rem, 6.5vw, 5.5rem); background: #ffffff38; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); filter: none; }
 .about_video-btn svg { width: 36%; height: 36%; margin: 0 0 0 6%; }
 .about_video-link:hover .about_video-btn { background: #ffffff55; transform: scale(1.1); }
+.about_video-btn svg { width: 34%; height: 34%; margin: 0; transform: translateX(9%); color: #fff; } /* Tabler filled triangle, turned to point right */
+/* play circle: brightens quickly on hover, then eases back to glass slowly and smoothly */
+.about_video-btn { transition: transform .7s cubic-bezier(.22, 1, .36, 1), background-color .9s cubic-bezier(.4, 0, .2, 1); }
+.about_video-link:hover .about_video-btn { transition: transform .45s cubic-bezier(.22, 1, .36, 1), background-color .3s ease; }
