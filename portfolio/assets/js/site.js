@@ -821,7 +821,8 @@
     var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
     function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
     function ends() {
-      var max = sc.scrollWidth - sc.clientWidth - 2, atStart = sc.scrollLeft <= 2, atEnd = sc.scrollLeft >= max;
+      // card snapping (and Safari's padding) can leave the strip a few px in from either end: treat that as the end
+      var SLACK = 24, max = sc.scrollWidth - sc.clientWidth - SLACK, atStart = sc.scrollLeft <= SLACK, atEnd = sc.scrollLeft >= max;
       if (prev) prev.classList.toggle('is-disabled', atStart);
       if (next) next.classList.toggle('is-disabled', atEnd);
       pag.classList.toggle('is-empty', atStart && atEnd); // nothing to scroll: hide the control entirely
