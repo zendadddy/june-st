@@ -673,3 +673,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .tm-wrap { margin: 0 -.5rem; width: calc(100% + 1rem); }
 }
 @media (min-width: 768px) { .tm-wrap { margin: 0 -2.5rem; width: calc(100% + 5rem); } } /* desktop: arrows sit just beside the quote */
+
+/* Phones: footer links float above the clouds: a little less room above the logo, links tucked under it, clouds get the space below */
+@media (max-width: 767px) { .footer { padding-top: 3rem; padding-bottom: 6.5rem; } .footer .footer_colophon { margin-top: -1.1rem; } }
