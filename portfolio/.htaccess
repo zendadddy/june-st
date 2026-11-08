@@ -1,5 +1,5 @@
 # francoisbach.com on Cloudways (Apache)
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 DirectorySlash Off
 ErrorDocument 404 /404.html
 Options -Indexes
