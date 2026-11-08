@@ -295,6 +295,23 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
   })();
 
+  /* ---------- 0e. Contact: the secret snail-mail stamp ----------
+     A faint postage stamp (the sun) in the Get in touch section; tapping it unfolds the Snail mail Q&A letter. */
+  (function () {
+    var trig = document.querySelector('.snail-trigger'), panel = document.getElementById('snail-mail'); if (!trig || !panel) return;
+    var sun = document.querySelector('.nav_sun svg');
+    document.querySelectorAll('[data-sun]').forEach(function (s) { if (sun) { var c = sun.cloneNode(true); c.removeAttribute('width'); c.removeAttribute('height'); s.appendChild(c); } });
+    trig.addEventListener('click', function () {
+      var open = !panel.classList.contains('is-open');
+      panel.classList.toggle('is-open', open); trig.classList.toggle('is-found', open);
+      trig.setAttribute('aria-expanded', String(open)); panel.setAttribute('aria-hidden', String(!open));
+      if (open) setTimeout(function () {
+        try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(panel, { offset: -110, duration: 1.2 }); else panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      }, 280);
+      try { if (window.ScrollTrigger) setTimeout(function () { ScrollTrigger.refresh(); }, 900); } catch (e) {}
+    });
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
