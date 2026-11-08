@@ -18,8 +18,8 @@ Options -Indexes
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType text/html "access plus 0 seconds"
-  ExpiresByType text/css "access plus 1 week"
-  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType image/png "access plus 1 month"
   ExpiresByType image/webp "access plus 1 month"
@@ -37,3 +37,10 @@ Options -Indexes
 AddType image/avif .avif
 AddType image/webp .webp
 AddType font/woff2 .woff2
+
+# html, css and js always check for a newer copy (cheap: the server answers "not modified" when nothing changed)
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js|php)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

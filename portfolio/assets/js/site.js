@@ -836,13 +836,20 @@
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
     function alive() { return list.filter(function (s) { return !dead[s.id]; }); }
     function offline() { cam.classList.remove('is-live'); cam.classList.add('is-offline'); label(null); if (player && player.stopVideo) player.stopVideo(); }
-    function skip() { dead[list[idx].id] = true; if (alive().length) show(idx + dir); else offline(); }
+    // remember which cams worked and which were offline (for a day), so the next visit starts on a working one straight away
+    var memo = {}; try { memo = JSON.parse(localStorage.getItem('camMemo') || '{}'); } catch (e) {}
+    function save() { try { localStorage.setItem('camMemo', JSON.stringify(memo)); } catch (e) {} }
+    function good(id) { memo[id] = { ok: 1, t: Date.now() }; save(); }
+    list.forEach(function (s) { var m = memo[s.id]; if (m && !m.ok && Date.now() - m.t < 864e5) dead[s.id] = true; });
+    list.sort(function (a, b) { return ((memo[b.id] && memo[b.id].ok) ? 1 : 0) - ((memo[a.id] && memo[a.id].ok) ? 1 : 0); });
+    if (!alive().length) { dead = {}; } // everything was marked offline: give them all another chance
+    function skip() { memo[list[idx].id] = { ok: 0, t: Date.now() }; save(); dead[list[idx].id] = true; if (alive().length) show(idx + dir); else offline(); }
     function show(i) {
       if (!alive().length) { offline(); return; }
       var n = list.length; idx = ((i % n) + n) % n;
       while (dead[list[idx].id]) idx = ((idx + dir) % n + n) % n;
       var s = list[idx]; cam.classList.remove('is-live'); clearTimeout(wait); clearTimeout(reveal);
-      wait = setTimeout(function () { if (!cam.classList.contains('is-live')) skip(); }, 8000); // never started: treat as offline
+      wait = setTimeout(function () { if (!cam.classList.contains('is-live')) skip(); }, 4000); // never started: treat as offline
       if (!player) {
         var host = document.createElement('div'); screen.appendChild(host);
         player = new YT.Player(host, { host: 'https://www.youtube-nocookie.com', videoId: s.id,
@@ -851,7 +858,7 @@
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
             onStateChange: function (e) {
               // reveal only after it has been playing for a moment, so YouTube's play/pause flash never shows
-              if (e.data === 1) { clearTimeout(wait); clearTimeout(reveal); reveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); }, 1600); }
+              if (e.data === 1) { clearTimeout(wait); clearTimeout(reveal); reveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); good(list[idx].id); }, 700); }
               else if (e.data === 0) skip(); // the stream ended
             },
             onError: function () { clearTimeout(wait); skip(); }
