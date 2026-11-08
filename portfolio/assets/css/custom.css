@@ -736,10 +736,17 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero.cc-glow h1 { animation: glow-text 1.6s cubic-bezier(.22, 1, .36, 1) .25s both; }
 @keyframes glow-text { from { opacity: 0; filter: blur(8px); translate: 0 10px; } to { opacity: 1; filter: blur(0); translate: 0 0; } }
 html.is-arriving .hero.cc-glow h1, html.is-arriving .hero_glow > * { animation-play-state: paused; }
-@media (max-width: 767px) { .hero_glow-sun { width: 130vw; } .hero_glow-haze { width: 280vw; } }
+@media (max-width: 767px) { .hero_glow-sun { width: 175vw; } .hero_glow-haze { width: 280vw; } }
 @media (prefers-reduced-motion: reduce) { .hero_glow-sun, .hero_glow-haze, .hero.cc-glow h1 { animation: none !important; } }
 body:has(.hero.cc-glow) .navigation { --nav-l: #fbfaf7; --nav-c: #fbfaf7; --nav-r: #fbfaf7; } /* nav starts off-white over the glow hero (no blue flash) */
 
 /* With the light glow hero: no warm rim on the logo-bar tear, and the hero fits its content instead of the full screen */
 body:has(.hero.cc-glow) .logo_marquee::after, body:has(.hero.cc-glow) .logo_marquee > .container::before { display: none !important; }
 .page-main > .hero.section.cc-glow { height: auto; min-height: 0; max-height: none; padding-bottom: clamp(5rem, 9vw, 8.5rem); } /* glow hero fits its content */
+
+/* Glow hero: no torn edge between the hero and the logos; the glow runs behind the logos on one continuous surface */
+.hero.cc-glow[data-css] { -webkit-mask-image: none !important; mask-image: none !important; overflow: visible; }
+.hero.cc-glow .hero_glow { bottom: -45%; }
+body:has(.hero.cc-glow) .logo_marquee { background: transparent; }
+body:has(.hero.cc-glow) .logo_marquee::before { display: none !important; }
+body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
