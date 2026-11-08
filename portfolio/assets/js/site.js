@@ -791,7 +791,8 @@
   /* ---------- 7. Project thumbnails: a single glitched frame on hover ----------
      Effect is set on <body data-thumb-hover="mosh|pixelate|dither"> (default: mosh). Hover shows one fixed glitched frame; leaving restores the photo. */
   (function () {
-    if (reduce || !window.matchMedia('(hover: hover)').matches) return;
+    if (reduce) return;
+    var touch = !window.matchMedia('(hover: hover)').matches, shows = []; // touch screens: cards glitch one at a time as they scroll into view
     var mode = document.body.getAttribute('data-thumb-hover') || 'mosh';
     var BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
     document.querySelectorAll('.project').forEach(function (card) {
@@ -833,14 +834,33 @@
       // two states: hover shows one fixed glitched frame, leaving shows the clean photo
       var MAX = mode === 'mosh' ? .38 : mode === 'pixelate' ? .32 : .6, seed = 1 + Array.prototype.indexOf.call(document.querySelectorAll('.project'), card);
       function seeded(s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
-      card.addEventListener('mouseenter', function () {
-        if (!img.complete || !prep()) return;
+      function glitchOn() {
+        if (!img.complete || !prep()) return false;
         var real = Math.random; Math.random = seeded(seed * 7919); // the same glitch every time for this card
         try { fx(MAX, cv.width, cv.height); } finally { Math.random = real; }
-        cv.classList.add('is-on');
-      });
-      card.addEventListener('mouseleave', function () { cv.classList.remove('is-on'); });
+        cv.classList.add('is-on'); return true;
+      }
+      if (!touch) {
+        card.addEventListener('mouseenter', glitchOn);
+        card.addEventListener('mouseleave', function () { cv.classList.remove('is-on'); });
+      } else shows.push({ card: card, img: img, tries: 0, on: glitchOn, off: function () { cv.classList.remove('is-on'); } });
     });
+    // touch: a queue so only one card glitches at a time; each card plays once, as it comes into view
+    if (touch && shows.length && 'IntersectionObserver' in window) {
+      var queue = [], busy = false;
+      function next() {
+        if (busy || !queue.length) return; var s = queue.shift(); busy = true;
+        if (!s.on()) { // photo not ready yet: retry once it has loaded (and the page has settled)
+          busy = false; if (s.tries++ < 4) { var again = function () { setTimeout(function () { queue.push(s); next(); }, 300); }; if (s.img.complete) setTimeout(again, 400); else s.img.addEventListener('load', again, { once: true }); }
+          next(); return; }
+        setTimeout(function () { s.off(); setTimeout(function () { busy = false; next(); }, 260); }, 340);
+      }
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (!e.isIntersecting) return; var s = shows.filter(function (x) { return x.card === e.target; })[0]; io.unobserve(e.target); if (s) { queue.push(s); next(); } });
+      }, { threshold: .6 });
+      var start = function () { shows.forEach(function (s) { io.observe(s.card); }); };
+      if (document.readyState === 'complete') setTimeout(start, 900); else window.addEventListener('load', function () { setTimeout(start, 900); }); // after the page has arrived
+    }
   })();
 
   /* ---------- 8. Home carousels (projects, courses): native scroll, mouse drag, arrow pills ---------- */
