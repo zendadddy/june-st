@@ -1170,3 +1170,6 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 }
 @keyframes logo-marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 @media (prefers-reduced-motion: reduce) { .logo_marquee .logo_col { animation: none; } }
+
+/* Contact on phones: the cam sits closer under the form */
+@media (max-width: 767px) { .section:has(+ .livecam) { padding-bottom: .5rem; } .section:has(+ .livecam) form[data-contact]:not(.is-typing) [type=submit] { display: none; } }
