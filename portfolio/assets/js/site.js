@@ -48,7 +48,7 @@
       modal.innerHTML = '<div class="gate-modal_backdrop" data-gate-close></div>' +
         '<div class="gate-modal_card">' +
           '<button type="button" class="gate-modal_close" aria-label="Close" data-gate-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
-          '<div class="u-vflex-left-top u-vgap-12"><h2 id="gate-title">Private <span class="h2 cc-alt">work</span></h2><p class="u-color-secondary">My projects are under wraps for now.</p></div>' +
+          '<div class="u-vflex-left-top u-vgap-12"><h2 id="gate-title" class="gate-title"><svg class="gate-lock" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.5"/></svg>Private <span class="h2 cc-alt">work</span></h2><p class="u-color-secondary">My projects are under wraps for now.</p></div>' +
           '<form class="form u-vflex-right-top gate-modal_form" autocomplete="off" novalidate>' +
             '<div class="input-group u-w-100"><label for="gate-pass" class="u-sr-only">Password</label><input class="input w-input" type="password" id="gate-pass" placeholder="Password" required></div>' +
             '<p class="gate-modal_error eyebrow-sm" role="alert" hidden>That’s not it. Try again?</p>' +
@@ -344,7 +344,7 @@
       var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
       var canPin = gh < vh * .92;
       pg.classList.toggle('is-pinned', canPin);
-      pinH = canPin ? Math.round(vh * 1.1) : 0;
+      pinH = canPin ? Math.round(vh * 1.35) : 0;
       track.style.height = canPin ? (gh + pinH) + 'px' : '';
       pg.style.setProperty('--pg-top', Math.max(12, (vh - gh) / 2) + 'px');
       var gr = grid.getBoundingClientRect(), cx = gr.left + gr.width / 2, cy = gr.top + gr.height / 2;
@@ -416,7 +416,7 @@
       stage.style.cursor = n > -1 ? 'zoom-in' : '';
       layout();
     }
-    function updateHover() { if (!pointer) return; if (cur < .8) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover only once the grid is 80% dealt
+    function updateHover() { if (!pointer) return; if (cur < .5) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover once the grid is half dealt
     if (canHover) {
       stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); });
       stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
@@ -425,7 +425,7 @@
     function tick() {
       var d = target - cur;
       if (Math.abs(d) < .0008) { cur = target; ticking = false; floating = false; layout(); updateHover(); return; }
-      cur += d * (floating ? .05 : .12); layout(); updateHover(); requestAnimationFrame(tick);
+      cur += d * (floating ? .04 : .085); layout(); updateHover(); requestAnimationFrame(tick);
     }
     // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
     function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
@@ -438,7 +438,7 @@
       idle = setTimeout(function () {
         var q = progress();
         if (pinH && q > .001 && q < .999 && !latched) { latched = true; floating = true; target = 1; kick(); }
-      }, 1000);
+      }, 1400);
     }, { passive: true });
     window.addEventListener('resize', function () { setFocus(-1); measure(); });
     window.addEventListener('load', measure);
@@ -568,13 +568,28 @@
     if (section) section.querySelectorAll('.testimonial_pagination').forEach(function (p) { if (!pag && sc.compareDocumentPosition(p) & Node.DOCUMENT_POSITION_FOLLOWING) pag = p; });
     if (!pag) { var tmp = document.createElement('div'); tmp.innerHTML = PAG_HTML; pag = tmp.firstChild; pag.classList.add('cc-added'); sc.insertAdjacentElement('afterend', pag); }
     // one bar above the cards: 'View all' on the left, the arrows on the right
-    var bar = document.createElement('div'); bar.className = 'carousel-bar';
-    sc.parentElement.insertBefore(bar, sc);
-    var seeAll = sc.parentElement.querySelector(':scope > .see-all'); if (seeAll) bar.appendChild(seeAll);
-    bar.appendChild(pag); pag.classList.add('cc-top');
+    // carousel head: title with the arrows on the same line (right), 'View all' under the title
+    var head = document.createElement('div'); head.className = 'carousel-head';
+    var title = sc.parentElement.querySelector(':scope > .carousel-title'), seeAll = sc.parentElement.querySelector(':scope > .see-all');
+    sc.parentElement.insertBefore(head, title || sc);
+    if (title) head.appendChild(title);
+    head.appendChild(pag); pag.classList.add('cc-top');
+    if (seeAll) head.appendChild(seeAll);
+    // cards fade in from the right the first time the carousel scrolls into view
+    if (!reduce && 'IntersectionObserver' in window) {
+      sc.classList.add('is-waiting');
+      var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { sc.classList.remove('is-waiting'); sc.classList.add('is-in'); io.disconnect(); } }); }, { threshold: .2 });
+      io.observe(sc);
+      Array.prototype.forEach.call(wrap.children, function (s, i) { s.style.setProperty('--d', (i * .09).toFixed(2) + 's'); });
+    }
     var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
     function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
-    function ends() { var max = sc.scrollWidth - sc.clientWidth - 2; if (prev) prev.classList.toggle('is-disabled', sc.scrollLeft <= 2); if (next) next.classList.toggle('is-disabled', sc.scrollLeft >= max); }
+    function ends() {
+      var max = sc.scrollWidth - sc.clientWidth - 2, atStart = sc.scrollLeft <= 2, atEnd = sc.scrollLeft >= max;
+      if (prev) prev.classList.toggle('is-disabled', atStart);
+      if (next) next.classList.toggle('is-disabled', atEnd);
+      pag.classList.toggle('is-empty', atStart && atEnd); // nothing to scroll: hide the control entirely
+    }
     [prev, next].forEach(function (b, i) { if (!b) return; b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); b.setAttribute('aria-label', i ? 'Next' : 'Previous');
       var go = function () { sc.scrollBy({ left: (i ? 1 : -1) * step(), behavior: 'smooth' }); };
       b.addEventListener('click', go); b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
