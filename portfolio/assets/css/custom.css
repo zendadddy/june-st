@@ -632,10 +632,5 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* ---- Phones ---- */
 /* About: the floating photos around "Hi, I'm Frank" are left out */
 @media (max-width: 767px) { .about_paper, .about_head, .about_garage, .about_illustration { display: none !important; } }
-/* Carousel arrows about 10% smaller */
-@media (max-width: 767px) {
-  .testimonial_pagination.cc-top { padding: .45rem; }
-  .testimonial_pagination.cc-top .testimonial_controls:not(.is-disabled) { width: 2.25rem; height: 2.25rem; }
-  .testimonial_pagination.cc-top .testimonial_controls svg { transform: scale(.9); }
-  .arrow-ink { top: .45rem; bottom: .45rem; }
-}
+/* Carousel arrows about 10% smaller, outline circle included: the whole control scales from its right edge */
+@media (max-width: 767px) { .testimonial_pagination.cc-top { transform: scale(.9); transform-origin: 100% 50%; } }
