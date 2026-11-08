@@ -371,8 +371,9 @@
       var k = 1 - ease(local), h0 = homes[n], jt = jitter[n];
       // about one in five photos settles slightly off kilter in the finished grid
       var tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1.5 + rnd(n, 5.33) * 2.5) : 0;
-      return { tx: jt.sx * k, ty: jt.sy * k, rot: jt.rot * k + tilt * (1 - k), s: 1 + (jt.s - 1) * k };
+      return { tx: jt.sx * k, ty: jt.sy * k, rot: jt.rot * k + tilt * (1 - k), s: 1 + (jt.s - 1) * k, k: k };
     }
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function layout() {
       if (!homes.length) return;
       var N = cards.length;
@@ -393,6 +394,9 @@
         } else {
           c.style.transform = 'translate3d(' + r.tx.toFixed(1) + 'px,' + r.ty.toFixed(1) + 'px,0) rotate(' + r.rot.toFixed(2) + 'deg) scale(' + r.s.toFixed(3) + ')';
         }
+        // like the project and course thumbnails: each photo comes into focus as it settles (the opening fan only softly)
+        var b = n === focus || reduceMotion ? 0 : Math.round(r.k * (n < 6 ? 1.6 : 12) * 4) / 4;
+        if (c._blur !== b) { c._blur = b; c.style.filter = b ? 'blur(' + b + 'px)' : ''; }
       });
     }
     // which card's resting footprint is under the pointer (top-most first; the focused card is judged by its resting place too)
