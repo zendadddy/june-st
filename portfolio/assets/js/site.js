@@ -146,7 +146,13 @@
           if (r.result === 'success') { form.classList.add('is-done'); say('You’re on the list. Check your inbox to confirm.', true); return; }
           if (/already subscribed/i.test(m)) { form.classList.add('is-done'); say('You’re already on the list. I’ll be in touch.', true); return; }
           if (/too many/i.test(m)) { say('Too many tries just now. Please wait a few minutes.'); return; }
-          say(m && m !== 'timeout' && m !== 'network' ? m : 'Something went wrong. Please try again.');
+          if (m === 'network' || m === 'timeout') { // the page could not reach Mailchimp directly: post the way the Mailchimp embed does, in a new tab
+            var f = document.createElement('form'); f.method = 'post'; f.target = '_blank'; f.action = MC_URL.replace('/post-json?', '/post?'); f.style.display = 'none';
+            f.innerHTML = '<input type="email" name="EMAIL"><input type="text" name="' + MC_BOT + '" value="">'; f.querySelector('[name=EMAIL]').value = v;
+            document.body.appendChild(f); f.submit(); setTimeout(function () { f.remove(); }, 1000);
+            form.classList.add('is-done'); say('Almost there. Finish in the Mailchimp tab that just opened.', true); return;
+          }
+          say(m || 'Something went wrong. Please try again.');
         });
       });
       modal.addEventListener('keydown', function (e) {
