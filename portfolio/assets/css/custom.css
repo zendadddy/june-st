@@ -883,3 +883,6 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 .gate-modal_form > p { grid-row: 2; grid-column: 1 / -1; }
 .gate-modal_form .input, .gate-modal_form .input:hover, .gate-modal_form .input:focus { padding-right: 8.5rem; }
 .pause_sky { object-position: 20% 0%; transform: scale(1.6); transform-origin: 25% 10%; } /* zoomed into the open blue, clouds mostly out of frame */
+
+/* company names in the bios read a touch heavier */
+.co { font-weight: 600; }
