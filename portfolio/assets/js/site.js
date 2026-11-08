@@ -791,6 +791,7 @@
           cx = Math.max(M + hw, Math.min(vw - M - hw, cx)); cy = Math.max(M + hh, Math.min(vh - M - hh, cy));
           var dx = cx - cx0, dy = cy - cy0;
           c.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + s.toFixed(3) + ')';
+          c.style.setProperty('--cap', (14 / s).toFixed(2) + 'px'); // captions read at the same size on screen, whatever the card's shape or zoom
         } else {
           c.style.transform = 'translate3d(' + r.tx.toFixed(1) + 'px,' + r.ty.toFixed(1) + 'px,0) rotate(' + r.rot.toFixed(2) + 'deg) scale(' + r.s.toFixed(3) + ')';
         }
