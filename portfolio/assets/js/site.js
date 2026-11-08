@@ -354,6 +354,22 @@
     });
   })();
 
+  /* ---------- 0f. Homepage testimonials: the arrows crossfade between the quotes ---------- */
+  document.querySelectorAll('[data-tm]').forEach(function (tm) {
+    var slides = [].slice.call(tm.querySelectorAll('.tm_slide')), i = 0;
+    var pag = tm.parentElement.parentElement.querySelector('.testimonial_pagination'); if (!pag || slides.length < 2) return;
+    function show(n) {
+      i = (n + slides.length) % slides.length;
+      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
+    }
+    [['.cc-prev', -1, 'Previous testimonial'], ['.cc-next', 1, 'Next testimonial']].forEach(function (d) {
+      var b = pag.querySelector(d[0]); if (!b) return;
+      b.setAttribute('role', 'button'); b.setAttribute('tabindex', '0'); b.setAttribute('aria-label', d[2]);
+      b.addEventListener('click', function () { show(i + d[1]); });
+      b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(i + d[1]); } });
+    });
+  });
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);

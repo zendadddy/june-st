@@ -645,3 +645,11 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .about.section::before { content: ""; position: absolute; z-index: 0; inset: 0 0 auto 0; height: min(120svh, 70rem); pointer-events: none;
     background: linear-gradient(180deg, #ffffff1f 0%, #ffffff4d 30%, #ffffff8c 55%, #ffffffa6 75%, #ffffff00 100%); }
 }
+
+/* Homepage testimonials (site.js 0f): quotes stacked in one spot and crossfaded */
+.tm { display: grid; width: 100%; }
+.tm_slide { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; opacity: 0; filter: blur(6px); transform: translateY(8px); pointer-events: none;
+  transition: opacity .6s ease, filter .7s ease, transform .8s cubic-bezier(.22, 1, .36, 1); }
+.tm_slide.is-active { opacity: 1; filter: none; transform: none; pointer-events: auto; transition-delay: .15s; }
+.tm_logo-invert { filter: brightness(0) invert(1); height: 1.6rem; width: auto; max-width: none; }
+@media (prefers-reduced-motion: reduce) { .tm_slide { transition: opacity .2s ease; filter: none; transform: none; } }
