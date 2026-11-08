@@ -1114,3 +1114,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .livecam.is-switching .livecam_btn { opacity: .85; }
 .livecam.is-switching .livecam_dot { animation: livecam-pulse 1s ease-in-out infinite; background: #fff; opacity: .7; }
 .livecam.is-switching .livecam_controls { opacity: 1; pointer-events: auto; }
+
+/* playground: 4:5 prints get a 4:5 card so their edges aren't cropped */
+.pg_card.cc-portrait { aspect-ratio: 4 / 5; }
+.pg_card.cc-portrait img { object-position: 0 50%; }
