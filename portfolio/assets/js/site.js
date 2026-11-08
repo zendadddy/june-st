@@ -275,7 +275,7 @@
       var item = { box: box, rows: rows, btn: btn, open: false };
       function collapsedH() { var last = rows[SHOW - 1]; return last.offsetTop + last.offsetHeight - rows[0].offsetTop; }
       item.layout = function () {
-        rows.forEach(function (r, i) { if (i >= SHOW) { if (item.open) r.removeAttribute('inert'); else r.setAttribute('inert', ''); } });
+        rows.forEach(function (r, i) { if (i >= SHOW) { r.classList.add('acc-extra'); r.style.setProperty('--k', Math.min(i - SHOW, 14)); if (item.open) r.removeAttribute('inert'); else r.setAttribute('inert', ''); } });
         box.style.height = (item.open ? box.scrollHeight : collapsedH()) + 'px';
       };
       btn.addEventListener('click', function () {
@@ -286,7 +286,7 @@
           item.layout();
           setTimeout(function () { var r = box.getBoundingClientRect(); if (r.top < 0) { try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(box, { offset: -120 }); else box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} } }, 50);
         } else item.layout();
-        try { if (window.ScrollTrigger) setTimeout(function () { ScrollTrigger.refresh(); }, 650); } catch (e) {}
+        try { if (window.ScrollTrigger) setTimeout(function () { ScrollTrigger.refresh(); }, 950); } catch (e) {} // after the box has settled
       });
       lists.push(item);
     });

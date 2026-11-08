@@ -203,7 +203,7 @@ a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-b
 .project .project_arrow { display: none; }
 
 /* Speaking & awards: rows that are real links get a small up-right arrow */
-a.accolade_link .col-lg-8 { display: flex; align-items: center; gap: .4rem; }
+a.accolade_link .col-lg-8 { display: flex; align-items: center; gap: .8rem; }
 a.accolade_link .col-lg-8 > .eyebrow { min-width: 0; }
 a.accolade_link .col-lg-8::after { content: ""; flex: none; display: inline-block; width: .6rem; height: .6rem; background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 9L9 3M4 3h5v5' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
@@ -472,7 +472,11 @@ p, li { text-wrap: pretty; }
 .acc-section h3 { font-size: clamp(1.15rem, 1.4vw, 1.35rem); letter-spacing: 0; }
 .acc-section .accolade_link { opacity: .72; transition: opacity .4s ease; }
 .acc-section .accolade_link:hover, .acc-section .accolade_link:focus-visible { opacity: 1; }
-.acc-box { overflow: hidden; transition: height .6s cubic-bezier(.22, 1, .36, 1); }
+.acc-box { overflow: hidden; transition: height .9s cubic-bezier(.45, 0, .2, 1); }
+/* rows beyond the first three drift in one after another as the list opens, and fade out together as it closes */
+.acc-section .accolade_link.acc-extra { opacity: 0; transform: translateY(-6px); transition: opacity .3s ease, transform .3s ease; }
+.acc-box.is-open .accolade_link.acc-extra { opacity: .72; transform: none; transition: opacity .55s ease calc(.12s + var(--k, 0) * 28ms), transform .7s cubic-bezier(.22, 1, .36, 1) calc(.12s + var(--k, 0) * 28ms); }
+.acc-box.is-open .accolade_link.acc-extra:hover { opacity: 1; transition-delay: 0s; }
 .acc-toggle { display: inline-flex; align-items: center; gap: .5rem; align-self: flex-start; margin-top: -.25rem; padding: .5rem 0; background: none; border: 0; color: inherit; cursor: pointer; opacity: .55; transition: opacity .3s ease; }
 .acc-section ul { margin-bottom: 0; }
 .acc-toggle:hover, .acc-toggle:focus-visible { opacity: 1; }
@@ -480,7 +484,7 @@ p, li { text-wrap: pretty; }
 .acc-toggle_icon { width: .6rem; height: .6rem; position: relative; top: -2px; background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v7M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 2.5v7M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat; }
 .acc-toggle[aria-expanded="true"] .acc-toggle_icon { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6h7' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E"); }
-@media (prefers-reduced-motion: reduce) { .acc-box { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .acc-box, .acc-section .accolade_link.acc-extra { transition: none !important; } }
 
 /* Phones: the nav and sun slide up out of view while scrolling down, and back on scrolling up (site.js section 3) */
 @media (max-width: 767px) {
