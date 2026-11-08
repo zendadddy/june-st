@@ -698,3 +698,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .blue-to-orange-gradient + svg + .home-bottom-gradient { position: relative; }
 .blue-to-orange-gradient + svg path { fill: #fa7d13 !important; } /* same sRGB orange as the gradient above (the inline display-p3 value renders more vivid on iPhones) */
 .blue-to-orange-gradient + svg rect { fill: #0d1633 !important; }
+
+/* About: caption under the podcast clip */
+.about_video-note { padding-top: .9rem; }
+.about_video-note p { margin: 0; opacity: .6; }
