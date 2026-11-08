@@ -227,7 +227,7 @@ a.accolade_link .col-lg-8::after { content: ""; flex: none; display: inline-bloc
 .swiper:has(> .swiper-wrapper.cc-project).is-autoscroll { scroll-snap-type: none; }
 .swiper:has(> .swiper-wrapper.cc-project).is-dragging .project { pointer-events: none; }
 .swiper-slide.cc-project { scroll-snap-align: start; }
-@media (max-width: 767px) { .swiper-slide.cc-project { width: 80%; } }
+
 
 /* Carousel arrow pills: the Projects copy sits under its row; arrows fade at the ends */
 .col:has(> .swiper > .swiper-wrapper.cc-project) { min-width: 0; }
@@ -593,3 +593,11 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .snail-modal .snail_eyebrow { margin: 0; }
 .snail-modal .snail_title { line-height: calc(var(--row) * 1.5); margin: 0 0 calc(var(--row) * .5); }
 .snail-modal .snail_envelope { margin-bottom: var(--row); }
+
+/* Homepage carousels: exactly three cards on screen at every size (card width set in site.js); phones get smaller type to suit */
+@media (max-width: 767px) {
+  .swiper-slide.cc-project .project .u-vgap-24 { grid-row-gap: .55rem; row-gap: .55rem; }
+  .swiper-slide.cc-project .project h4:not(.u-sr-only) { font-size: .8rem; line-height: 1.25; }
+  .swiper-slide.cc-project .project_logo { height: 1.35rem; margin: -.45rem 0 -.4rem; }
+  .swiper-slide.cc-project .project .project_brand + h4 { margin-top: 0; }
+}

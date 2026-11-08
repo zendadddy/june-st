@@ -820,8 +820,10 @@
       var row = sc.closest('.row'); if (row) row.style.alignSelf = 'stretch'; // in a left-aligned column the row would size to its content
       // size the cards from the column width (3 across, or 80% on phones) and let the row contain them, so the end padding applies
       wrap.style.width = '';
-      var colW = sc.clientWidth, g = parseFloat(getComputedStyle(wrap).columnGap) || 0;
-      var w = window.innerWidth < 768 ? colW * .8 : (colW - 2 * g) / 3;
+      // exactly three cards on screen at every size: from the column's left edge to a gap's width inside the window's
+      // right edge, so the 4th card starts right at the edge and never peeks in
+      var g = parseFloat(getComputedStyle(wrap).columnGap) || 0, left = sc.getBoundingClientRect().left;
+      var w = Math.max(80, (document.documentElement.clientWidth - left - g - 2 * g) / 3);
       wrap.style.width = 'max-content';
       Array.prototype.forEach.call(wrap.children, function (s) { s.style.width = w + 'px'; });
       var edge = Math.max(0, document.documentElement.clientWidth - sc.getBoundingClientRect().right);
