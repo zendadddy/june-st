@@ -61,8 +61,8 @@
 
 /* Homepage hero photo: stage shot, cropped to keep the speaker in view, with a soft wash for the white headline */
 .hero.cc-photo { color: var(--_colors---all--white); background: #0b0f2a; }
-.hero.cc-photo .hero_photo { object-fit: cover; object-position: 62% 55%; }
-@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 82% 55%; } }
+.hero.cc-photo .hero_photo { object-fit: cover; object-position: 100% 35%; }
+@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 32% 35%; } }
 .hero.cc-photo::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #0a0d2899 0%, #0a0d2833 38%, #0a0d2833 62%, #0a0d2880 100%); }
 .hero.cc-photo .container { position: relative; z-index: 1; }
