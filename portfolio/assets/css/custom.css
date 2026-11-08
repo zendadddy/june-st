@@ -1118,3 +1118,8 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* playground: 4:5 prints get a 4:5 card so their edges aren't cropped */
 .pg_card.cc-portrait { aspect-ratio: 4 / 5; }
 .pg_card.cc-portrait img { object-position: 0 50%; }
+
+/* playground credits: a small note along the bottom of the card, shown only when the card is zoomed */
+.pg_credit { position: absolute; left: 0; right: 0; bottom: 0; padding: 1.4em .6em .5em; font-size: .5rem; line-height: 1.2; letter-spacing: .02em; color: #fff; text-align: left;
+  background: linear-gradient(180deg, #0000 0%, #000a 100%); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+.pg_card.is-focus .pg_credit { opacity: 1; transition-delay: .15s; }
