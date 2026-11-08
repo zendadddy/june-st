@@ -518,3 +518,8 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 50% 50%; } }
 /* Phones: "Coming soon" sits snug above the course title */
 @media (max-width: 767px) { .project .u-vflex-left-top.u-vgap-12 { grid-row-gap: .3rem; row-gap: .3rem; } }
+
+/* Project cards: the brand logo sits snug above its description at every size (same treatment as Coming soon on courses) */
+.project .project_brand + h4 { margin-top: -.55rem; }
+@media (max-width: 767px) { .project .project_brand + h4 { margin-top: -.2rem; } }
+@media (max-width: 479px) { .row.w-dyn-items .project .project_brand + h4 { margin-top: 0; } }
