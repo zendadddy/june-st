@@ -238,6 +238,44 @@
     a.addEventListener('click', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
   });
 
+  /* ---------- 0d. About: accolades stay quiet ----------
+     Each list (Speaking, Awards, Interviews, Podcasts) shows its three most recent entries; "Show all" expands the rest. */
+  (function () {
+    var marker = [].filter.call(document.querySelectorAll('.section_marker .cc-marker'), function (h) { return /accolades/i.test(h.textContent); })[0];
+    var section = marker && marker.closest('section'); if (!section) return;
+    section.classList.add('acc-section');
+    var SHOW = 3, lists = [];
+    section.querySelectorAll('ul').forEach(function (ul) {
+      var box = ul.firstElementChild, rows = box ? [].slice.call(box.querySelectorAll(':scope > .accolade_link')) : [];
+      if (rows.length <= SHOW) return;
+      box.classList.add('acc-box');
+      var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'acc-toggle eyebrow';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.innerHTML = '<span class="acc-toggle_label">Show all ' + rows.length + '</span><span class="acc-toggle_icon" aria-hidden="true"></span>';
+      ul.after(btn);
+      var item = { box: box, rows: rows, btn: btn, open: false };
+      function collapsedH() { var last = rows[SHOW - 1]; return last.offsetTop + last.offsetHeight - rows[0].offsetTop; }
+      item.layout = function () {
+        rows.forEach(function (r, i) { if (i >= SHOW) { if (item.open) r.removeAttribute('inert'); else r.setAttribute('inert', ''); } });
+        box.style.height = (item.open ? box.scrollHeight : collapsedH()) + 'px';
+      };
+      btn.addEventListener('click', function () {
+        item.open = !item.open; btn.setAttribute('aria-expanded', String(item.open)); box.classList.toggle('is-open', item.open);
+        btn.querySelector('.acc-toggle_label').textContent = item.open ? 'Show less' : 'Show all ' + rows.length;
+        if (!item.open) { // collapsing from far down the list: keep the toggle in view
+          var top = section.getBoundingClientRect().top; var bt = btn.getBoundingClientRect().top;
+          item.layout();
+          setTimeout(function () { var r = box.getBoundingClientRect(); if (r.top < 0) { try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(box, { offset: -120 }); else box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} } }, 50);
+        } else item.layout();
+        try { if (window.ScrollTrigger) setTimeout(function () { ScrollTrigger.refresh(); }, 650); } catch (e) {}
+      });
+      lists.push(item);
+    });
+    function all() { lists.forEach(function (it) { it.layout(); }); }
+    all(); window.addEventListener('load', all); window.addEventListener('resize', all);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);

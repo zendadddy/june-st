@@ -465,3 +465,17 @@ p, li { text-wrap: pretty; }
 
 /* Nav: name, links and Menu sit level with the centre of the sun */
 .nav_layout { padding-top: .825rem; }
+
+/* About accolades (site.js 0d): quieter titles and rows; each list folds to three entries with a "Show all" toggle */
+.acc-section h3 { font-size: clamp(1.15rem, 1.4vw, 1.35rem); letter-spacing: 0; }
+.acc-section .accolade_link { opacity: .72; transition: opacity .4s ease; }
+.acc-section .accolade_link:hover, .acc-section .accolade_link:focus-visible { opacity: 1; }
+.acc-box { overflow: hidden; transition: height .6s cubic-bezier(.22, 1, .36, 1); }
+.acc-toggle { display: inline-flex; align-items: center; gap: .5rem; align-self: flex-start; margin-top: -.25rem; padding: .5rem 0; background: none; border: 0; color: inherit; cursor: pointer; opacity: .55; transition: opacity .3s ease; }
+.acc-section ul { margin-bottom: 0; }
+.acc-toggle:hover, .acc-toggle:focus-visible { opacity: 1; }
+.acc-toggle_icon { position: relative; width: .6rem; height: .6rem; }
+.acc-toggle_icon::before, .acc-toggle_icon::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; background: currentColor; transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+.acc-toggle_icon::after { transform: rotate(90deg); }
+.acc-toggle[aria-expanded="true"] .acc-toggle_icon::after { transform: rotate(0deg); }
+@media (prefers-reduced-motion: reduce) { .acc-box { transition: none; } }
