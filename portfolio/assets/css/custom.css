@@ -657,3 +657,4 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* Testimonial logos: one visible height for every brand. Each file's lettering fills a different share of its box,
    so the box is sized from that share (--ink-ratio) and the width is left free. Set softer at 80%. */
 .testimonial_logo { --logo-ink: 1.15rem; --ink-ratio: .95; height: calc(var(--logo-ink) / var(--ink-ratio)); max-height: none; width: auto; max-width: none; object-fit: contain; opacity: .8; }
+.testimonial_logo.tm_logo-invert.tm_logo-headspace { --ink-ratio: .42; } /* Headspace: the round mark fills ~53% of the file; sized a touch larger so the wordmark reads like the others */
