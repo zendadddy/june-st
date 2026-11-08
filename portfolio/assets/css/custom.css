@@ -459,8 +459,9 @@ p, li { text-wrap: pretty; }
   .navigation .nav_list .nav_link::after { display: none; }
   .navigation .nav_list .nav_link:hover { top: 0; text-shadow: none; }
   /* leaving through the menu: the links fade while the panel stays as the white cover */
-  .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0 !important; transform: translateY(-8px); filter: blur(10px); transition: opacity .42s ease, transform .5s cubic-bezier(.22, 1, .36, 1), filter .45s ease; transition-delay: calc(var(--i, 0) * .04s); }
-  .navigation.is-menu-leaving .nav_list .nav_link.is-picked { transition-delay: .14s; } /* the page you picked lingers a beat */
+  /* leaving through the menu: the other links simply vanish; only the one you tapped blurs and fades away */
+  .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0 !important; transition: none !important; }
+  .navigation.is-menu-leaving .nav_list .nav_link.is-picked { transform: translateY(-6px); filter: blur(10px); transition: opacity .5s ease, transform .55s cubic-bezier(.22, 1, .36, 1), filter .5s ease !important; }
   .navigation.is-menu-leaving .nav_menu, .navigation.is-menu-leaving .nav_layout > .nav_link { opacity: 0; transition: opacity .35s ease; }
   html.has-menu .navigation.is-menu-leaving ~ .nav_sun, html.has-menu:has(.is-menu-leaving) .nav_sun { opacity: 0; transition: opacity .35s ease; }
 }
