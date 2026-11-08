@@ -126,7 +126,7 @@ img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 /* Rough paper edge along the top of the home logo bar, same torn edge as the quote section (clip-bg). */
 .logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: 1.25rem; }
 .logo_marquee::before {
-  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 4.5vw); pointer-events: none;
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 5.5vw); pointer-events: none;
   background: var(--background--primary);
   -webkit-mask-image: url("../logo-arc-clip.svg"); mask-image: url("../logo-arc-clip.svg");
   -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
@@ -307,3 +307,15 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   .totop_text{font-family:var(--_typography---eyebrow--font);font-size:21px;font-weight:var(--_typography---eyebrow--font-weight);letter-spacing:.16em;text-transform:uppercase;fill:currentColor}
   .u-theme-dark .totop{color:var(--_colors---all--black)}
   @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}
+
+/* Logos ride the arc like a merry-go-round (positions set in site.js); room below for the dip at the edges */
+.logo_marquee { padding-bottom: calc(1.5rem + 4.5vw); }
+.logo_marquee .logo_img { will-change: transform, opacity; transform-origin: 50% 50%; }
+
+/* Carousel arrows: solid black pill, white arrows */
+.testimonial_pagination.cc-top { background: #000; border-color: #000; }
+.testimonial_pagination.cc-top .testimonial_controls { color: #fff; background: transparent; }
+.testimonial_pagination.cc-top .testimonial_controls:hover { background: #ffffff1f; }
+
+/* Vertical section eyebrows a touch quieter */
+.eyebrow.cc-marker { opacity: .8; }
