@@ -520,9 +520,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 767px) { .project .u-vflex-left-top.u-vgap-12 { grid-row-gap: .3rem; row-gap: .3rem; } }
 
 /* Project cards: the brand logo sits snug above its description at every size (same treatment as Coming soon on courses) */
-.project .project_brand + h4 { margin-top: -.55rem; }
-@media (max-width: 767px) { .project .project_brand + h4 { margin-top: -.2rem; } }
-@media (max-width: 479px) { .row.w-dyn-items .project .project_brand + h4 { margin-top: 0; } }
+.project .project_brand + h4 { margin-top: -.3rem; }
+@media (max-width: 767px) { .project .project_brand + h4 { margin-top: 0; } }
+@media (max-width: 479px) { .row.w-dyn-items .project .project_brand + h4 { margin-top: .2rem; } }
 
 /* Homepage hero: the content can never be wider than the screen. Safari can size a flex column to the headline's
    one-line width, which pushed the headline and button off to the right on iPhones; the column and headline are
@@ -532,3 +532,11 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero .u-vflex-center-top { width: 100%; min-width: 0; }
 .hero h1 { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
 @media (max-width: 767px) { .hero .container > .row > .col { flex: 0 0 100%; max-width: 100%; } }
+
+/* Homepage logos: a quiet "Where I've worked" label above them */
+.logo_eyebrow { display: block; width: 100%; max-width: none; margin: .25rem auto 1rem; text-align: center; opacity: .45; grid-column: 1 / -1; }
+@media (max-width: 767px) { .logo_eyebrow { margin: .5rem 0 .25rem; } }
+/* Mobile menu: the close control is the same thin X as the modals */
+.nav_menu_x { display: block; width: 1.5rem; height: 1.5rem; margin: -.15rem -.2rem; }
+/* Phones: the Ram Dass quote section is left out */
+@media (max-width: 767px) { .section.quote-ramdass { display: none; } }
