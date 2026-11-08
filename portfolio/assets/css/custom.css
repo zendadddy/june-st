@@ -448,3 +448,13 @@ p, li { text-wrap: pretty; }
   .logo_marquee .logo_img[alt="DoorDash"] { display: block; order: 3; height: 2rem; }
   .logo_marquee .logo_img[alt="Headspace"] { display: block; order: 4; }
 }
+
+/* Mobile menu: plain links (no hover underline, glow or lift), white panel to match the page transition sheet */
+@media (max-width: 767px) {
+  .navigation .nav_list { background-color: var(--_colors---all--white, #fff); }
+  .navigation .nav_list .nav_link::after { display: none; }
+  .navigation .nav_list .nav_link:hover { top: 0; text-shadow: none; }
+  /* leaving through the menu: the links fade while the panel stays as the white cover */
+  .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0; transform: translateY(-10px); transition: opacity .25s ease, transform .3s ease; transition-delay: 0s; }
+  .navigation.is-menu-leaving .nav_menu { opacity: 0; transition: opacity .2s ease; }
+}

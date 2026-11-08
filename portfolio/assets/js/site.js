@@ -216,9 +216,18 @@
     btn.addEventListener('click', toggle);
     btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && root.classList.contains('has-menu')) { set(false); btn.focus(); } });
-    list.addEventListener('click', function (e) { if (e.target.closest('a')) set(false); }); // the page wave takes over from here
+    // picking a page: the open menu is already a full white cover, so go straight there; the next page arrives by
+    // lifting that white away upward with the wave edge (section 2), the same paper transition as desktop
+    list.addEventListener('click', function (e) {
+      var a = e.target.closest('a'); if (!a || e.defaultPrevented || !root.classList.contains('has-menu')) return;
+      if (a.target && a.target !== '_self') return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      nav.classList.add('is-menu-leaving');
+      try { sessionStorage.setItem('fb-arrive', '1'); } catch (err) {}
+      setTimeout(function () { location.href = a.href; }, 260);
+    });
     window.addEventListener('resize', function () { if (window.innerWidth >= 768 && root.classList.contains('has-menu')) set(false); });
-    window.addEventListener('pageshow', function () { set(false); });
+    window.addEventListener('pageshow', function () { nav.classList.remove('is-menu-leaving'); set(false); });
   })();
 
   /* Nav: the link to the page you're on is greyed out and inert (the Frank Bach wordmark and the sun always stay live) */
