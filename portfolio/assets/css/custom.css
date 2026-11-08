@@ -916,7 +916,7 @@ footer.footer::after { content: ""; position: absolute; left: 0; right: 0; botto
 .about_video-link { display: flex; align-items: center; justify-content: center; }
 .about_video-btn { width: clamp(6rem, 13vw, 10rem); aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
   background: #ffffff38; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: transform .5s cubic-bezier(.22, 1, .36, 1), background-color .3s ease; }
-.about_video-btn svg { width: 30%; height: 30%; margin-left: 3%; }
+.about_video-btn svg { width: 22%; height: 22%; margin: 0; display: block; }
 .about_video-link:hover .about_video-btn { transform: scale(1.1); background: #ffffff55; }
 
 /* About: the playground follows the expertise list closely instead of after a long blank stretch */
