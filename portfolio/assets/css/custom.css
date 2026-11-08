@@ -523,3 +523,12 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .project .project_brand + h4 { margin-top: -.55rem; }
 @media (max-width: 767px) { .project .project_brand + h4 { margin-top: -.2rem; } }
 @media (max-width: 479px) { .row.w-dyn-items .project .project_brand + h4 { margin-top: 0; } }
+
+/* Homepage hero: the content can never be wider than the screen. Safari can size a flex column to the headline's
+   one-line width, which pushed the headline and button off to the right on iPhones; the column and headline are
+   pinned to the container width so the headline wraps inside it and stays centred. */
+.hero .container > .row { flex-wrap: wrap; }
+.hero .container > .row > .col { min-width: 0; }
+.hero .u-vflex-center-top { width: 100%; min-width: 0; }
+.hero h1 { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+@media (max-width: 767px) { .hero .container > .row > .col { flex: 0 0 100%; max-width: 100%; } }
