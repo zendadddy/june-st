@@ -385,6 +385,19 @@
   /* ---------- 0h. Footer copyright year: always the current year ---------- */
   document.querySelectorAll('.copyright-year').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
 
+  /* ---------- 0i. Contact form: post to contact.php (the server emails it), show the sent or failed note ---------- */
+  document.querySelectorAll('form[data-contact]').forEach(function (form) {
+    var wrap = form.parentElement, done = wrap.querySelector('.w-form-done'), fail = wrap.querySelector('.w-form-fail'), btn = form.querySelector('[type=submit]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); e.stopImmediatePropagation(); if (!form.reportValidity()) return;
+      var label = btn.value; btn.disabled = true; btn.value = 'Sending…'; if (fail) fail.style.display = 'none';
+      fetch(form.action, { method: 'POST', body: new FormData(form) }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+        .then(function (d) { if (!d.ok) throw 0; form.style.display = 'none'; if (done) done.style.display = 'block'; })
+        .catch(function () { if (fail) fail.style.display = 'block'; })
+        .then(function () { btn.disabled = false; btn.value = label; });
+    }, true);
+  });
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
