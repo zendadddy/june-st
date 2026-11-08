@@ -452,6 +452,14 @@
     window.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(upd); }, { passive: true }); upd();
   })();
 
+  /* ---------- 0m. Footer clouds stay inside the footer (they drift and scale on scroll, and used to peek above the torn edge) ---------- */
+  (function () {
+    var f = document.querySelector('footer.footer'); if (!f) return;
+    var bgs = f.querySelectorAll(':scope > img.footer_bg'); if (!bgs.length) return;
+    var clip = document.createElement('div'); clip.className = 'footer_bgclip'; clip.setAttribute('aria-hidden', 'true');
+    f.insertBefore(clip, bgs[0]); bgs.forEach(function (im) { clip.appendChild(im); });
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
