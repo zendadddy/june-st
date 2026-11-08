@@ -123,8 +123,7 @@
       modal.innerHTML = '<div class="gate-modal_backdrop" data-soon-close></div>' +
         '<div class="gate-modal_card">' +
           '<button type="button" class="gate-modal_close" aria-label="Close" data-soon-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
-          '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title">Coming <span class="h2 cc-alt">soon</span></h2>' +
-          '<p class="u-color-secondary">These courses are all on the way. Join my mailing list and I’ll let you know when they’re live.</p></div>' +
+          '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title"></h2><p class="u-color-secondary soon-modal_text"></p></div>' +
           '<div class="soon-modal_signup"><form class="form u-vflex-right-top gate-modal_form soon-modal_form" novalidate>' +
             '<div class="input-group u-w-100"><label for="soon-email" class="u-sr-only">Email address</label><input class="input w-input" type="email" id="soon-email" name="EMAIL" placeholder="Email address" autocomplete="email" required></div>' +
             '<div aria-hidden="true" style="position:absolute;left:-5000px"><input type="text" name="' + MC_BOT + '" tabindex="-1" value=""></div>' +
@@ -162,8 +161,14 @@
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
     }
-    function open() {
+    var COPY = {
+      courses: ['Coming <span class="h2 cc-alt">soon</span>', 'These courses are all on the way. Join my mailing list and I’ll let you know when they’re live.'],
+      newsletter: ['My <span class="h2 cc-alt">newsletter</span>', 'Occasional notes on design, building things, and new courses as they launch. No spam, unsubscribe any time.']
+    };
+    function open(kind) {
       if (!modal) build();
+      var c = COPY[kind] || COPY.courses;
+      modal.querySelector('#soon-title').innerHTML = c[0]; modal.querySelector('.soon-modal_text').textContent = c[1];
       lastFocus = document.activeElement;
       modal.hidden = false; document.documentElement.classList.add('has-gate');
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
@@ -178,8 +183,8 @@
     }
     document.addEventListener('click', function (e) {
       if (e.button !== 0) return;
-      var a = e.target.closest && e.target.closest('a.project_link[href="#"]'); if (!a) return;
-      e.preventDefault(); e.stopImmediatePropagation(); open();
+      var a = e.target.closest && e.target.closest('a.project_link[href="#"], a[data-newsletter]'); if (!a) return;
+      e.preventDefault(); e.stopImmediatePropagation(); open(a.hasAttribute('data-newsletter') ? 'newsletter' : 'courses');
     }, true);
   })();
 
