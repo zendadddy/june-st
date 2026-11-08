@@ -388,6 +388,14 @@
   /* ---------- 0i. Contact form: post to contact.php (the server emails it), show the sent or failed note ---------- */
   document.querySelectorAll('form[data-contact]').forEach(function (form) {
     var wrap = form.parentElement, done = wrap.querySelector('.w-form-done'), fail = wrap.querySelector('.w-form-fail'), btn = form.querySelector('[type=submit]');
+    // the button appears once you start typing, and wakes up only when every field is filled (with a real-looking email)
+    var fields = [].slice.call(form.querySelectorAll('input[required], textarea[required]'));
+    function sync() {
+      var any = fields.some(function (f) { return f.value.trim(); });
+      var full = fields.every(function (f) { return f.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : f.value.trim(); });
+      form.classList.toggle('is-typing', any); if (btn.value !== 'Sending…') btn.disabled = !full;
+    }
+    form.addEventListener('input', sync); sync();
     form.addEventListener('submit', function (e) {
       e.preventDefault(); e.stopImmediatePropagation(); if (!form.reportValidity()) return;
       var label = btn.value; btn.disabled = true; btn.value = 'Sending…'; if (fail) fail.style.display = 'none';
@@ -1056,7 +1064,7 @@
 
   /* ---------- 9. Forms: submit is disabled while every field is empty ---------- */
   document.querySelectorAll('form.form').forEach(function (form) {
-    if (form.closest('.gate-modal')) return; // the password modal has its own handling
+    if (form.closest('.gate-modal') || form.hasAttribute('data-contact')) return; // the password modal and contact form have their own handling
     var fields = Array.prototype.slice.call(form.querySelectorAll('input:not([type=submit]):not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select'));
     var submit = form.querySelector('[type=submit]'); if (!submit || !fields.length) return;
     function update() { var empty = fields.every(function (f) { return !String(f.value || '').trim(); }); submit.disabled = empty; submit.setAttribute('aria-disabled', empty ? 'true' : 'false'); }

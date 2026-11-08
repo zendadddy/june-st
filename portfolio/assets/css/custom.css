@@ -1003,7 +1003,7 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .logo_marquee + .section::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .47 0 0 0 0 .36 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
   background-size: 220px 220px; animation: sand-drift 1.4s steps(6) infinite;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%); }
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 180px, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0, #000 180px, #000 55%, transparent 100%); } /* grain fades in below the torn edge, so there's no hard line */
 .logo_marquee + .section > .container { position: relative; z-index: 1; }
 @keyframes sand-drift { 0% { background-position: 0 0; } 17% { background-position: -40px 25px; } 33% { background-position: 30px -55px; } 50% { background-position: -75px -15px; } 67% { background-position: 55px 70px; } 83% { background-position: -20px 90px; } 100% { background-position: 0 0; } }
 @media (prefers-reduced-motion: reduce) { .logo_marquee + .section::after { animation: none; } }
@@ -1021,3 +1021,8 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 @keyframes cam-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
 @media (prefers-reduced-motion: reduce) { .livecam::before { animation: none; } }
 .footer_tear { max-width: none; } /* the global svg max-width was capping the overhang */
+
+/* contact form: the submit button fades in once you start typing; it stays dimmed until the form is complete */
+form[data-contact] [type=submit] { opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .35s; }
+form[data-contact].is-typing [type=submit] { opacity: 1; visibility: visible; transform: none; transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1); }
+form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
