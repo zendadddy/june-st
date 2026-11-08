@@ -639,3 +639,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Phones: more room under "Let's talk" before the torn edge */
 @media (max-width: 767px) { .page-main > .hero.section:first-child { padding-bottom: 5.5rem; } }
+
+/* Phones: a soft white veil over the sky video so the About text stays legible */
+@media (max-width: 767px) {
+  .about.section::before { content: ""; position: absolute; z-index: 0; inset: 0 0 auto 0; height: min(120svh, 70rem); pointer-events: none;
+    background: linear-gradient(180deg, #ffffff1f 0%, #ffffff4d 30%, #ffffff8c 55%, #ffffffa6 75%, #ffffff00 100%); }
+}
