@@ -708,3 +708,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .footer, .logo_marquee { overflow-x: clip; }
 /* Pages that end in text: room for the footer's torn edge so it never cuts into the last lines */
 .page-main > .section:last-child:not(.u-p-0) { padding-bottom: calc(var(--_layout---section--padding) + 2.75rem); }
+
+/* Phones: breathing room under the photo collage before "Hey, I'm Frank" */
+@media (max-width: 767px) { h3.u-align-center.h2:has(+ .home-intro) { margin-top: 2.25rem; } }
