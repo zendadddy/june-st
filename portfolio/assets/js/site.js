@@ -580,7 +580,7 @@
       sc.classList.add('is-waiting');
       var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { sc.classList.remove('is-waiting'); sc.classList.add('is-in'); io.disconnect(); } }); }, { threshold: .2 });
       io.observe(sc);
-      Array.prototype.forEach.call(wrap.children, function (s, i) { s.style.setProperty('--d', (i * .09).toFixed(2) + 's'); });
+      Array.prototype.forEach.call(wrap.children, function (s, i) { s.style.setProperty('--d', (i * .12).toFixed(2) + 's'); });
     }
     var prev = pag.querySelector('.cc-prev'), next = pag.querySelector('.cc-next');
     function step() { var s = wrap.children[0]; return s ? s.getBoundingClientRect().width + (parseFloat(getComputedStyle(wrap).columnGap) || 0) : sc.clientWidth; }
