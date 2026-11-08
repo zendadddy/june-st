@@ -444,6 +444,14 @@
     place(); window.addEventListener('resize', place); window.addEventListener('load', place); if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   })();
 
+  /* ---------- 0l. Ram Dass palms: a slow zoom as the section scrolls through ---------- */
+  (function () {
+    var img = document.querySelector('.quote-palms'); if (!img || reduce) return;
+    var sec = img.closest('section'), rq = 0;
+    function upd() { rq = 0; var r = sec.getBoundingClientRect(), vh = window.innerHeight; var t = Math.max(0, Math.min(1, (vh - r.top) / (vh + r.height))); img.style.scale = (1.04 + t * .16).toFixed(4); }
+    window.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(upd); }, { passive: true }); upd();
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
