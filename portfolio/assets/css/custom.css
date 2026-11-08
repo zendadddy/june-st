@@ -901,5 +901,8 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 .hero_glow-sun { background: radial-gradient(circle, #f2c98a 0%, #f3cf98 30%, #f6dcb6 48%, #f9ead6 58%, rgba(251,250,247,0) 68%); }
 @media (max-width: 767px) { .hero_glow-sun { width: 118vw; } }
 
-/* desktop and tablet: the same dotted rule opens the courses section */
-@media (min-width: 768px) { .section.cc-courses > .container > .row > .col-lg-11 { border-top: 2px dotted #2b292524; padding-top: clamp(3.5rem, 5vw, 5rem); } }
+
+/* Ram Dass quote sits up in the open blue, above the palm crowns */
+.section.quote-ramdass { justify-content: flex-start; }
+.section.quote-ramdass > .container { padding-top: clamp(4.5rem, 8vw, 8rem); }
+.quote-palms { object-position: 50% 0%; }
