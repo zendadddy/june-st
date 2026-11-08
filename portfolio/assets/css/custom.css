@@ -1083,3 +1083,9 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .livecam_close:hover { transform: scale(1.06); background: #00000080; }
 .livecam_close:focus { outline: none; }
 .livecam_close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* an invisible layer over the whole feed: the pointer only ever touches this, so YouTube never sees a hover and never shows its pause button */
+.livecam_shield { position: absolute; inset: 0; z-index: 2; background: transparent; opacity: 0; cursor: default; }
+.livecam.is-live .livecam_shield { cursor: zoom-in; }
+.livecam.is-full .livecam_shield { cursor: zoom-out; }
+.livecam .livecam_screen, .livecam.is-live .livecam_screen, .livecam .livecam_screen iframe { pointer-events: none !important; }

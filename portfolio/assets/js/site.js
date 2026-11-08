@@ -893,7 +893,7 @@
       try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}
       if (on) closeBtn.focus({ preventScroll: true, focusVisible: false });
     }
-    screen.addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
+    cam.querySelector('.livecam_shield').addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
     closeBtn.addEventListener('click', function (e) { e.stopPropagation(); full(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && cam.classList.contains('is-full')) full(false); });
     // Load YouTube's player API. If it never arrives (blocked network), the photo stays and the arrows stay hidden.
