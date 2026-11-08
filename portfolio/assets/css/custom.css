@@ -433,3 +433,6 @@ p, li { text-wrap: pretty; }
   .row.w-dyn-items .project .eyebrow { font-size: .875rem; }
   .row.w-dyn-items .project_logo { height: 1.9rem; margin: -.7rem 0 -.55rem; }
 }
+
+/* Nav: the current page's link is greyed out and not clickable, on desktop and in the mobile menu */
+.nav_list .nav_link.w--current { opacity: .45; pointer-events: none; cursor: default; }

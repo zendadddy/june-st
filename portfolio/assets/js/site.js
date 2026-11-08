@@ -221,6 +221,14 @@
     window.addEventListener('pageshow', function () { set(false); });
   })();
 
+  /* Nav: the link to the page you're on is greyed out and inert (the Frank Bach wordmark and the sun always stay live) */
+  document.querySelectorAll('.nav_list .nav_link.w--current').forEach(function (a) {
+    var here = location.pathname.replace(/index\.html$/, ''), to = new URL(a.href, location.href).pathname.replace(/index\.html$/, '');
+    if (to !== here) { a.classList.remove('w--current'); a.removeAttribute('aria-current'); return; } // e.g. 'Projects' while reading a project: still a way back
+    a.setAttribute('aria-current', 'page'); a.setAttribute('aria-disabled', 'true'); a.setAttribute('tabindex', '-1');
+    a.addEventListener('click', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
+  });
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
