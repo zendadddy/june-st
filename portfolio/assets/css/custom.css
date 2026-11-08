@@ -61,7 +61,7 @@
 
 /* Homepage hero photo: stage shot, cropped to keep the speaker in view, with a soft wash for the white headline */
 .hero.cc-photo { color: var(--_colors---all--white); background: #0b0f2a; }
-.hero.cc-photo .hero_photo { object-fit: cover; object-position: 62% 55%; }
+.hero.cc-photo .hero_photo { object-fit: cover; object-position: 50% 55%; }
 @media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 50% 55%; } } /* phones: the hall framed dead centre, aisle under the headline */
 .hero.cc-photo::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #0a0d2899 0%, #0a0d2833 38%, #0a0d2833 62%, #0a0d2880 100%); }
@@ -621,3 +621,10 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Footer: the slashes between links get breathing room either side */
 .footer_list-item:not(:last-child)::after { margin: 0 .55em; }
+
+/* Homepage hero, centred for good: the headline column is plain block layout (no flex sizing for Safari to stretch),
+   centred in the container, with the headline and button centred inside it */
+.hero .container > .row { display: block; margin-left: 0; margin-right: 0; }
+.hero .container > .row > .col { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding-left: 0; padding-right: 0; }
+.hero .u-vflex-center-top { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; }
+.hero h1 { text-align: center; margin-left: auto; margin-right: auto; }
