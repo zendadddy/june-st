@@ -404,3 +404,22 @@ p, li { text-wrap: pretty; }
   .footer_dd-label { position: relative; }
   .footer_dd-label::before { content: ""; position: absolute; top: -14px; bottom: -14px; left: -8px; right: -8px; }
 }
+
+/* ---- Mobile menu (site.js 0c) ---- */
+@media (max-width: 767px) {
+  .nav_menu { position: relative; z-index: 2; cursor: pointer; padding: 10px 0 10px 16px; margin: -10px 0 -10px -16px; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .nav_layout > .nav_link { position: relative; z-index: 2; }
+  .navigation .nav_list { display: flex; z-index: 1; flex-direction: column; justify-content: center; align-items: flex-start; gap: .25rem;
+    padding: 6rem var(--_layout---columns--size, 1rem) 3rem; background-color: var(--background--primary);
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .45s; }
+  .navigation.is-menu-open .nav_list { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .45s cubic-bezier(.22, 1, .36, 1), visibility 0s; }
+  .navigation .nav_list .nav_link { font-size: clamp(2.5rem, 12vw, 3.5rem); line-height: 1.15; letter-spacing: -.02em; color: var(--_colors---all--black, #1d1d1b); padding: .2rem 0;
+    opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .6s cubic-bezier(.22, 1, .36, 1); }
+  .navigation.is-menu-open .nav_list .nav_link { opacity: 1; transform: none; transition-delay: calc(.08s + var(--i, 0) * .06s); }
+  .navigation .nav_list .nav_link.w--current { opacity: .45; }
+  .navigation.is-menu-open .nav_list .nav_link.w--current { opacity: .45; }
+  .navigation.is-menu-open, .navigation.is-menu-open .nav_link, .navigation.is-menu-open .nav_menu { color: var(--_colors---all--black, #1d1d1b); }
+  html.has-menu .nav_sun { color: var(--_colors---all--black, #1d1d1b); z-index: 12; }
+  html.has-menu, html.has-menu body { overflow: hidden; }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) { .navigation .nav_list, .navigation .nav_list .nav_link { transition: none !important; transform: none !important; } }

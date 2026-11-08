@@ -197,6 +197,30 @@
     dd.addEventListener('pointerenter', keep, { once: true }); dd.addEventListener('focusin', keep, { once: true }); dd.addEventListener('click', keep, { once: true });
   });
 
+  /* ---------- 0c. Mobile menu ----------
+     Below 768px the nav links live in .nav_list, a full-screen panel; "Menu" toggles it. */
+  (function () {
+    var nav = document.querySelector('.navigation'), btn = nav && nav.querySelector('.nav_menu'), list = nav && nav.querySelector('.nav_list');
+    if (!btn || !list) return;
+    var label = btn.querySelector('div') || btn, root = document.documentElement;
+    list.id = list.id || 'site-menu';
+    btn.setAttribute('role', 'button'); btn.setAttribute('tabindex', '0'); btn.setAttribute('aria-controls', list.id); btn.setAttribute('aria-expanded', 'false');
+    [].forEach.call(list.querySelectorAll('a'), function (a, i) { a.style.setProperty('--i', i); });
+    function set(open) {
+      root.classList.toggle('has-menu', open); nav.classList.toggle('is-menu-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false'); label.textContent = open ? 'Close' : 'Menu';
+      try { if (typeof lenis !== 'undefined') { if (open && lenis.stop) lenis.stop(); if (!open && lenis.start) lenis.start(); } } catch (e) {}
+      if (open) { var first = list.querySelector('a'); if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 60); }
+    }
+    function toggle() { set(!root.classList.contains('has-menu')); }
+    btn.addEventListener('click', toggle);
+    btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && root.classList.contains('has-menu')) { set(false); btn.focus(); } });
+    list.addEventListener('click', function (e) { if (e.target.closest('a')) set(false); }); // the page wave takes over from here
+    window.addEventListener('resize', function () { if (window.innerWidth >= 768 && root.classList.contains('has-menu')) set(false); });
+    window.addEventListener('pageshow', function () { set(false); });
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
