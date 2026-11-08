@@ -189,7 +189,8 @@
       var c = COPY[kind] || COPY.courses;
       modal.querySelector('#soon-title').innerHTML = c[0]; modal.querySelector('.soon-modal_text').textContent = c[1];
       var icon = modal.querySelector('.soon-modal_icon'); icon.hidden = kind !== 'newsletter';
-      if (!icon.hidden && !icon.getAttribute('src')) icon.src = new URL('assets/newsletter-face.png', siteRoot).href;
+      // find the assets folder from the page's own favicon link (works wherever the site is hosted, at any page depth)
+      if (!icon.hidden && !icon.getAttribute('src')) { var fav = document.querySelector('link[rel~="icon"]'); icon.src = fav ? fav.href.replace(/[^/]*$/, 'newsletter-face.png') : new URL('assets/newsletter-face.png', siteRoot).href; }
       lastFocus = document.activeElement;
       modal.hidden = false; document.documentElement.classList.add('has-gate');
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
