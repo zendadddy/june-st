@@ -200,7 +200,9 @@ a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-b
 .project .project_arrow { display: none; }
 
 /* Speaking & awards: rows that are real links get a small up-right arrow */
-a.accolade_link .col-lg-4 .eyebrow::after { content: ""; display: inline-block; vertical-align: .05em; margin-left: .4rem; width: .6rem; height: .6rem; background: currentColor;
+a.accolade_link .col-lg-8 { display: flex; align-items: center; gap: .4rem; }
+a.accolade_link .col-lg-8 > .eyebrow { min-width: 0; }
+a.accolade_link .col-lg-8::after { content: ""; flex: none; display: inline-block; width: .6rem; height: .6rem; background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 9L9 3M4 3h5v5' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 9L9 3M4 3h5v5' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") center / contain no-repeat; }
 
