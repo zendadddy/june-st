@@ -172,6 +172,10 @@ a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-b
 .nav_link:hover, .footer_link:hover, .linktree-btn:hover, a:not([class]):hover { top: -2.5px; }
 .footer_link:hover, .linktree-btn:hover { text-shadow: 0 3px 8px #00000024; }
 
+/* Larger, steady hover target: an invisible pad around lifting links (taller underneath, so the 2.5px lift never slips out from under the cursor) */
+.nav_link::before, .footer_link::before, .linktree-btn::before, a:not([class])::before, .see-all::before {
+  content: ""; position: absolute; left: -6px; right: -6px; top: -8px; bottom: -12px; }
+
 /* Project cards: the whole card, photo included, is the link */
 .project .project_link { z-index: 3; }
 .project .project_arrow { display: none; }
