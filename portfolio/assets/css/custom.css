@@ -801,7 +801,7 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 @media (max-width: 767px) { .accolade_link .col-lg-8 .eyebrow { font-size: 1.15em; line-height: 1.08 !important; } a.accolade_link .col-lg-8 { align-items: flex-start; } a.accolade_link .col-lg-8::after { margin-top: .35em; } }
 
 /* homepage hero: the "Let's talk" button is hidden for now (delete this rule to bring it back) */
-.hero.cc-glow a.btn[href="contact.html"] { display: none; }
+.hero.cc-glow a.btn { display: none; } /* "Let's talk" hidden for now */
 
 /* glow: its box ends below the logos; fade the bottom out so there is no hard line, and on phones the torn edge tucks up close */
 .hero.cc-glow .hero_glow { -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 100%); mask-image: linear-gradient(180deg, #000 55%, transparent 100%); }
