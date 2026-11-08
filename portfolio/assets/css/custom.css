@@ -1198,9 +1198,3 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .pg_credit, .pg_card.cc-wide .pg_credit { font-size: var(--cap, 3.3cqh); }
 @media (min-width: 768px) { .logo_marquee .logo_row { margin-left: 0; padding-left: 12vw; } } /* Anthropic starts just inside the faded edge */
 
-/* project thumbnails: a little lock fades in over the image on hover (only while locked) */
-.project_lock { position: absolute; left: 50%; top: 50%; z-index: 3; width: 3.25rem; height: 3.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  color: #fff; background: #0000004d; -webkit-backdrop-filter: blur(.5rem); backdrop-filter: blur(.5rem); pointer-events: none;
-  opacity: 0; transform: translate(-50%, -50%) scale(.9); transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
-.project_lock svg { width: 45%; height: 45%; }
-@media (hover: hover) { .project:hover .project_lock { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
