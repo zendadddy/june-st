@@ -806,6 +806,16 @@
     if (im.complete && im.naturalWidth) done(); else { im.addEventListener('load', done, { once: true }); im.addEventListener('error', done, { once: true }); }
   });
 
+  /* ---------- 5b. Warm up the Contact cams from other pages: once the page is idle, open the YouTube connections and fetch its player script and the contact page ---------- */
+  if (!document.querySelector('[data-livecam]')) {
+    var warm = function () {
+      ['https://www.youtube.com', 'https://www.youtube-nocookie.com', 'https://i.ytimg.com', 'https://www.google.com'].forEach(function (h) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = h; l.crossOrigin = ''; document.head.appendChild(l); });
+      [['https://www.youtube.com/iframe_api', 'script'], [new URL('contact.html', siteRoot).href, 'document']].forEach(function (u) { var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u[0]; l.as = u[1]; document.head.appendChild(l); });
+    };
+    var idle = window.requestIdleCallback || function (f) { setTimeout(f, 1500); };
+    if (document.readyState === 'complete') idle(warm); else window.addEventListener('load', function () { idle(warm); });
+  }
+
   /* ---------- 6. Contact: live LA cams over the mirror photo ----------
      Only cams that are actually streaming are shown: a cam that errors, ends, or hasn't started playing within 8s is skipped.
      The arrows step through the live cams; the photo shows only until the first cam is up (or if none are). */
@@ -851,7 +861,7 @@
     window.onYouTubeIframeAPIReady = function () {
       if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(null);
       var go = function () { if (started) return; started = true; dir = 1; show(0); };
-      if ('IntersectionObserver' in window) { var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { seen.disconnect(); go(); } }, { threshold: .35 }); seen.observe(cam); } else go();
+      go(); // start right away (muted, hidden behind the skeleton), so the feed is already playing by the time you scroll to it
     };
     var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
   }
