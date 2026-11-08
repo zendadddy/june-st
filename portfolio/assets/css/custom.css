@@ -711,3 +711,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Phones: breathing room under the photo collage before "Hey, I'm Frank" */
 @media (max-width: 767px) { h3.u-align-center.h2:has(+ .home-intro) { margin-top: 2.25rem; } }
+
+/* Private work popup: a little "Unless…" leading into the password field */
+.gate-unless { align-self: flex-start; margin: 0 0 -.5rem; color: var(--_colors---all--black); opacity: .55; font-style: italic; }
