@@ -311,10 +311,9 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}
 
 
-/* Carousel arrows: solid black pill, white arrows */
-.testimonial_pagination.cc-top { background: #000; border-color: #000; }
-.testimonial_pagination.cc-top .testimonial_controls { color: #fff; background: transparent; }
-.testimonial_pagination.cc-top .testimonial_controls:hover { background: #ffffff1f; }
+/* Carousel arrows: outlined pill; hovering an arrow fills its circle black with a white arrow */
+.testimonial_pagination.cc-top .testimonial_controls { transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, background-color .3s ease, color .3s ease; }
+.testimonial_pagination.cc-top .testimonial_controls:hover { background-color: #000; color: #fff; }
 
 /* Vertical section eyebrows a touch quieter */
 .eyebrow.cc-marker { opacity: .8; }
