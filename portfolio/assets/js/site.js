@@ -467,6 +467,18 @@
     f.insertBefore(clip, bgs[0]); bgs.forEach(function (im) { clip.appendChild(im); });
   })();
 
+  /* ---------- 0n. Project thumbnails: a small lock appears on hover while the work is still locked ---------- */
+  (function () {
+    var open = false; try { open = +localStorage.getItem('fb-unlock') > Date.now(); } catch (e) {}
+    if (open) return;
+    var ICON = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.5"/></svg>';
+    document.querySelectorAll('.project').forEach(function (card) {
+      var a = card.querySelector('a.project_link'), box = card.querySelector('.u-p-relative.u-overflow-hidden');
+      if (!a || !box || !/\/projects\/[a-z0-9-]+/.test(a.getAttribute('href') || '')) return;
+      var lock = document.createElement('span'); lock.className = 'project_lock'; lock.innerHTML = ICON; box.appendChild(lock);
+    });
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
