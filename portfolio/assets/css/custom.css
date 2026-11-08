@@ -462,3 +462,6 @@ p, li { text-wrap: pretty; }
   .navigation.is-menu-leaving .nav_list .nav_link { opacity: 0; transform: translateY(-10px); transition: opacity .25s ease, transform .3s ease; transition-delay: 0s; }
   .navigation.is-menu-leaving .nav_menu { opacity: 0; transition: opacity .2s ease; }
 }
+
+/* Nav: name, links and Menu sit level with the centre of the sun */
+.nav_layout { padding-top: .825rem; }
