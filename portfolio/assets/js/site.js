@@ -871,7 +871,10 @@
         es.forEach(function (e) { if (!e.isIntersecting) return; var s = shows.filter(function (x) { return x.card === e.target; })[0]; io.unobserve(e.target); if (s) { queue.push(s); next(); } });
       }, { threshold: .6 });
       var start = function () { shows.forEach(function (s) { io.observe(s.card); }); };
-      if (document.readyState === 'complete') setTimeout(start, 900); else window.addEventListener('load', function () { setTimeout(start, 900); }); // after the page has arrived
+      // nothing glitches until the visitor starts scrolling (a real move, not the page settling)
+      var y0 = window.scrollY, begun = false;
+      var onScroll = function () { if (begun || Math.abs(window.scrollY - y0) < 24) return; begun = true; window.removeEventListener('scroll', onScroll); start(); };
+      window.addEventListener('scroll', onScroll, { passive: true });
     }
   })();
 
