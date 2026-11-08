@@ -321,3 +321,6 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 
 /* About: decorative clouds and illustration sit over the bio, so let clicks and hovers pass through to its links */
 .about_clouds, .about_illustration { pointer-events: none; }
+
+/* Courses "Coming soon" modal (site.js 0b): same card as the password gate */
+.soon-modal_signup:empty { display: none; }

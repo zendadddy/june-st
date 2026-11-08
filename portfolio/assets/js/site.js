@@ -102,6 +102,51 @@
     return { open: open, close: close, unlocked: unlocked };
   })();
 
+  /* ---------- 0b. Courses "Coming soon" modal ----------
+     Course cards (a.project_link with href="#") open a modal styled like the password gate.
+     The mailing list form goes in .soon-modal_signup. */
+  (function () {
+    var modal = null, lastFocus = null;
+    function build() {
+      modal = document.createElement('div');
+      modal.className = 'gate-modal soon-modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'soon-title'); modal.hidden = true;
+      modal.innerHTML = '<div class="gate-modal_backdrop" data-soon-close></div>' +
+        '<div class="gate-modal_card">' +
+          '<button type="button" class="gate-modal_close" aria-label="Close" data-soon-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
+          '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title">Coming <span class="h2 cc-alt">soon</span></h2>' +
+          '<p class="u-color-secondary">These courses are all on the way. Join my mailing list and I’ll let you know when they’re live.</p></div>' +
+          '<div class="soon-modal_signup"></div>' +
+        '</div>';
+      document.body.appendChild(modal);
+      modal.querySelectorAll('[data-soon-close]').forEach(function (el) { el.addEventListener('click', close); });
+      modal.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { close(); return; }
+        if (e.key !== 'Tab') return;
+        var f = modal.querySelectorAll('button, input, a[href], select, textarea'), first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+    }
+    function open() {
+      if (!modal) build();
+      lastFocus = document.activeElement;
+      modal.hidden = false; document.documentElement.classList.add('has-gate');
+      try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
+      requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { var i = modal.querySelector('.soon-modal_signup input[type=email], .soon-modal_signup input:not([type=hidden])'); (i || modal.querySelector('.gate-modal_close')).focus(); }, 60); });
+    }
+    function close() {
+      if (!modal || modal.hidden) return;
+      modal.classList.remove('is-open'); document.documentElement.classList.remove('has-gate');
+      try { if (typeof lenis !== 'undefined' && lenis.start) lenis.start(); } catch (e) {}
+      setTimeout(function () { modal.hidden = true; }, 450);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    document.addEventListener('click', function (e) {
+      if (e.button !== 0) return;
+      var a = e.target.closest && e.target.closest('a.project_link[href="#"]'); if (!a) return;
+      e.preventDefault(); e.stopImmediatePropagation(); open();
+    }, true);
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
