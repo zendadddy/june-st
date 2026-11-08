@@ -12,7 +12,7 @@ if ($name === '' || !$email || $msg === '') { http_response_code(422); echo '{"o
 $name1 = str_replace("\n", ' ', $name);
 $subject = '=?UTF-8?B?' . base64_encode("New message from $name1 via francoisbach.com") . '?=';
 $body = "From: $name1 <$email>\n\n$msg\n";
-$headers = "From: francoisbach.com <no-reply@francoisbach.com>\r\nReply-To: $email\r\nContent-Type: text/plain; charset=UTF-8\r\n";
-$ok = mail($to, $subject, $body, $headers, '-fno-reply@francoisbach.com');
+$headers = "From: Contact form <f@francoisbach.com>\r\nReply-To: $email\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+$ok = mail($to, $subject, $body, $headers, '-ff@francoisbach.com');
 if (!$ok) http_response_code(500);
 echo json_encode(['ok' => $ok]);
