@@ -1059,3 +1059,6 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 
 /* playground: square photos get square cards instead of being cropped to portrait */
 .pg_card.cc-square { aspect-ratio: 1; }
+
+/* cam tag: top left, just below the torn top edge */
+.livecam .livecam_note { top: clamp(4rem, 7vw, 6rem); bottom: auto; }
