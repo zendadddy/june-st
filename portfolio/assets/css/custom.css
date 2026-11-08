@@ -1098,3 +1098,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 @media (min-width: 992px) { .page-main > .hero.section.cc-glow { padding-top: max(212px, 30vh); padding-bottom: max(130px, 25vh); } }
 .w-form-done .form-done_title .form-done_text { display: inline; } /* sent note on one line */
 .w-form-done { text-align: center; } /* sent note centred */
+
+/* cam reveal: the feed stays hidden behind the skeleton while YouTube starts up, then settles in with a soft fade and a slight expand */
+.livecam_screen { transform: scale(.97); transition: opacity 1.2s ease, transform 1.6s cubic-bezier(.22, 1, .36, 1); }
+.livecam.is-live .livecam_screen { transform: none; }
