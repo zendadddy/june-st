@@ -57,26 +57,4 @@
     filter: "blur(0.1rem)"
   }, "<+=0.3");
 </script><!-- Back to top: fixed circle, "TOP" repeated along the ring, rotates with scroll -->
-<a href="#" class="totop" aria-label="Back to top" data-totop>
-  <svg class="totop_arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
-</a>
-<script>
-(function(){
-  var el=document.querySelector('[data-totop]'); if(!el) return;
-  var ring=el.querySelector('.totop_ring'); var ticking=false;
-  function update(){
-    var y=window.scrollY||document.documentElement.scrollTop||0;
-    if(ring)ring.style.transform='rotate('+(y/5)+'deg)';
-    el.classList.toggle('is-visible', y>window.innerHeight*1.5);
-    ticking=false;
-  }
-  window.addEventListener('scroll',function(){ if(!ticking){ requestAnimationFrame(update); ticking=true; } },{passive:true});
-  update();
-  el.addEventListener('click',function(e){
-    e.preventDefault();
-    if(typeof lenis!=='undefined' && lenis && lenis.scrollTo){ lenis.scrollTo(0,{duration:1.4}); }
-    else { window.scrollTo({top:0,behavior:'smooth'}); }
-  });
-})();
-</script>
 <script src="assets/js/site.js"></script></body></html>
