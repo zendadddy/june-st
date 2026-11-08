@@ -601,3 +601,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .swiper-slide.cc-project .project_logo { height: 1.35rem; margin: -.45rem 0 -.4rem; }
   .swiper-slide.cc-project .project .project_brand + h4 { margin-top: 0; }
 }
+
+/* Homepage "Take a pause": the rock photo is framed on the peak, the two people and the sky */
+.pause-photo { width: 100%; object-fit: cover; object-position: 50% 8%; }
+@media (max-width: 767px) { .pause-photo { object-position: 50% 4%; } }
