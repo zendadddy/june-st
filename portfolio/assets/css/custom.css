@@ -124,19 +124,19 @@ img.footer_bg { transition: opacity 1.2s ease; }
 img.footer_bg:not(.is-loaded) { opacity: 0 !important; }
 
 /* Rough paper edge along the top of the home logo bar, same torn edge as the quote section (clip-bg). */
-.logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: 1.25rem; }
+.logo_marquee { position: relative; z-index: 2; background: var(--background--primary); padding-top: .25rem; }
 .logo_marquee::before {
-  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 5.5vw); pointer-events: none;
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; pointer-events: none;
   background: var(--background--primary);
-  -webkit-mask-image: url("../logo-arc-clip.svg"); mask-image: url("../logo-arc-clip.svg");
+  -webkit-mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg"); mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg");
   -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
 /* light arc: a warm glow hugging the curved edge, brightest at the crest, breathing slowly */
 .logo_marquee::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: calc(1rem + 4.5vw); z-index: -1; pointer-events: none; transform: translateY(-3px);
-  -webkit-mask-image: url("../logo-arc-clip.svg"); mask-image: url("../logo-arc-clip.svg");
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.75rem; z-index: -1; pointer-events: none; transform: translateY(-3px);
+  -webkit-mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg"); mask-image: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg");
   -webkit-mask-size: 100% auto; mask-size: 100% auto; -webkit-mask-position: center top; mask-position: center top; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  background: radial-gradient(ellipse 50% 220% at 50% 0%, #fffaf0 0%, #ffe4bce0 45%, #ffe4bc00 100%);
+  background: radial-gradient(ellipse 50% 260% at 50% 0%, #fffaf0 0%, #ffe4bce0 45%, #ffe4bc00 100%);
   animation: logo-arc 9s ease-in-out infinite;
 }
 .logo_marquee > .container::before {
@@ -308,9 +308,6 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   .u-theme-dark .totop{color:var(--_colors---all--black)}
   @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}
 
-/* Logos ride the rim of a wheel (positions set in site.js); room below for the curve, and logos sink out of view under the bar's bottom edge */
-.logo_marquee { padding-bottom: calc(1.5rem + 6vw); clip-path: inset(-50vh 0 0 0); }
-.logo_marquee .logo_img { will-change: transform, opacity; transform-origin: 50% 50%; }
 
 /* Carousel arrows: solid black pill, white arrows */
 .testimonial_pagination.cc-top { background: #000; border-color: #000; }
