@@ -634,3 +634,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 767px) { .about_paper, .about_head, .about_garage, .about_illustration { display: none !important; } }
 /* Carousel arrows about 10% smaller, outline circle included: the whole control scales from its right edge */
 @media (max-width: 767px) { .testimonial_pagination.cc-top { transform: scale(.9); transform-origin: 100% 50%; } }
+
+/* Phones: no 16:9 ratio on the homepage hero. With a height set as well, iPhone Safari sized the hero from its height
+   (about 680px wide on a 390px screen), which pushed the headline and button off to the right. */
+@media (max-width: 767px) { .hero.section { aspect-ratio: auto !important; width: 100%; max-width: 100vw; min-width: 0; } }
