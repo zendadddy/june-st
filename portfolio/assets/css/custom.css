@@ -775,3 +775,6 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 .logo_marquee + .section::before { content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: 2.5rem; background: #f6f2ea; pointer-events: none;
   -webkit-mask: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg") center top / max(100%, 1100px) auto no-repeat;
           mask: url("../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg") center top / max(100%, 1100px) auto no-repeat; }
+
+/* testimonials without a logo: the company name sits where the logo would, quietly */
+.tm_company { font-size: 1.35rem; line-height: 1; font-weight: 600; letter-spacing: .01em; opacity: .8; }
