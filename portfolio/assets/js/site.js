@@ -843,7 +843,7 @@
       if (!touch) {
         card.addEventListener('mouseenter', glitchOn);
         card.addEventListener('mouseleave', function () { cv.classList.remove('is-on'); });
-      } else shows.push({ card: card, img: img, tries: 0, on: glitchOn, off: function () { cv.classList.remove('is-on'); } });
+      } else if (!card.closest('.swiper')) shows.push({ card: card, img: img, tries: 0, on: glitchOn, off: function () { cv.classList.remove('is-on'); } });
     });
     // touch: a queue so only one card glitches at a time; each card plays once, as it comes into view
     if (touch && shows.length && 'IntersectionObserver' in window) {
