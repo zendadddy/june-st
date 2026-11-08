@@ -373,6 +373,18 @@
     });
   });
 
+  /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
+  (function () {
+    var f = document.querySelector('footer.footer'); if (!f) return;
+    var fav = document.querySelector('link[rel~="icon"]'), file = '68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg';
+    var url = fav ? fav.href.replace(/[^/]*$/, file) : new URL('assets/' + file, siteRoot).href;
+    fetch(url).then(function (r) { return r.text(); }).then(function (t) {
+      var m = t.match(/ d="([^"]+)"/); if (!m) return;
+      f.insertAdjacentHTML('afterbegin', '<svg class="footer_tear" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="' + m[1] + '" fill="#534d6a"/></svg>');
+      f.classList.add('has-tear');
+    }).catch(function () {});
+  })();
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);

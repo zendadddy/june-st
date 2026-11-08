@@ -712,3 +712,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* Phones: breathing room under the photo collage before "Hey, I'm Frank" */
 @media (max-width: 767px) { h3.u-align-center.h2:has(+ .home-intro) { margin-top: 2.25rem; } }
 
+
+/* Footer torn edge as an inline SVG (site.js 0g); the mask version stays as a fallback until it loads */
+.footer_tear { position: absolute; z-index: 2; left: -2px; bottom: calc(100% - 1px); width: calc(100% + 4px); aspect-ratio: 1440 / 56; height: auto; display: block; pointer-events: none; overflow: hidden; }
+.footer.has-tear::before { display: none; }
