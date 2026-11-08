@@ -311,9 +311,19 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
   @media (prefers-reduced-motion:reduce){.totop_ring{transform:none!important}}
 
 
-/* Carousel arrows: outlined pill; hovering an arrow fills its circle black with a white arrow */
-.testimonial_pagination.cc-top .testimonial_controls { transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, background-color .3s ease, color .3s ease; }
-.testimonial_pagination.cc-top .testimonial_controls:hover { background-color: #000; color: #fff; }
+/* Carousel arrows: outlined pill; one black "ink" circle flows between the arrows on hover (site.js), arrow turns white */
+.testimonial_pagination.cc-top { position: relative; isolation: isolate; }
+.testimonial_pagination.cc-top .testimonial_controls { position: relative; z-index: 1; transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, color .35s ease; }
+.testimonial_pagination.cc-top .testimonial_controls:hover { color: #fff; }
+.arrow-ink { position: absolute; z-index: 0; top: var(--_spacing---rems--0-5rem); bottom: var(--_spacing---rems--0-5rem); left: 0; right: 0; border-radius: 99px; background: #000; pointer-events: none;
+  opacity: 0; transform: scale(.4);
+  transition-property: left, right, opacity, transform; transition-duration: .5s, .5s, .3s, .4s;
+  transition-timing-function: cubic-bezier(.65, 0, .25, 1), cubic-bezier(.65, 0, .25, 1), ease, cubic-bezier(.22, 1, .36, 1);
+  transition-delay: 0s, .1s, 0s, 0s; } /* moving left: the left edge leads */
+.testimonial_pagination.cc-top.ink-right .arrow-ink { transition-delay: .1s, 0s, 0s, 0s; } /* moving right: the right edge leads */
+.testimonial_pagination.cc-top.ink-on .arrow-ink { opacity: 1; transform: none; }
+.testimonial_pagination.cc-top.ink-jump .arrow-ink { transition: none; }
+@media (prefers-reduced-motion: reduce) { .arrow-ink { transition: opacity .2s ease !important; } }
 
 /* Vertical section eyebrows a touch quieter */
 .eyebrow.cc-marker { opacity: .8; }
@@ -326,3 +336,7 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 .soon-modal_msg { margin: 0; align-self: flex-start; color: #c2410c; }
 .soon-modal_msg.is-ok { color: var(--_colors---all--black); font-family: inherit; font-size: 1.125rem; letter-spacing: normal; text-transform: none; line-height: 1.5; }
 .soon-modal_form.is-done .input-group, .soon-modal_form.is-done input[type=submit] { display: none; }
+
+/* Newsletter modal: face icon above the title */
+.soon-modal .gate-modal_card .soon-modal_icon { display: block; flex: none; width: clamp(4rem, 8vw, 5rem); height: auto; max-width: none; aspect-ratio: 258 / 296; object-fit: contain; margin: -.5rem 0 -.25rem -.25rem; }
+.soon-modal_icon[hidden] { display: none; }

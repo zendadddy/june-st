@@ -123,6 +123,7 @@
       modal.innerHTML = '<div class="gate-modal_backdrop" data-soon-close></div>' +
         '<div class="gate-modal_card">' +
           '<button type="button" class="gate-modal_close" aria-label="Close" data-soon-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
+          '<img class="soon-modal_icon" alt="" width="258" height="296" hidden>' +
           '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title"></h2><p class="u-color-secondary soon-modal_text"></p></div>' +
           '<div class="soon-modal_signup"><form class="form u-vflex-right-top gate-modal_form soon-modal_form" novalidate>' +
             '<div class="input-group u-w-100"><label for="soon-email" class="u-sr-only">Email address</label><input class="input w-input" type="email" id="soon-email" name="EMAIL" placeholder="Email address" autocomplete="email" required></div>' +
@@ -169,6 +170,8 @@
       if (!modal) build();
       var c = COPY[kind] || COPY.courses;
       modal.querySelector('#soon-title').innerHTML = c[0]; modal.querySelector('.soon-modal_text').textContent = c[1];
+      var icon = modal.querySelector('.soon-modal_icon'); icon.hidden = kind !== 'newsletter';
+      if (!icon.hidden && !icon.getAttribute('src')) icon.src = new URL('assets/newsletter-face.png', siteRoot).href;
       lastFocus = document.activeElement;
       modal.hidden = false; document.documentElement.classList.add('has-gate');
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
@@ -664,6 +667,19 @@
     sc.parentElement.insertBefore(head, title || sc);
     if (title) head.appendChild(title);
     head.appendChild(pag); pag.classList.add('cc-top');
+    // one black "ink" circle that flows between the arrows on hover: the leading edge moves first, the trailing edge catches up
+    (function () {
+      var ink = document.createElement('span'); ink.className = 'arrow-ink'; ink.setAttribute('aria-hidden', 'true'); pag.insertBefore(ink, pag.firstChild);
+      var side = null;
+      function to(ctl) {
+        var l = ctl.offsetLeft, r = pag.clientWidth - l - ctl.offsetWidth, s = ctl.classList.contains('cc-next') ? 'next' : 'prev';
+        if (side && side !== s) pag.classList.toggle('ink-right', s === 'next'); else if (!side) { pag.classList.add('ink-jump'); void ink.offsetWidth; }
+        ink.style.left = l + 'px'; ink.style.right = r + 'px'; side = s;
+        pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
+      }
+      pag.querySelectorAll('.testimonial_controls').forEach(function (c) { c.addEventListener('pointerenter', function () { if (!c.classList.contains('is-disabled')) to(c); }); });
+      pag.addEventListener('pointerleave', function () { pag.classList.remove('ink-on'); side = null; });
+    })();
     if (seeAll) head.appendChild(seeAll);
     // cards fade in from the right the first time the carousel scrolls into view
     if (!reduce && 'IntersectionObserver' in window) {
