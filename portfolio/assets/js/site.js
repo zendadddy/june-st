@@ -358,6 +358,8 @@
   document.querySelectorAll('[data-tm]').forEach(function (tm) {
     var slides = [].slice.call(tm.querySelectorAll('.tm_slide')), i = 0;
     var pag = tm.parentElement.parentElement.querySelector('.testimonial_pagination'); if (!pag || slides.length < 2) return;
+    // arrows sit on either side of the quotes, so they stay put whatever the quote's length
+    var wrap = document.createElement('div'); wrap.className = 'tm-wrap'; tm.parentNode.insertBefore(wrap, tm); wrap.appendChild(tm); wrap.appendChild(pag); pag.classList.add('tm-arrows');
     function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
