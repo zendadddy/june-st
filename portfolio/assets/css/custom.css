@@ -506,3 +506,10 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   .footer_center-time { height: 250px; transform: scale(.84); } /* the clock's stacked labels keep their spacing inside the smaller ring */
   .footer_logo { width: 78%; }
 }
+
+/* Footer, pared back: no ray sun, LA time / dusk clock, coordinates or copyright; just the logo, links and email */
+.footer .footer_center { display: none; }
+.footer { min-height: 0; padding-top: clamp(4.5rem, 9vw, 9rem); }
+.footer .footer_logo { margin-top: 0; }
+.footer_colophon > div:first-child { visibility: hidden; } /* copyright: keeps its grid slot on desktop so the links stay centred */
+@media (max-width: 991px) { .footer_colophon > div:first-child { display: none; } }

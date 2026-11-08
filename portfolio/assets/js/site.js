@@ -369,6 +369,12 @@
   document.addEventListener('click', function (e) {
     if (reduce || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target.closest('a'); if (!a || !isInternal(a)) return;
+    // a link to the page you're already on (Frank Bach / the sun on the homepage, etc.) just glides back to the top
+    try { var dest = new URL(a.href, location.href), norm = function (p) { return p.replace(/index\.html$/, ''); };
+      if (dest.origin === location.origin && norm(dest.pathname) === norm(location.pathname) && !dest.hash) {
+        e.preventDefault(); if (root.classList.contains('has-menu') && a.closest('.nav_list')) return;
+        if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(0, { duration: 1.1 }); else window.scrollTo({ top: 0, behavior: 'smooth' });
+        return; } } catch (err) {}
     e.preventDefault(); leaving = true;
     var href = a.href; prefetch(href);
     try { sessionStorage.setItem('fb-arrive', '1'); } catch (err) {}
