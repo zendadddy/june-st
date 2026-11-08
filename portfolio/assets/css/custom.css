@@ -651,5 +651,9 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .tm_slide { grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; opacity: 0; filter: blur(6px); transform: translateY(8px); pointer-events: none;
   transition: opacity .6s ease, filter .7s ease, transform .8s cubic-bezier(.22, 1, .36, 1); }
 .tm_slide.is-active { opacity: 1; filter: none; transform: none; pointer-events: auto; transition-delay: .15s; }
-.tm_logo-invert { filter: brightness(0) invert(1); height: 1.6rem; width: auto; max-width: none; }
+.testimonial_logo.tm_logo-invert { filter: brightness(0) invert(1); --ink-ratio: .36; } /* DoorDash's lettering fills ~36% of its file height */
 @media (prefers-reduced-motion: reduce) { .tm_slide { transition: opacity .2s ease; filter: none; transform: none; } }
+
+/* Testimonial logos: one visible height for every brand. Each file's lettering fills a different share of its box,
+   so the box is sized from that share (--ink-ratio) and the width is left free. Set softer at 80%. */
+.testimonial_logo { --logo-ink: 1.15rem; --ink-ratio: .95; height: calc(var(--logo-ink) / var(--ink-ratio)); max-height: none; width: auto; max-width: none; object-fit: contain; opacity: .8; }
