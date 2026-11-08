@@ -763,6 +763,11 @@
     allSlots.forEach(function (s) { var im = s.querySelector('img'); if (im && !im.complete) im.addEventListener('load', measure, { once: true }); });
     measure();
   }
+  // phones: a different playground collage on each visit (cycles through six)
+  (function () {
+    var k; try { k = (parseInt(localStorage.getItem('pgLay') || '-1', 10) + 1) % 6; localStorage.setItem('pgLay', String(k)); } catch (e) { k = Math.floor(Math.random() * 6); }
+    document.querySelectorAll('[data-playground]').forEach(function (pg) { pg.setAttribute('data-lay', String(k)); });
+  })();
   if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
 
   /* Footer clouds: fade in once loaded */
