@@ -169,8 +169,8 @@
         subscribe(v, form.querySelector('input[name=' + MC_BOT + ']').value, function (r) {
           btn.value = 'Notify me'; syncModalBtn(form);
           var m = String(r.msg || '').replace(/<[^>]*>/g, '').replace(/^\d+\s*-\s*/, '');
-          if (r.result === 'success') { form.classList.add('is-done'); say('You’re on the list. Check your inbox to confirm.', true); return; }
-          if (/already subscribed/i.test(m)) { form.classList.add('is-done'); say('You’re already on the list. I’ll be in touch.', true); return; }
+          if (r.result === 'success') { form.classList.add('is-done'); say('You’re on the list. Check your inbox to confirm.', true); soonAutoClose = setTimeout(close, 8000); return; }
+          if (/already subscribed/i.test(m)) { form.classList.add('is-done'); say('You’re already on the list. I’ll be in touch.', true); soonAutoClose = setTimeout(close, 8000); return; }
           if (/too many/i.test(m)) { say('Too many tries just now. Please wait a few minutes.'); return; }
           if (m === 'network' || m === 'timeout') { // the page could not reach Mailchimp directly: post the way the Mailchimp embed does, in a new tab
             var f = document.createElement('form'); f.method = 'post'; f.target = '_blank'; f.action = MC_URL.replace('/post-json?', '/post?'); f.style.display = 'none';
@@ -204,8 +204,9 @@
       try { if (typeof lenis !== 'undefined' && lenis.stop) lenis.stop(); } catch (e) {}
       requestAnimationFrame(function () { modal.classList.add('is-open'); setTimeout(function () { var i = modal.querySelector('.soon-modal_signup input[type=email], .soon-modal_signup input:not([type=hidden])'); (i || modal.querySelector('.gate-modal_close')).focus(); }, 60); });
     }
+    var soonAutoClose = 0; // after a successful signup the popup closes itself after 8 seconds
     function close() {
-      if (!modal || modal.hidden) return;
+      clearTimeout(soonAutoClose); if (!modal || modal.hidden) return;
       modal.classList.remove('is-open'); document.documentElement.classList.remove('has-gate');
       try { if (typeof lenis !== 'undefined' && lenis.start) lenis.start(); } catch (e) {}
       setTimeout(function () { modal.hidden = true; }, 450);
@@ -812,7 +813,14 @@
     cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
     // Load YouTube's player API. If it never arrives (blocked network, sandboxed preview), the photo stays and the arrows stay hidden.
     var prevReady = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = function () { if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(slides[0]); };
+    window.onYouTubeIframeAPIReady = function () {
+      if (prevReady) prevReady(); apiReady = true; cam.classList.add('is-ready'); label(slides[0]);
+      // tune in to the first live cam on its own once the section scrolls into view
+      if ('IntersectionObserver' in window && slides.length > 1) {
+        var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { seen.disconnect(); dir = 1; show(1); } }, { threshold: .35 });
+        seen.observe(cam);
+      }
+    };
     var tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; tag.async = true; document.head.appendChild(tag);
   }
 
