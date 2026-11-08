@@ -373,6 +373,9 @@
     });
   });
 
+  /* ---------- 0h. Footer copyright year: always the current year ---------- */
+  document.querySelectorAll('.copyright-year').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
