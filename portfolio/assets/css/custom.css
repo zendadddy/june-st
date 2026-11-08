@@ -630,8 +630,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero h1 { text-align: center; margin-left: auto; margin-right: auto; }
 
 /* ---- Phones ---- */
-/* About: the floating photos around "Hi, I'm Frank" are left out */
-@media (max-width: 767px) { .about_paper, .about_head, .about_garage, .about_illustration { display: none !important; } }
 /* Carousel arrows about 10% smaller, outline circle included: the whole control scales from its right edge */
 @media (max-width: 767px) { .testimonial_pagination.cc-top { transform: scale(.9); transform-origin: 100% 50%; } }
 
