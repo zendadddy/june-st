@@ -754,7 +754,7 @@
   });
 
   /* ---------- 10. Hero loop: still photo for reduced motion ---------- */
-  document.querySelectorAll('video.hero_photo').forEach(function (v) {
+  document.querySelectorAll('video.hero_photo, video.about_video, video.about_sky').forEach(function (v) {
     if (reduce) { v.removeAttribute('autoplay'); v.pause(); return; }
     var p = v.play(); if (p && p.catch) p.catch(function () {}); // some browsers block autoplay; the poster still shows
   });

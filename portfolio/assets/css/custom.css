@@ -61,8 +61,8 @@
 
 /* Homepage hero photo: stage shot, cropped to keep the speaker in view, with a soft wash for the white headline */
 .hero.cc-photo { color: var(--_colors---all--white); background: #0b0f2a; }
-.hero.cc-photo .hero_photo { object-fit: cover; object-position: 100% 35%; }
-@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 32% 35%; } }
+.hero.cc-photo .hero_photo { object-fit: cover; object-position: 62% 55%; }
+@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 82% 55%; } }
 .hero.cc-photo::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #0a0d2899 0%, #0a0d2833 38%, #0a0d2833 62%, #0a0d2880 100%); }
 .hero.cc-photo .container { position: relative; z-index: 1; }
@@ -340,3 +340,25 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 /* Newsletter modal: face icon above the title */
 .soon-modal .gate-modal_card .soon-modal_icon { display: block; flex: none; width: clamp(4rem, 8vw, 5rem); height: auto; max-width: none; aspect-ratio: 258 / 296; object-fit: contain; margin: -.5rem 0 -.25rem -.25rem; }
 .soon-modal_icon[hidden] { display: none; }
+
+/* Footer "Design & Dev": the city links slide out beside the label on hover, keyboard focus or tap */
+.footer_dd { display: inline-flex; align-items: baseline; }
+.footer_dd-label { cursor: default; outline: none; }
+.footer_dd-cities { display: inline-grid; grid-template-columns: 0fr; transition: grid-template-columns .55s cubic-bezier(.22, 1, .36, 1); }
+.footer_dd-inner { min-width: 0; overflow: hidden; white-space: nowrap; padding: 6px 0 12px; margin: -6px 0 -12px; opacity: 0; transform: translateX(-8px); transition: opacity .35s ease, transform .55s cubic-bezier(.22, 1, .36, 1); }
+.footer_dd:hover .footer_dd-cities, .footer_dd:focus-within .footer_dd-cities { grid-template-columns: 1fr; }
+.footer_dd:hover .footer_dd-inner, .footer_dd:focus-within .footer_dd-inner { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .footer_dd-cities, .footer_dd-inner { transition: none; } }
+
+/* About: podcast clip in the widescreen band (replaces the speaking photo) */
+.about_video { left: 0; width: 100%; object-fit: cover; object-position: 35% 40%; }
+
+/* pg-isolate: playground cards stack inside their own section, so the fixed nav and sun always sit above them */
+.pg { isolation: isolate; }
+
+/* About: drifting cloud video behind the top of the bio, fading into the page's white at the bottom */
+.about.section { position: relative; isolation: isolate; }
+.about.section > *:not(.about_sky) { position: relative; z-index: 1; }
+.about_sky { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: min(120svh, 70rem); object-fit: cover; object-position: 50% 30%; pointer-events: none;
+  filter: saturate(.8) brightness(1.1);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%); mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%); }
