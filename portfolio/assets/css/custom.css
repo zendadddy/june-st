@@ -791,3 +791,8 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 .tm_slide > .testimonial_logo, .tm_slide > .tm_company { margin-top: -.6rem; }
 /* About, phones: the floating photos hang below the print, so give them room before the bio starts */
 @media (max-width: 767px) { [data-gsap="collage"] > .u-p-relative { margin-bottom: 1.75rem; } }
+
+/* accolades: the title takes the row and the year sits flush right, instead of floating at a fixed column mid-row */
+.accolade_link .row { display: flex; flex-wrap: nowrap; align-items: baseline; column-gap: 1.5rem; }
+.accolade_link .row > .col-lg-8 { flex: 1 1 auto; width: auto; max-width: none; min-width: 0; }
+.accolade_link .row > .col-lg-4 { flex: none; width: auto; max-width: none; margin-left: auto; text-align: right; font-variant-numeric: tabular-nums; }
