@@ -1184,3 +1184,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 
 /* phones: less room under the footer links */
 @media (max-width: 767px) { .footer { padding-bottom: 2.75rem; } }
+
+/* modal X: no spin on hover, just a slight fade */
+.gate-modal_close:hover, .nav_close:hover { transform: none !important; opacity: .7; }
+.gate-modal_close { transition: opacity .25s ease; }
