@@ -611,7 +611,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Homepage "Take a pause": the rock photo is framed on the peak, the two people and the sky */
 /* more sky: the photo sits narrower on the left and fades into a sky gradient sampled from its own right edge */
-.section[data-svg="breath"] { background: #3a87d2 url(../about-sky-poster.jpg) 100% 50% / cover no-repeat; } /* the same sky as the About page */
+.section[data-svg="breath"] { background: linear-gradient(180deg, #488790 0%, #54939d 22%, #5fa2aa 42%, #6cb0b6 62%, #7dbfc4 82%, #8ac6c9 100%); }
 .pause-photo { left: 0; right: auto; width: 74%; object-fit: cover; object-position: 50% 8%;
   -webkit-mask-image: linear-gradient(90deg, #000 72%, transparent 100%); mask-image: linear-gradient(90deg, #000 72%, transparent 100%); }
 @media (max-width: 767px) { .pause-photo { width: 80%; object-position: 50% 4%; } }
@@ -754,15 +754,17 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 /* tight tracking was eating the word gaps ("witha") on iOS: give spaces a little air */
 .h1, .h2, .h3, h1, h2, h3 { word-spacing: .06em; }
 
-/* pg-strip: on phones the playground is a two-row strip that scrolls sideways; tap a photo to open it */
+/* pg-phone: the drifting three-column grid shows twelve photos; tap one to open the viewer, which holds them all */
 @media (max-width: 767px) {
-  .pg .pg_grid { grid-template-columns: none; grid-template-rows: repeat(2, auto); grid-auto-flow: column; grid-auto-columns: max-content;
-    gap: 1.25rem 1rem; align-items: center; justify-items: center; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 1.5rem var(--_layout---columns--gutter, 1rem) 2rem; scroll-padding-inline: var(--_layout---columns--gutter, 1rem); }
-  .pg .pg_grid::-webkit-scrollbar { display: none; }
-  .pg .pg_slot, .pg .pg_slot:nth-child(n) { display: flex; width: auto; }
-  .pg .pg_card { width: auto; height: 46vw; pointer-events: auto; cursor: zoom-in; -webkit-tap-highlight-color: transparent; }
+  .pg .pg_slot:nth-child(n+10) { display: flex; }
+  .pg .pg_slot:nth-child(n+13) { display: none; }
+  .pg .pg_card { pointer-events: auto; cursor: zoom-in; -webkit-tap-highlight-color: transparent; }
   .pg .pg_card:active { filter: brightness(.94); }
+}
+.pg-all { display: none; }
+@media (max-width: 767px) {
+  .pg-all { display: flex; align-items: center; gap: .4em; margin: 1.75rem auto 0; padding: .5rem 0; border: 0; background: none; color: inherit; font: inherit;
+    font-size: .8125rem; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid currentColor; cursor: pointer; }
 }
 .pg-lb { position: fixed; inset: 0; z-index: 1000; background: rgba(251, 250, 247, .94); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility 0s linear .3s; }
