@@ -967,7 +967,7 @@
     // one black "ink" circle that flows between the arrows on hover: the leading edge moves first, the trailing edge catches up
     (function () {
       var ink = document.createElement('span'); ink.className = 'arrow-ink'; ink.setAttribute('aria-hidden', 'true'); pag.insertBefore(ink, pag.firstChild);
-      var side = null, hovering = false, ctls = [].slice.call(pag.querySelectorAll('.testimonial_controls'));
+      var side = null, hovering = false, over = null, ctls = [].slice.call(pag.querySelectorAll('.testimonial_controls'));
       function to(ctl) {
         var l = ctl.offsetLeft, r = pag.clientWidth - l - ctl.offsetWidth, s = ctl.classList.contains('cc-next') ? 'next' : 'prev';
         if (side && side !== s) pag.classList.toggle('ink-right', s === 'next'); else if (!side) { pag.classList.add('ink-jump'); void ink.offsetWidth; }
@@ -976,16 +976,17 @@
         pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
       }
       // at rest there is no ink: it only appears under the arrow being hovered
+      function refit() { if (hovering && over && !over.classList.contains('is-disabled')) { pag.classList.add('ink-jump'); to(over); } else { hovering = hovering && !!over && !over.classList.contains('is-disabled'); rest(); } }
       function rest() {
         if (hovering) return;
         pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); });
       }
       ctls.forEach(function (c) {
-        c.addEventListener('pointerenter', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; hovering = true; if (!c.classList.contains('is-disabled')) to(c); }); // touch taps don't summon the ink
-        c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') rest(); }); // an arrow folded in or out
+        c.addEventListener('pointerenter', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; hovering = true; over = c; if (!c.classList.contains('is-disabled')) to(c); }); // touch taps don't summon the ink
+        c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') refit(); }); // an arrow folded in or out: the ink follows the arrow under the pointer
       });
-      pag.addEventListener('pointerleave', function () { hovering = false; rest(); });
-      var rq = 0; sc.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; rest(); }); }, { passive: true });
+      pag.addEventListener('pointerleave', function () { hovering = false; over = null; rest(); });
+      var rq = 0; sc.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; refit(); }); }, { passive: true });
       window.addEventListener('resize', rest);
       requestAnimationFrame(function () { requestAnimationFrame(rest); }); window.addEventListener('load', rest);
     })();
