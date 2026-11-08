@@ -1046,3 +1046,13 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 .gate-modal_form input[type=submit] { transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .35s; }
 .gate-modal_form:not(.is-typing) input[type=submit] { opacity: 0; visibility: hidden; transform: translateX(6px); }
 .gate-modal_form.is-typing input[type=submit] { visibility: visible; transition: opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1); }
+
+/* contact form errors: a quiet line under the field and a warm underline; they fade in on leaving the field, and out as soon as it's fixed */
+.input-group { position: relative; }
+.field-error { margin: .4rem 0 0; font-size: .8125rem; line-height: 1.35; color: #b4532a; opacity: 0; transform: translateY(-3px); transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
+.field-error.is-on { opacity: 1; transform: none; }
+.input-group.has-error .input, .input-group.has-error .input:focus { border-bottom-color: #b4532a; box-shadow: 0 1px 0 0 #b4532a; }
+/* podcast play circle: no glass, a plain soft dark disc */
+.about_video-btn { background: #00000052; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.about_video-link:hover .about_video-btn { background: #00000073; }
+.about_video-btn svg { width: 30.6%; height: 30.6%; } /* play icon 10% smaller */

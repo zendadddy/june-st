@@ -389,16 +389,33 @@
   /* ---------- 0i. Contact form: post to contact.php (the server emails it), show the sent or failed note ---------- */
   document.querySelectorAll('form[data-contact]').forEach(function (form) {
     var wrap = form.parentElement, done = wrap.querySelector('.w-form-done'), fail = wrap.querySelector('.w-form-fail'), btn = form.querySelector('[type=submit]');
-    // the button appears once you start typing, and wakes up only when every field is filled (with a real-looking email)
+    // the button appears once you start typing, and wakes up only when everything checks out.
+    // Errors are polite: a field is only judged when you leave it, and an error clears the moment it's fixed (never while you're still typing).
     var fields = [].slice.call(form.querySelectorAll('input[required], textarea[required]'));
+    var RULES = {
+      name: [function (v) { return v.length > 0; }, 'Please add your name.'],
+      email: [function (v) { return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v); }, 'That email doesn’t look right. Check for the @ and the .com part.'],
+      message: [function (v) { return v.length > 0; }, 'A message is required.']
+    };
+    function ok(f) { var r = RULES[f.name]; return r ? r[0](f.value.trim()) : !!f.value.trim(); }
+    function show(f, on) {
+      var g = f.closest('.input-group') || f.parentElement, m = g.querySelector('.field-error');
+      if (on && !m) { m = document.createElement('p'); m.className = 'field-error'; m.id = f.id + '-error'; m.setAttribute('role', 'alert'); m.textContent = RULES[f.name] ? RULES[f.name][1] : 'Required.'; g.appendChild(m); }
+      g.classList.toggle('has-error', !!on); f.setAttribute('aria-invalid', on ? 'true' : 'false');
+      if (on) f.setAttribute('aria-describedby', m.id); else f.removeAttribute('aria-describedby');
+      if (m) requestAnimationFrame(function () { m.classList.toggle('is-on', !!on); });
+    }
+    fields.forEach(function (f) {
+      f.addEventListener('blur', function () { if (!f.closest('form').contains(document.activeElement) && !f.value.trim() && !form.classList.contains('is-typing')) return; show(f, !ok(f)); }); // judged on leaving, not while typing (and not if you just click in and out of an untouched form)
+      f.addEventListener('input', function () { f.dataset.touched = 1; if ((f.closest('.input-group') || f.parentElement).classList.contains('has-error') && ok(f)) show(f, false); });
+    });
     function sync() {
       var any = fields.some(function (f) { return f.value.trim(); });
-      var full = fields.every(function (f) { return f.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : f.value.trim(); });
-      form.classList.toggle('is-typing', any); if (btn.value !== 'Sending…') btn.disabled = !full;
+      form.classList.toggle('is-typing', any); if (btn.value !== 'Sending…') btn.disabled = !fields.every(ok);
     }
     form.addEventListener('input', sync); sync();
     form.addEventListener('submit', function (e) {
-      e.preventDefault(); e.stopImmediatePropagation(); if (!form.reportValidity()) return;
+      e.preventDefault(); e.stopImmediatePropagation(); var bad = fields.filter(function (f) { return !ok(f); }); if (bad.length) { bad.forEach(function (f) { show(f, true); }); bad[0].focus(); return; }
       var label = btn.value; btn.disabled = true; btn.value = 'Sending…'; if (fail) fail.style.display = 'none';
       fetch(form.action, { method: 'POST', body: new FormData(form) }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
         .then(function (d) { if (!d.ok) throw 0; form.style.display = 'none'; if (done) done.style.display = 'block'; })
