@@ -874,4 +874,4 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 @media (max-width: 767px) { .acc-section h3, .u-vflex-stretch-top.u-vgap-16 > h3:has(+ .acc-box), .u-vflex-stretch-top.u-vgap-16 > h3:has(+ .accolade_link) { font-size: 1.75rem; line-height: 1.15; } }
 
 /* phones: a dotted rule opens the courses section, between the projects and the courses statement */
-@media (max-width: 767px) { .section.cc-courses { padding-top: 3rem; } .section.cc-courses > .container { border-top: 2px dotted #2b292540; padding-top: 3rem; } }
+@media (max-width: 767px) { .section.cc-courses { padding-top: 0; } .section.cc-courses > .container { border-top: 2px dotted #2b292524; padding-top: 3.5rem; } }
