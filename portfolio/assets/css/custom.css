@@ -1103,3 +1103,14 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .livecam_screen { transform: scale(.97); transition: opacity 1.2s ease, transform 1.6s cubic-bezier(.22, 1, .36, 1); }
 .livecam.is-live .livecam_screen { transform: none; }
 .w-form-done { border-top: 1px solid var(--background--border); } /* same soft grey rule as the dividers elsewhere */
+
+/* changing cams: instead of jumping back to the light skeleton, the view dims to a soft dark screen while the next feed tunes in */
+.livecam { transition: background-color .6s ease; }
+.section.livecam.is-switching { background: #17181a; }
+.livecam.is-switching::before { opacity: .12 !important; animation: cam-shimmer 1.6s ease-in-out infinite !important; }
+.livecam.is-switching .livecam_screen { opacity: 0; transform: scale(1.02); filter: blur(8px); transition: opacity .5s ease, transform .9s cubic-bezier(.22, 1, .36, 1), filter .5s ease; }
+.livecam .livecam_screen { filter: none; }
+.livecam.is-switching .livecam_note { opacity: 1; }
+.livecam.is-switching .livecam_btn { opacity: .85; }
+.livecam.is-switching .livecam_dot { animation: livecam-pulse 1s ease-in-out infinite; background: #fff; opacity: .7; }
+.livecam.is-switching .livecam_controls { opacity: 1; pointer-events: auto; }

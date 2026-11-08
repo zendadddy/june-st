@@ -38,7 +38,7 @@
   var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
   var gate = (function () {
     var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // sha256("famouslastname")
-    var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects\/[a-z0-9-]+\.html$/; // individual project pages; /projects itself is open
+    var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects\/[a-z0-9-]+(\.html)?$/; // individual project pages; /projects itself is open
     function unlocked() { try { return +localStorage.getItem(KEY) > Date.now(); } catch (e) { return false; } }
     // reset: open any page with #lock (or ?lock) to clear the 72-hour unlock in this browser
     function relock() {
@@ -68,7 +68,7 @@
     }
     function sha256(str) { var b = new TextEncoder().encode(str); if (window.crypto && crypto.subtle) return crypto.subtle.digest('SHA-256', b).then(function (d) { return hex(new Uint8Array(d)); }); return Promise.resolve(sha256Fallback(b)); }
 
-    var modal = null, next = 'projects.html', lastFocus = null;
+    var modal = null, next = 'projects', lastFocus = null;
     function build() {
       modal = document.createElement('div');
       modal.className = 'gate-modal'; modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-labelledby', 'gate-title'); modal.hidden = true;
@@ -102,7 +102,7 @@
     }
     function open(to) {
       if (!modal) build();
-      next = GATED.test(to || '') ? to : 'projects.html';
+      next = GATED.test(to || '') ? to : 'projects';
       lastFocus = document.activeElement;
       modal.querySelector('.gate-modal_error').hidden = true; modal.querySelector('input[type=password]').value = ''; syncModalBtn(modal.querySelector('form'));
       modal.hidden = false; document.documentElement.classList.add('has-gate');
@@ -264,7 +264,7 @@
 
   /* Nav: the link to the page you're on is greyed out and inert (the Frank Bach wordmark and the sun always stay live) */
   document.querySelectorAll('.nav_list .nav_link.w--current').forEach(function (a) {
-    var here = location.pathname.replace(/index\.html$/, ''), to = new URL(a.href, location.href).pathname.replace(/index\.html$/, '');
+    var clean = function (p) { return p.replace(/index\.html$/, '').replace(/\.html$/, ''); }, here = clean(location.pathname), to = clean(new URL(a.href, location.href).pathname);
     if (to !== here) { a.classList.remove('w--current'); a.removeAttribute('aria-current'); return; } // e.g. 'Projects' while reading a project: still a way back
     a.setAttribute('aria-current', 'page'); a.setAttribute('aria-disabled', 'true'); a.setAttribute('tabindex', '-1');
     a.addEventListener('click', function (e) { e.preventDefault(); e.stopImmediatePropagation(); }, true);
@@ -424,6 +424,18 @@
     }, true);
   });
 
+  /* ---------- 0j. Freshness: the server lets browsers keep pages for up to 30 days, so each page checks the current build
+     and, if it's older, reloads itself once (a reload always revalidates the page) ---------- */
+  (function () {
+    var me = document.querySelector('script[src*="site.js?v="]'), have = me && (me.getAttribute('src').match(/v=(\d+)/) || [])[1];
+    if (!have || !window.fetch) return;
+    fetch(new URL('version.json?t=' + Date.now(), siteRoot).href, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.v || String(d.v) === have) return;
+      var k = 'fb-fresh-' + d.v; try { if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, '1'); } catch (e) { return; }
+      location.reload();
+    }).catch(function () {});
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
@@ -512,7 +524,7 @@
     if (reduce || leaving || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     var a = e.target.closest('a'); if (!a || !isInternal(a)) return;
     // a link to the page you're already on (Frank Bach / the sun on the homepage, etc.) just glides back to the top
-    try { var dest = new URL(a.href, location.href), norm = function (p) { return p.replace(/index\.html$/, ''); };
+    try { var dest = new URL(a.href, location.href), norm = function (p) { return p.replace(/index\.html$/, '').replace(/\.html$/, ''); };
       if (dest.origin === location.origin && norm(dest.pathname) === norm(location.pathname) && !dest.hash) {
         e.preventDefault(); if (root.classList.contains('has-menu') && a.closest('.nav_list')) return;
         if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(0, { duration: 1.1 }); else window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -831,7 +843,7 @@
   if (!document.querySelector('[data-livecam]')) {
     var warm = function () {
       ['https://www.youtube.com', 'https://www.youtube-nocookie.com', 'https://i.ytimg.com', 'https://www.google.com'].forEach(function (h) { var l = document.createElement('link'); l.rel = 'preconnect'; l.href = h; l.crossOrigin = ''; document.head.appendChild(l); });
-      [['https://www.youtube.com/iframe_api', 'script'], [new URL('contact.html', siteRoot).href, 'document']].forEach(function (u) { var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u[0]; l.as = u[1]; document.head.appendChild(l); });
+      [['https://www.youtube.com/iframe_api', 'script'], [new URL('contact', siteRoot).href, 'document']].forEach(function (u) { var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u[0]; l.as = u[1]; document.head.appendChild(l); });
     };
     var idle = window.requestIdleCallback || function (f) { setTimeout(f, 1500); };
     if (document.readyState === 'complete') idle(warm); else window.addEventListener('load', function () { idle(warm); });
@@ -850,7 +862,7 @@
     function tick() { if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit' }); }
     tick(); setInterval(tick, 15000);
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
-    var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, reveal = 0, started = false;
+    var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, camReveal = 0, started = false;
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
     function alive() { return list.filter(function (s) { return !dead[s.id]; }); }
     function offline() { cam.classList.remove('is-live'); cam.classList.add('is-offline'); label(null); if (player && player.stopVideo) player.stopVideo(); cam.hidden = true; } // nothing is streaming: leave the section out rather than a blank box
@@ -866,7 +878,10 @@
       if (!alive().length) { offline(); return; }
       var n = list.length; idx = ((i % n) + n) % n;
       while (dead[list[idx].id]) idx = ((idx + dir) % n + n) % n;
-      var s = list[idx]; cam.classList.remove('is-live'); clearTimeout(wait); clearTimeout(reveal);
+      var s = list[idx]; clearTimeout(wait); clearTimeout(camReveal);
+      // changing cams: the current view dims and softens to a dark 'tuning in' screen, then the next one settles in
+      if (player) { cam.classList.add('is-switching'); placeEl.textContent = 'Tuning in · ' + s.place; }
+      cam.classList.remove('is-live');
       wait = setTimeout(function () { if (!cam.classList.contains('is-live')) skip(); }, player ? 6000 : 15000); // never started: try the next (the first load gets longer, YouTube itself is still arriving)
       if (!player) {
         var host = document.createElement('div'); screen.appendChild(host);
@@ -875,8 +890,8 @@
           events: {
             onReady: function (e) { e.target.mute(); e.target.playVideo(); },
             onStateChange: function (e) {
-              // reveal only after it has been playing for a moment, so YouTube's play/pause flash never shows
-              if (e.data === 1) { clearTimeout(wait); clearTimeout(reveal); reveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); good(list[idx].id); }, 3600); } // YouTube shows its pause button for ~3s after starting: stay behind the skeleton until it's gone
+              // camReveal only after it has been playing for a moment, so YouTube's play/pause flash never shows
+              if (e.data === 1) { clearTimeout(wait); clearTimeout(camReveal); camReveal = setTimeout(function () { cam.classList.add('is-live'); label(list[idx]); cam.classList.remove('is-switching'); good(list[idx].id); }, 4100); } // YouTube shows its pause button for ~3s after starting: stay behind the skeleton until it's gone
               else if (e.data === 0) skip(); // the stream ended
             },
             onError: function () { clearTimeout(wait); skip(true); }

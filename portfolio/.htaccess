@@ -1,5 +1,6 @@
 # francoisbach.com on Cloudways (Apache)
 DirectoryIndex index.html
+DirectorySlash Off
 ErrorDocument 404 /404.html
 Options -Indexes
 
@@ -13,6 +14,16 @@ Options -Indexes
   RewriteRule ^ https://francoisbach.com%{REQUEST_URI} [L,R=301]
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://francoisbach.com%{REQUEST_URI} [L,R=301]
+  # clean URLs: /about serves about.html, /projects/headspace serves projects/headspace.html
+  # /projects is both a folder and a page: the page wins
+  RewriteRule ^projects/?$ projects.html [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+  # old .html addresses send people to the clean one
+  RewriteCond %{THE_REQUEST} \s/([^\s?]+)\.html[\s?]
+  RewriteRule ^ /%1 [R=301,L,NE]
 </IfModule>
 
 <IfModule mod_expires.c>
