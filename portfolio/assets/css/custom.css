@@ -614,3 +614,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .pause-photo { left: 0; right: auto; width: 74%; object-fit: cover; object-position: 50% 8%;
   -webkit-mask-image: linear-gradient(90deg, #000 72%, transparent 100%); mask-image: linear-gradient(90deg, #000 72%, transparent 100%); }
 @media (max-width: 767px) { .pause-photo { width: 80%; object-position: 50% 4%; } }
+
+/* Phones: "Work for brands people love" gets breathing room above it once it stacks under the heading */
+@media (max-width: 767px) { p.u-nudge-up { margin-top: .9rem !important; top: 0 !important; transform: none !important; translate: none !important; } }
