@@ -804,6 +804,12 @@
   var cam = document.querySelector('[data-livecam]');
   if (cam) {
     var list; try { list = JSON.parse(cam.getAttribute('data-livecam')); } catch (err) { list = []; }
+    // a different order every visit, so it isn't always the same beach first
+    for (var q = list.length - 1; q > 0; q--) { var w = Math.floor(Math.random() * (q + 1)), t = list[q]; list[q] = list[w]; list[w] = t; }
+    // the label carries the current time in LA
+    var timeEl = cam.querySelector('.livecam_time');
+    function tick() { if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit' }); }
+    tick(); setInterval(tick, 15000);
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
     var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, started = false;
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }

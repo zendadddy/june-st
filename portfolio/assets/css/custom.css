@@ -977,3 +977,6 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .section.livecam { background: #fff; }
 .livecam:not(.is-live) .livecam_note { opacity: 0; }
 .livecam_note { transition: opacity .6s ease; }
+
+/* cam label: LA time after the place, set off by a thin rule */
+.livecam_time { border-left: 1px solid #ffffff4d; padding-left: .5rem; opacity: .8; font-variant-numeric: tabular-nums; }
