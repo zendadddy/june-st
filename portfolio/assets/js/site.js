@@ -686,7 +686,7 @@
     var allSlots = Array.prototype.slice.call(pg.querySelectorAll('.pg_slot'));
     if (!grid || !track || !allSlots.length) return;
     var slots = [], cards = [], homes = [], jitter = [], rest = [], pinH = 0, focus = -1;
-    var cur = 0, target = 0, ticking = false, pointer = null, latched = false, floating = false, idle = 0;
+    var cur = 0, target = 0, ticking = false, pointer = null, latched = false, floating = false, idle = 0, done = false;
     var canHover = window.matchMedia('(hover: hover)').matches;
     function rnd(n, k) { var s = Math.sin(n * k) * 43758.5453; return s - Math.floor(s); }
     function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
@@ -708,7 +708,7 @@
       cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
       allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
       var vh = window.innerHeight, gh = grid.getBoundingClientRect().height;
-      var canPin = !simple && gh < vh * .92;
+      var canPin = !simple && !done && gh < vh * .92; // once the photos have been dealt, the grid just sits in the page
       pg.classList.toggle('is-pinned', canPin);
       pinH = canPin ? Math.round(vh * 1.35) : 0;
       track.style.height = canPin ? (gh + pinH) + 'px' : '';
@@ -728,7 +728,7 @@
         var off = side < 0 ? -(cxs + w * .7 + rnd(n, 7.13) * 60) : (vw - cxs) + w * .7 + rnd(n, 7.13) * 60;
         return { sx: off, sy: (rnd(n, 39.425) - .5) * vh * .08, rot: rot * .6, s: 1.05 };
       });
-      cur = target = progress();
+      cur = target = done ? 1 : progress();
       layout();
     }
     // where each card sits when it is not the focused one (offset from its slot, scale)
@@ -804,14 +804,26 @@
     // ease the shown progress toward the scroll position so wheel and trackpad steps don't judder
     function tick() {
       var d = target - cur;
-      if (Math.abs(d) < .0008) { cur = target; ticking = false; floating = false; layout(); updateHover(); return; }
+      if (Math.abs(d) < .0008) { cur = target; ticking = false; floating = false; layout(); updateHover(); if (cur >= .999 && !done) settle(); return; }
       cur += d * (floating ? .04 : .085); layout(); updateHover(); requestAnimationFrame(tick);
+    }
+    // the deal plays once per visit: when it finishes, drop the pin and keep the grid where it is on screen, so scrolling back up or down just passes it
+    function settle() {
+      done = true; latched = true; target = cur = 1;
+      if (!pinH) return;
+      var before = grid.getBoundingClientRect().top;
+      measure();
+      var shift = grid.getBoundingClientRect().top - before;
+      if (Math.abs(shift) > 1) {
+        try { if (typeof lenis !== 'undefined' && lenis.scrollTo) lenis.scrollTo(window.scrollY + shift, { immediate: true, force: true }); else window.scrollBy(0, shift); } catch (e) { window.scrollBy(0, shift); }
+      }
     }
     // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
     function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
     window.addEventListener('scroll', function () {
       if (simple) { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; layout(); }); } return; }
       var p = progress();
+      if (done) { target = 1; if (!floating) kick(); return; }
       if (p <= .001) latched = false;
       target = latched ? 1 : p;
       if (!floating) kick();

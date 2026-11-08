@@ -1135,3 +1135,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .livecam_expand:hover { transform: scale(1.06); background: #00000080; }
 .livecam.is-full .livecam_expand, .livecam:not(.is-live) .livecam_expand { opacity: 0; pointer-events: none; }
 @media (hover: none) { .livecam.is-live .livecam_expand { opacity: .85; } }
+
+/* pg-no-dim: hovering a photo no longer fades the others or tints the background */
+.pg.has-focus .pg_card { opacity: 1; }
+.w-form-done .form-done_title .form-done_text { opacity: 1; color: inherit; } /* one colour: the full dark text colour */
