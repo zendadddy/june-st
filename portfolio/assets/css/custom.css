@@ -1062,3 +1062,17 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 
 /* cam tag: top left, just below the torn top edge */
 .livecam .livecam_note { top: clamp(4rem, 7vw, 6rem); bottom: auto; }
+
+/* livecam-full: click the feed to fill the screen; an X sits top right */
+.livecam.is-live .livecam_screen { pointer-events: auto; cursor: zoom-in; }
+.livecam.is-full { position: fixed; inset: 0; z-index: 1000; width: 100vw; height: 100vh; height: 100dvh; aspect-ratio: auto; -webkit-mask-image: none !important; mask-image: none !important; margin: 0; }
+.livecam.is-full .livecam_screen { cursor: zoom-out; }
+.livecam.is-full .livecam_screen iframe { width: max(100vw, 177.78vh); height: max(100vh, 56.25vw); transform: translate(-50%, -50%) scale(1.3); }
+html.cam-full, html.cam-full body { overflow: hidden; }
+html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: none; }
+.livecam_close { position: absolute; top: clamp(1rem, 2.5vw, 2rem); right: clamp(1rem, 2.5vw, 2rem); width: 3rem; height: 3rem; border-radius: 50%; border: 0; color: #fff; background: #0000004d;
+  -webkit-backdrop-filter: blur(.5rem); backdrop-filter: blur(.5rem); display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto;
+  opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .3s; }
+.livecam_close:hover { transform: rotate(90deg); }
+.livecam.is-full .livecam_close { opacity: 1; visibility: visible; transition: opacity .3s ease, transform .5s cubic-bezier(.22, 1, .36, 1); }
+.livecam.is-full .livecam_note { top: clamp(1rem, 2.5vw, 2rem); }

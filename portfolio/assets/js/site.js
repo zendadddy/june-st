@@ -884,6 +884,18 @@
       } else { player.loadVideoById(s.id); }
     }
     cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady || !alive().length) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
+    // click the feed to watch it full screen; the X (or Esc, or clicking again) brings it back
+    var closeBtn = document.createElement('button'); closeBtn.type = 'button'; closeBtn.className = 'livecam_close'; closeBtn.setAttribute('aria-label', 'Close full screen');
+    closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg>';
+    cam.querySelector('.livecam_ui').appendChild(closeBtn);
+    function full(on) {
+      cam.classList.toggle('is-full', on); document.documentElement.classList.toggle('cam-full', on);
+      try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}
+      if (on) closeBtn.focus({ preventScroll: true });
+    }
+    screen.addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
+    closeBtn.addEventListener('click', function (e) { e.stopPropagation(); full(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && cam.classList.contains('is-full')) full(false); });
     // Load YouTube's player API. If it never arrives (blocked network), the photo stays and the arrows stay hidden.
     var prevReady = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
