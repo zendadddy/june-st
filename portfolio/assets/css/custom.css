@@ -436,3 +436,15 @@ p, li { text-wrap: pretty; }
 
 /* Nav: the current page's link is greyed out and not clickable, on desktop and in the mobile menu */
 .nav_list .nav_link.w--current { opacity: .45; pointer-events: none; cursor: default; }
+
+/* Mobile home: logos sit still in a 2x2 grid (Anthropic, Instagram, DoorDash, Headspace) instead of scrolling */
+@media (max-width: 767px) {
+  .logo_marquee .logo_row { display: block; }
+  .logo_marquee .logo_col { transform: none !important; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem 1rem; justify-items: center; align-items: center; width: 100%; padding: .75rem 0 .25rem; }
+  .logo_marquee .logo_col ~ .logo_col { display: none; }
+  .logo_marquee .logo_img { display: none; max-width: 100%; height: 2.4rem; width: auto; object-fit: contain; }
+  .logo_marquee .logo_img[alt="Anthropic"] { display: block; order: 1; height: 2rem; }
+  .logo_marquee .logo_img[alt="Instagram"] { display: block; order: 2; }
+  .logo_marquee .logo_img[alt="DoorDash"] { display: block; order: 3; height: 2rem; }
+  .logo_marquee .logo_img[alt="Headspace"] { display: block; order: 4; }
+}
