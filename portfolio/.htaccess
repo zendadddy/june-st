@@ -6,7 +6,11 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # always https, always the bare domain
-  RewriteCond %{HTTPS} off [OR]
+  # Cloudways terminates SSL at Nginx, so Apache sees HTTPS=off even on https
+  # requests; trust X-Forwarded-Proto to avoid a redirect loop.
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://francoisbach.com%{REQUEST_URI} [L,R=301]
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^ https://francoisbach.com%{REQUEST_URI} [L,R=301]
 </IfModule>
