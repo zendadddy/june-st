@@ -630,7 +630,7 @@
       hour12: true
     }).replace(' ', ''); // Removes space before AM/PM
 
-    footerTime.textContent = laTime;
+    if (footerTime) footerTime.textContent = laTime;
   }
 
   // Initial call + update every minute
