@@ -938,3 +938,8 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .arrow-ink { transition-duration: .26s, .26s, .16s, .22s; transition-timing-function: cubic-bezier(.5, 0, .1, 1), cubic-bezier(.5, 0, .1, 1), ease-out, cubic-bezier(.2, 1.2, .4, 1); transition-delay: 0s, .05s, 0s, 0s; }
 .testimonial_pagination.cc-top.ink-right .arrow-ink { transition-delay: .05s, 0s, 0s, 0s; }
 .testimonial_pagination.cc-top .testimonial_controls { transition: width .55s cubic-bezier(.22, 1, .36, 1), opacity .2s ease, color .18s ease; }
+
+/* the podcast caption sits on the clip, bottom left, as a small frosted tag */
+.about_video-cap.cc-on-video { position: absolute; z-index: 3; left: var(--_layout---columns--size, 1.5rem); bottom: clamp(1rem, 2.5vw, 2rem); color: #fff; opacity: 1;
+  padding: .45rem .8rem; border-radius: 8rem; background: #0000004d; -webkit-backdrop-filter: blur(.5rem); backdrop-filter: blur(.5rem); }
+.about_video-cap.cc-on-video:hover { background: #00000073; }
