@@ -980,3 +980,8 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 
 /* cam label: LA time after the place, set off by a thin rule */
 .livecam_time { border-left: 1px solid #ffffff4d; padding-left: .5rem; opacity: .8; font-variant-numeric: tabular-nums; }
+
+/* Ram Dass palms: a slow breeze. The photo sways a touch from its base and drifts, like trees moving against the sky */
+@keyframes palm-sway { 0%, 100% { rotate: 0deg; translate: 0 0; } 30% { rotate: .5deg; translate: .4% 0; } 65% { rotate: -.35deg; translate: -.3% 0; } }
+.quote-palms { transform-origin: 50% 120%; scale: 1.06; animation: palm-sway 11s ease-in-out infinite; } /* rotate/translate/scale props, so GSAP's parallax transform still applies */
+@media (prefers-reduced-motion: reduce) { .quote-palms { animation: none; } }
