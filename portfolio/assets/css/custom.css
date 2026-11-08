@@ -62,7 +62,7 @@
 /* Homepage hero photo: stage shot, cropped to keep the speaker in view, with a soft wash for the white headline */
 .hero.cc-photo { color: var(--_colors---all--white); background: #0b0f2a; }
 .hero.cc-photo .hero_photo { object-fit: cover; object-position: 62% 55%; }
-@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 82% 55%; } }
+@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 60% 55%; } }
 .hero.cc-photo::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #0a0d2899 0%, #0a0d2833 38%, #0a0d2833 62%, #0a0d2880 100%); }
 .hero.cc-photo .container { position: relative; z-index: 1; }
@@ -423,3 +423,13 @@ p, li { text-wrap: pretty; }
   html.has-menu, html.has-menu body { overflow: hidden; }
 }
 @media (max-width: 767px) and (prefers-reduced-motion: reduce) { .navigation .nav_list, .navigation .nav_list .nav_link { transition: none !important; transform: none !important; } }
+
+/* Phones: project and course grids sit two side by side, with type and logos sized for the half-width cards */
+@media (max-width: 479px) {
+  .row.w-dyn-items > .col.col-lg-6.col-xs-12.w-dyn-item { flex-basis: 50%; max-width: 50%; }
+  .row.u-vgap-80-40.w-dyn-items { row-gap: 2rem; }
+  .row.w-dyn-items .project .u-vgap-24 { grid-row-gap: .75rem; row-gap: .75rem; }
+  .row.w-dyn-items .project h4:not(.u-sr-only) { font-size: 1rem; line-height: 1.25; }
+  .row.w-dyn-items .project .eyebrow { font-size: .875rem; }
+  .row.w-dyn-items .project_logo { height: 1.9rem; margin: -.7rem 0 -.55rem; }
+}
