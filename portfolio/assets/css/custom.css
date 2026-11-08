@@ -487,3 +487,7 @@ p, li { text-wrap: pretty; }
   html.nav-hidden .nav_sun { transform: translate(-50%, calc(-100% - 2.5rem)); }
 }
 @media (max-width: 767px) and (prefers-reduced-motion: reduce) { .navigation, .nav_sun { transition: none; } }
+
+/* Spacing: phones and tablets tighter, desktop unchanged. Section padding (and the big gaps that use it) runs
+   44px at 390 -> ~72px at 768 -> 120px from 1440, instead of 64 -> 84 -> 120 */
+:root { --_layout---section--padding: clamp(2.75rem, 7.24vw + 1rem, 7.5rem); }
