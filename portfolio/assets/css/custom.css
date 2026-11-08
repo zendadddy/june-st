@@ -1056,3 +1056,6 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 .about_video-btn { background: #00000052; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .about_video-link:hover .about_video-btn { background: #00000073; }
 .about_video-btn svg { width: 30.6%; height: 30.6%; } /* play icon 10% smaller */
+
+/* playground: square photos get square cards instead of being cropped to portrait */
+.pg_card.cc-square { aspect-ratio: 1; }
