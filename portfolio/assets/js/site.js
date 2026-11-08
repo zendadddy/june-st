@@ -903,6 +903,11 @@
     var closeBtn = document.createElement('button'); closeBtn.type = 'button'; closeBtn.className = 'livecam_close'; closeBtn.setAttribute('aria-label', 'Close full screen');
     closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg>';
     cam.querySelector('.livecam_ui').appendChild(closeBtn);
+    // the feed itself now takes clicks (YouTube's own play/pause), so full screen gets its own button
+    var expandBtn = document.createElement('button'); expandBtn.type = 'button'; expandBtn.className = 'livecam_expand'; expandBtn.setAttribute('aria-label', 'Watch full screen');
+    expandBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.5"/></svg>';
+    cam.querySelector('.livecam_ui').appendChild(expandBtn);
+    expandBtn.addEventListener('click', function (e) { e.stopPropagation(); full(true); });
     function full(on) {
       cam.classList.toggle('is-full', on); document.documentElement.classList.toggle('cam-full', on);
       try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}
