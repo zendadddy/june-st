@@ -716,3 +716,30 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 /* Footer torn edge as an inline SVG (site.js 0g); the mask version stays as a fallback until it loads */
 .footer_tear { position: absolute; z-index: 2; left: -2px; bottom: calc(100% - 1px); width: calc(100% + 4px); aspect-ratio: 1440 / 56; height: auto; display: block; pointer-events: none; overflow: hidden; }
 .footer.has-tear::before { display: none; }
+
+/* ---- Homepage hero: Morning glow (warm light falling from the top) ---- */
+.hero.cc-photo.cc-glow { background: #fbfaf7; color: #2b2925; }
+.hero.cc-glow::after { display: none; }
+.hero.cc-glow h1 { color: #2b2925; text-shadow: none; }
+.hero.cc-glow .btn { background-color: #2b2925; color: #fbfaf7; border-color: #2b2925; }
+.hero.cc-glow .btn:hover { background-color: #45403a; color: #fbfaf7; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+.hero_glow { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.hero_glow-sun, .hero_glow-haze { position: absolute; left: 50%; border-radius: 50%; will-change: transform, opacity; }
+/* the sun just above the frame: a warm core spilling down */
+.hero_glow-sun { top: 0; width: min(150vw, 1500px); aspect-ratio: 1.6; transform: translate(-50%, -58%);
+  background: radial-gradient(ellipse at 50% 50%, #f2c98a 0%, #f5d9a9 22%, #f8e7c9 42%, rgba(251,250,247,0) 70%);
+  animation: glow-rise 2.4s cubic-bezier(.22, 1, .36, 1) both, glow-breathe 9s ease-in-out 2.4s infinite; }
+/* a softer, wider haze that drifts slowly side to side */
+.hero_glow-haze { top: 0; width: min(190vw, 2000px); aspect-ratio: 2.4; transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at 50% 50%, rgba(246,210,160,.55) 0%, rgba(249,226,190,.35) 35%, rgba(251,250,247,0) 70%);
+  animation: glow-fade 3s ease .3s both, glow-drift 16s ease-in-out 3s infinite alternate; }
+@keyframes glow-rise { from { opacity: 0; transform: translate(-50%, -78%) scale(.85); } to { opacity: 1; transform: translate(-50%, -58%) scale(1); } }
+@keyframes glow-breathe { 0%, 100% { opacity: 1; transform: translate(-50%, -58%) scale(1); } 50% { opacity: .82; transform: translate(-50%, -56%) scale(1.05); } }
+@keyframes glow-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes glow-drift { from { transform: translate(-56%, -50%); } to { transform: translate(-44%, -47%); } }
+.hero.cc-glow h1 { animation: glow-text 1.6s cubic-bezier(.22, 1, .36, 1) .25s both; }
+@keyframes glow-text { from { opacity: 0; filter: blur(8px); translate: 0 10px; } to { opacity: 1; filter: blur(0); translate: 0 0; } }
+html.is-arriving .hero.cc-glow h1, html.is-arriving .hero_glow > * { animation-play-state: paused; }
+@media (max-width: 767px) { .hero_glow-sun { width: 220vw; } .hero_glow-haze { width: 280vw; } }
+@media (prefers-reduced-motion: reduce) { .hero_glow-sun, .hero_glow-haze, .hero.cc-glow h1 { animation: none !important; } }
+body:has(.hero.cc-glow) .navigation { --nav-l: #fbfaf7; --nav-c: #fbfaf7; --nav-r: #fbfaf7; } /* nav starts off-white over the glow hero (no blue flash) */
