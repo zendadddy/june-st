@@ -1139,3 +1139,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* pg-no-dim: hovering a photo no longer fades the others or tints the background */
 .pg.has-focus .pg_card { opacity: 1; }
 .w-form-done .form-done_title .form-done_text { opacity: 1; color: inherit; } /* one colour: the full dark text colour */
+
+/* the orb's resting place follows the headline (set by site.js) */
+.hero_glow-sun { top: var(--orb-y, 46%); }
+@keyframes glow-set { from { top: -22%; opacity: .55; transform: translate(-50%, -50%) scale(1.35); } to { top: var(--orb-y, 46%); opacity: 1; transform: translate(-50%, -50%) scale(1); } }

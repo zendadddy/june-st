@@ -436,6 +436,14 @@
     }).catch(function () {});
   })();
 
+  /* ---------- 0k. Glow hero: the orb sits exactly behind the middle of the headline ---------- */
+  (function () {
+    var hero = document.querySelector('.hero.cc-glow'); if (!hero) return;
+    var glow = hero.querySelector('.hero_glow'), h1 = hero.querySelector('h1'); if (!glow || !h1) return;
+    function place() { var g = glow.getBoundingClientRect(), h = h1.getBoundingClientRect(); if (!g.height) return; glow.style.setProperty('--orb-y', (((h.top + h.bottom) / 2 - g.top) / g.height * 100).toFixed(2) + '%'); }
+    place(); window.addEventListener('resize', place); window.addEventListener('load', place); if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
