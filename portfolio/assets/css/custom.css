@@ -1143,3 +1143,8 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* the orb's resting place follows the headline (set by site.js) */
 .hero_glow-sun { top: var(--orb-y, 46%); }
 @keyframes glow-set { from { top: -22%; opacity: .55; transform: translate(-50%, -50%) scale(1.35); } to { top: var(--orb-y, 46%); opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+
+/* playground cards that link out: clickable, everything else about them stays the same */
+.pg_card:has(.pg_link) { pointer-events: auto; cursor: pointer; }
+.pg_link { display: block; width: 100%; height: 100%; }
+.pg_link img { width: 100%; height: 100%; object-fit: cover; display: block; }
