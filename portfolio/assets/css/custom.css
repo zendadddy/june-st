@@ -533,9 +533,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero h1 { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
 @media (max-width: 767px) { .hero .container > .row > .col { flex: 0 0 100%; max-width: 100%; } }
 
-/* Homepage logos: a quiet "Where I've worked" label above them */
-.logo_eyebrow { display: block; width: 100%; max-width: none; margin: .25rem auto 1.75rem; text-align: center; opacity: .45; grid-column: 1 / -1; }
-@media (max-width: 767px) { .logo_eyebrow { margin: .5rem 0 1.1rem; } }
 /* Mobile menu: the close control is the same thin X as the modals */
 .nav_menu_x { display: block; width: 1.5rem; height: 1.5rem; margin: -.15rem -.2rem; }
 /* Phones: the Ram Dass quote section is left out */
