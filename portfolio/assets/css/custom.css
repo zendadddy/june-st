@@ -756,3 +756,18 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 
 /* text stand-in for a client logo (Moxa) until the real mark is in: same visual height and softness as the image logos */
 .testimonial_logo.tm_logo-text { height: auto; display: block; font-size: 1.35rem; line-height: 1; font-weight: 600; letter-spacing: .02em; color: currentColor; opacity: .8; }
+
+/* pg-collage: on phones the nine photos are scattered like prints on a table: mixed sizes, staggered, a little overlap */
+@media (max-width: 767px) {
+  .pg .pg_grid { grid-template-columns: repeat(12, 1fr); column-gap: 0; row-gap: 0; align-items: start; padding-bottom: 2rem; }
+  .pg .pg_slot { align-self: start; }
+  .pg .pg_slot:nth-child(1) { grid-area: 1 / 1 / 2 / 7; }
+  .pg .pg_slot:nth-child(2) { grid-area: 1 / 7 / 2 / 12; margin: 14vw 0 0 2vw; }
+  .pg .pg_slot:nth-child(3) { grid-area: 2 / 3 / 3 / 8; margin-top: -10vw; }
+  .pg .pg_slot:nth-child(4) { grid-area: 2 / 7 / 3 / 13; margin-top: 12vw; }
+  .pg .pg_slot:nth-child(5) { grid-area: 3 / 1 / 4 / 6; margin-top: -4vw; }
+  .pg .pg_slot:nth-child(6) { grid-area: 3 / 5 / 4 / 10; margin-top: 22vw; }
+  .pg .pg_slot:nth-child(7) { grid-area: 4 / 3 / 5 / 13; margin-top: -6vw; }
+  .pg .pg_slot:nth-child(8) { grid-area: 5 / 1 / 6 / 6; margin-top: -8vw; }
+  .pg .pg_slot:nth-child(9) { grid-area: 5 / 6 / 6 / 11; margin: 6vw 0 0 3vw; }
+}

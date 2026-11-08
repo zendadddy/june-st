@@ -681,7 +681,7 @@
         var vh0 = window.innerHeight; pg.classList.add('is-settled');
         cards.forEach(function (c, n) {
           var sr = slots[n].getBoundingClientRect(), mid = sr.top + sr.height / 2 - vh0 / 2;
-          var rate = .03 + rnd(n, 2.171) * .06, tilt = rnd(n, 3.731) < .2 ? (rnd(n, 9.17) < .5 ? -1 : 1) * (1.5 + rnd(n, 5.33) * 2.5) : 0;
+          var rate = .03 + rnd(n, 2.171) * .06, tilt = (n % 2 ? 1 : -1) * (1.5 + rnd(n, 5.33) * 3.5); // every print sits a little askew, alternating left and right
           c.style.transform = 'translate3d(0,' + (-mid * rate).toFixed(1) + 'px,0) rotate(' + tilt.toFixed(2) + 'deg)';
           if (c._blur) { c._blur = 0; c.style.filter = ''; }
         });
