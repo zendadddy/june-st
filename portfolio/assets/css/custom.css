@@ -513,3 +513,8 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .footer .footer_logo { margin-top: 0; }
 .footer_colophon > div:first-child { visibility: hidden; } /* copyright: keeps its grid slot on desktop so the links stay centred */
 @media (max-width: 991px) { .footer_colophon > div:first-child { display: none; } }
+
+/* Phones: the hero's own centred crop (hero-loop-m / hero-stage-m) fills the frame as-is */
+@media (max-width: 767px) { .hero.cc-photo .hero_photo { object-position: 50% 50%; } }
+/* Phones: "Coming soon" sits snug above the course title */
+@media (max-width: 767px) { .project .u-vflex-left-top.u-vgap-12 { grid-row-gap: .3rem; row-gap: .3rem; } }
