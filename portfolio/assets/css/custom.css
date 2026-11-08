@@ -1012,3 +1012,12 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .about_video-btn { width: clamp(2.75rem, 4.5vw, 3.75rem); background: none; -webkit-backdrop-filter: none; backdrop-filter: none; filter: drop-shadow(0 2px 10px #0000004d); }
 .about_video-btn svg { width: 100%; height: 100%; margin: 0 0 0 8%; }
 .about_video-link:hover .about_video-btn { background: none; transform: scale(1.1); }
+
+/* Contact cams: a grey skeleton with a soft shimmer while the live feed loads */
+.section.livecam { background: #ecebe8; }
+.livecam::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(100deg, #ecebe800 30%, #f7f6f3 50%, #ecebe800 70%) 0 0 / 250% 100% no-repeat; animation: cam-shimmer 1.6s ease-in-out infinite; transition: opacity .6s ease; }
+.livecam.is-live::before, .livecam.is-offline::before { opacity: 0; animation: none; }
+@keyframes cam-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+@media (prefers-reduced-motion: reduce) { .livecam::before { animation: none; } }
+.footer_tear { max-width: none; } /* the global svg max-width was capping the overhang */
