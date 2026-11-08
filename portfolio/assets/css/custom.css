@@ -861,3 +861,11 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
   .pg[data-lay="5"] .pg_slot:nth-child(9) { grid-area: 4 / 7 / 5 / 12; margin: 6vw 0 0 0; }
 }
 .section[data-svg="breath"] { background: #3d86d3; } /* sky-blue fallback under the video */
+
+/* phones: the logo grid sits a little higher under the headline */
+@media (max-width: 767px) { .page-main > .hero.section.cc-glow { padding-bottom: 3rem; } }
+/* About: the podcast clip opens the episode on Spotify; the caption below links too, led by a small play icon */
+.about_video-link { position: absolute; inset: 0; z-index: 2; cursor: pointer; }
+.about_video-cap { display: inline-flex; align-items: center; gap: .5em; color: inherit; text-decoration: none; opacity: .6; transition: opacity .25s ease; }
+.about_video-cap:hover, .about_video-cap:focus-visible { opacity: 1; }
+.about_video-play { width: .8em; height: .8em; flex: none; }
