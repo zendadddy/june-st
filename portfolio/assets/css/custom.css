@@ -911,3 +911,10 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 footer.footer::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 42%; z-index: 0; pointer-events: none;
   background: linear-gradient(180deg, #534d6a00 0%, #534d6a59 45%, #534d6aa6 100%); }
 @media (max-width: 767px) { footer.footer::after { height: 55%; } }
+
+/* About podcast clip: a frosted round play button in the middle (the caption below no longer has its own icon) */
+.about_video-link { display: flex; align-items: center; justify-content: center; }
+.about_video-btn { width: clamp(6rem, 13vw, 10rem); aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff;
+  background: #ffffff38; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: transform .5s cubic-bezier(.22, 1, .36, 1), background-color .3s ease; }
+.about_video-btn svg { width: 30%; height: 30%; margin-left: 3%; }
+.about_video-link:hover .about_video-btn { transform: scale(1.1); background: #ffffff55; }
