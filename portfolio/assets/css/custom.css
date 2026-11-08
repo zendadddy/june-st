@@ -575,3 +575,6 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 479px) { .snail_address { padding-left: 0; } }
 @media (prefers-reduced-motion: reduce) { .snail-modal .snail_letter, .snail-trigger { transition: none; } }
 .contact-intro .snail { display: none; } /* the letter lives in the modal; this inline copy only exists until site.js moves it */
+
+/* Snail mail Q&A is parked until there is a mailing address: delete this line to bring the stamp back */
+.snail-trigger { display: none !important; }
