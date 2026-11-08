@@ -185,11 +185,14 @@ html.has-gate, html.has-gate body { overflow: hidden; }
 
 /* Links that aren't the nav: dim to 80% on hover. Nav and other links rise 2-3px with a soft shadow, slowly, like a breath in. */
 a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-button) { transition: opacity .6s cubic-bezier(.22, 1, .36, 1), top .6s cubic-bezier(.22, 1, .36, 1), text-shadow .6s ease; }
-a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-button):hover { opacity: .8; }
+a:not(.nav_link):not(.nav_sun):not(.btn):not(.totop):not(.project_link):not(.w-button):not(.footer_link):hover { opacity: .8; }
 .nav_link, .footer_link, .accolade_link, .linktree-btn, a:not([class]) { position: relative; top: 0; }
 .nav_link { transition: top .6s cubic-bezier(.22, 1, .36, 1), text-shadow .6s ease; }
-.nav_link:hover, .footer_link:hover, .linktree-btn:hover, a:not([class]):hover { top: -2.5px; }
-.footer_link:hover, .linktree-btn:hover { text-shadow: 0 3px 8px #00000024; }
+.nav_link:hover, .linktree-btn:hover, a:not([class]):hover { top: -2.5px; }
+.linktree-btn:hover { text-shadow: 0 3px 8px #00000024; }
+/* Footer links stay put and just fade */
+.footer_link { transition: opacity .5s cubic-bezier(.22, 1, .36, 1); }
+.footer_link:hover, .footer_dd-label:focus-visible { opacity: .55; }
 
 /* Larger, steady hover target: an invisible pad around lifting links (taller underneath, so the 2.5px lift never slips out from under the cursor) */
 .nav_link::before, .footer_link::before, .linktree-btn::before, a:not([class])::before, .see-all::before {
@@ -346,8 +349,8 @@ span.cc-alt.cc-alt.cc-alt { font-size: 1.138em; line-height: 1; }
 .footer_dd-label { cursor: default; outline: none; }
 .footer_dd-cities { display: inline-grid; grid-template-columns: 0fr; transition: grid-template-columns .55s cubic-bezier(.22, 1, .36, 1); }
 .footer_dd-inner { min-width: 0; overflow: hidden; white-space: nowrap; padding: 6px 0 12px; margin: -6px 0 -12px; opacity: 0; transform: translateX(-8px); transition: opacity .35s ease, transform .55s cubic-bezier(.22, 1, .36, 1); }
-.footer_dd:hover .footer_dd-cities, .footer_dd:focus-within .footer_dd-cities { grid-template-columns: 1fr; }
-.footer_dd:hover .footer_dd-inner, .footer_dd:focus-within .footer_dd-inner { opacity: 1; transform: none; }
+.footer_dd:hover .footer_dd-cities, .footer_dd:focus-within .footer_dd-cities, .footer_dd.is-open .footer_dd-cities { grid-template-columns: 1fr; }
+.footer_dd:hover .footer_dd-inner, .footer_dd:focus-within .footer_dd-inner, .footer_dd.is-open .footer_dd-inner { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .footer_dd-cities, .footer_dd-inner { transition: none; } }
 
 /* About: podcast clip in the widescreen band (replaces the speaking photo) */

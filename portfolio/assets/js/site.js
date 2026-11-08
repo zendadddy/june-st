@@ -191,6 +191,12 @@
     }, true);
   })();
 
+  /* Footer "Design & Dev": once the cities have slid out, they stay out */
+  document.querySelectorAll('.footer_dd').forEach(function (dd) {
+    function keep() { dd.classList.add('is-open'); }
+    dd.addEventListener('pointerenter', keep, { once: true }); dd.addEventListener('focusin', keep, { once: true }); dd.addEventListener('click', keep, { once: true });
+  });
+
   /* ---------- 1. Always start a new page at the top ---------- */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   if (!location.hash) window.scrollTo(0, 0);
