@@ -971,3 +971,9 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 .livecam.is-live:hover .livecam_btn, .livecam.is-live .livecam_btn:focus-visible { opacity: 1; }
 @media (hover: none) { .livecam.is-live .livecam_btn { opacity: .85; } }
 .livecam .livecam_src { display: none; }
+
+/* Contact cams: no mirror photo; the section stays white until a live feed fades in */
+.livecam .livecam_photo { display: none; }
+.section.livecam { background: #fff; }
+.livecam:not(.is-live) .livecam_note { opacity: 0; }
+.livecam_note { transition: opacity .6s ease; }
