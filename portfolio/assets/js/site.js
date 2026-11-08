@@ -762,48 +762,6 @@
   }
   if (!reduce) document.querySelectorAll('[data-playground]').forEach(initPlayground);
 
-  /* Playground viewer (phones): tap a photo to open it full screen; swipe between photos; tap the X, the backdrop or press Esc to close */
-  document.querySelectorAll('[data-playground]').forEach(function (pg) {
-    var imgs = Array.prototype.slice.call(pg.querySelectorAll('.pg_card img'));
-    if (!imgs.length) return;
-    var lb = null, track = null, count = null, lastFocus = null;
-    function build() {
-      lb = document.createElement('div'); lb.className = 'pg-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Playground photos');
-      lb.innerHTML = '<button class="pg-lb_close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button><div class="pg-lb_track"></div><div class="pg-lb_count" aria-live="polite"></div>';
-      track = lb.querySelector('.pg-lb_track'); count = lb.querySelector('.pg-lb_count');
-      imgs.forEach(function (im) {
-        var it = document.createElement('div'); it.className = 'pg-lb_item';
-        var big = document.createElement('img'); big.alt = im.alt || ''; big.loading = 'lazy'; big.decoding = 'async'; big.src = im.currentSrc || im.src;
-        it.appendChild(big); track.appendChild(it);
-      });
-      lb.querySelector('.pg-lb_close').addEventListener('click', close);
-      track.addEventListener('click', function (e) { if (e.target.tagName !== 'IMG') close(); });
-      track.addEventListener('scroll', function () { var i = Math.round(track.scrollLeft / (track.clientWidth || 1)); count.textContent = (i + 1) + ' / ' + imgs.length; }, { passive: true });
-      document.body.appendChild(lb);
-    }
-    function open(i) {
-      if (!lb) build();
-      lastFocus = document.activeElement;
-      document.documentElement.classList.add('pg-lb-open');
-      track.style.scrollSnapType = 'none'; track.scrollLeft = i * track.clientWidth; track.style.scrollSnapType = '';
-      count.textContent = (i + 1) + ' / ' + imgs.length;
-      requestAnimationFrame(function () { lb.classList.add('is-open'); lb.querySelector('.pg-lb_close').focus({ preventScroll: true }); });
-    }
-    function close() {
-      if (!lb || !lb.classList.contains('is-open')) return;
-      lb.classList.remove('is-open'); document.documentElement.classList.remove('pg-lb-open');
-      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
-    }
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-    imgs.forEach(function (im, i) {
-      im.closest('.pg_card').addEventListener('click', function () { if (window.innerWidth < 768) open(i); });
-    });
-    // phones show a dozen in the grid; this opens the viewer on the first photo so every one is a swipe away
-    var all = document.createElement('button'); all.type = 'button'; all.className = 'pg-all'; all.textContent = 'View all ' + imgs.length;
-    all.addEventListener('click', function () { open(0); });
-    (pg.querySelector('.pg_track') || pg).insertAdjacentElement('afterend', all);
-  });
-
   /* Footer clouds: fade in once loaded */
   document.querySelectorAll('img.footer_bg').forEach(function (im) {
     var done = function () { im.classList.add('is-loaded'); };
