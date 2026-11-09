@@ -490,6 +490,13 @@
     hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; go(); });
   })();
 
+  /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
+  (function () {
+    var root = document.documentElement, rq = 0;
+    function upd() { rq = 0; root.classList.toggle('at-top', window.scrollY < 8); }
+    window.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(upd); }, { passive: true }); upd();
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;

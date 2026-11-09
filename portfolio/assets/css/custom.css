@@ -1216,3 +1216,6 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
   100% { filter: hue-rotate(0deg) saturate(1); }        /* back to orange */
 }
 @media (prefers-reduced-motion: reduce) { .hero.cc-glow .hero_glow-sun { animation: none !important; } }
+
+/* at the top of the page the nav floats with no tint; the tint fades in once you scroll */
+html.at-top .navigation::before { opacity: 0; }
