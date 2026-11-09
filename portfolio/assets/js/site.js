@@ -421,6 +421,7 @@
       form.classList.toggle('is-typing', any); if (btn.value !== 'Sending…') btn.disabled = !fields.every(ok);
     }
     form.addEventListener('input', sync); sync();
+    window.addEventListener('load', function () { sync(); setTimeout(sync, 300); }); // Webflow's form script re-enables the button when it starts up
     form.addEventListener('submit', function (e) {
       e.preventDefault(); e.stopImmediatePropagation(); var bad = fields.filter(function (f) { return !ok(f); }); if (bad.length) { bad.forEach(function (f) { show(f, true); }); bad[0].focus(); return; }
       var label = btn.value; btn.disabled = true; btn.value = 'Sending…'; if (fail) fail.style.display = 'none';

@@ -1321,3 +1321,11 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 /* contact form: the submit button is always there (dimmed until the form is complete) */
 form[data-contact] [type=submit] { opacity: 1; visibility: visible; transform: none; }
 form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
+
+/* "watch the sunset": every few seconds a soft warm glow rises behind the words and fades */
+[data-cams-link] { animation: sunset-glow 5s ease-in-out 1.5s infinite; }
+@keyframes sunset-glow {
+  0%, 55%, 100% { text-shadow: 0 0 0 #ffc24b00; }
+  70% { text-shadow: 0 0 10px #ffc24bcc, 0 0 22px #ffb03a80, 0 0 2px #ffd36e; }
+}
+@media (prefers-reduced-motion: reduce) { [data-cams-link] { animation: none; } }
