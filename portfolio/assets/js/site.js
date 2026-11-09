@@ -1012,6 +1012,9 @@
     var timeEl = cam.querySelector('.livecam_time');
     function tick() { if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit' }); }
     tick(); setInterval(tick, 15000);
+    // while the skeleton shows: a small 'Loading...' in the middle, the dots appearing one by one
+    var loadEl = document.createElement('p'); loadEl.className = 'livecam_loading eyebrow'; loadEl.setAttribute('aria-hidden', 'true');
+    loadEl.innerHTML = 'Loading<span>.</span><span>.</span><span>.</span>'; cam.appendChild(loadEl);
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
     var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, camReveal = 0, started = false;
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
