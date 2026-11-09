@@ -1210,8 +1210,9 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
   0%   { filter: hue-rotate(0deg) saturate(1); }
   20%  { filter: hue-rotate(-45deg) saturate(1.05); }   /* pink */
   40%  { filter: hue-rotate(-95deg) saturate(.95); }    /* purple */
-  60%  { filter: hue-rotate(-155deg) saturate(.9); }    /* blue */
-  75%  { filter: hue-rotate(-155deg) saturate(.25) brightness(1.04); }  /* pale */
+  52%  { filter: hue-rotate(-150deg) saturate(1); }     /* blue */
+  62%  { filter: hue-rotate(-200deg) saturate(1.6); }   /* bright sky blue, like #00bfff */
+  75%  { filter: hue-rotate(-200deg) saturate(.25) brightness(1.04); }  /* pale */
   82%  { filter: hue-rotate(0deg) saturate(.2) brightness(1.05); }      /* turns while pale, so it never passes through green */
   100% { filter: hue-rotate(0deg) saturate(1); }        /* back to orange */
 }

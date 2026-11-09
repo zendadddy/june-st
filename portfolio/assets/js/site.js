@@ -474,8 +474,8 @@
     var tx = 0, ty = 0, x = 0, y = 0, raf = 0;
     function step() {
       // the pull toward the cursor keeps fading, so the orb always settles back to the centre (like it's on a soft spring)
-      tx *= .975; ty *= .975;
-      x += (tx - x) * .06; y += (ty - y) * .06;
+      tx *= .99; ty *= .99;   // gentle, unhurried pull home
+      x += (tx - x) * .035; y += (ty - y) * .035;
       sun.style.translate = x.toFixed(1) + 'px ' + y.toFixed(1) + 'px';
       sun.style.scale = (1 - Math.min(.22, Math.hypot(x, y) / 600)).toFixed(3); // shrinks a little the further it's pulled, grows back as it settles
       raf = (Math.abs(x) > .3 || Math.abs(y) > .3 || Math.abs(tx) > .3 || Math.abs(ty) > .3) ? requestAnimationFrame(step) : 0;
