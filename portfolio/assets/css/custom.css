@@ -1016,7 +1016,7 @@ body:has(.about) .pg[data-playground] { padding-top: 0; }
 /* Contact cams: a grey skeleton with a soft shimmer while the live feed loads */
 .section.livecam { background: #ecebe8; }
 .livecam::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: linear-gradient(100deg, #ecebe800 30%, #f7f6f3 50%, #ecebe800 70%) 0 0 / 250% 100% no-repeat; animation: cam-shimmer 1.6s ease-in-out infinite; transition: opacity .6s ease; }
+  background: linear-gradient(100deg, #ecebe800 30%, #f7f6f3 50%, #ecebe800 70%) 0 0 / 250% 100% no-repeat; animation: cam-shimmer 3.2s ease-in-out infinite; transition: opacity .6s ease; }
 .livecam.is-live::before, .livecam.is-offline::before { opacity: 0; animation: none; }
 @keyframes cam-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
 @media (prefers-reduced-motion: reduce) { .livecam::before { animation: none; } }
@@ -1107,7 +1107,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* changing cams: instead of jumping back to the light skeleton, the view dims to a soft dark screen while the next feed tunes in */
 .livecam { transition: background-color .6s ease; }
 .section.livecam.is-switching { background: #17181a; }
-.livecam.is-switching::before { opacity: .12 !important; animation: cam-shimmer 1.6s ease-in-out infinite !important; }
+.livecam.is-switching::before { opacity: .12 !important; animation: cam-shimmer 3.2s ease-in-out infinite !important; }
 .livecam.is-switching .livecam_screen { opacity: 0; transform: scale(1.02); filter: blur(8px); transition: opacity .5s ease, transform .9s cubic-bezier(.22, 1, .36, 1), filter .5s ease; }
 .livecam .livecam_screen { filter: none; }
 .livecam.is-switching .livecam_note { opacity: 1; }
