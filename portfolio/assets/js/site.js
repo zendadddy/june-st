@@ -814,10 +814,8 @@
           var order = [2, 0, 4, 1, 5, 3][n], fx = (order / (FAN - 1) - .5) * spread * .7 + (rnd(n, 78.233) - .5) * 40;
           return { sx: homes[n].x + fx, sy: homes[n].y + (rnd(n, 39.425) - .5) * vh * .06, rot: rot, s: (vh * .42) / Math.sqrt(w * h) };
         }
-        // everything else waits just off the nearest side of the screen, at its own row height
-        var sr = slots[n].getBoundingClientRect(), cxs = sr.left + sr.width / 2, side = cxs < vw / 2 ? -1 : 1;
-        var off = side < 0 ? -(cxs + w * .7 + rnd(n, 7.13) * 60) : (vw - cxs) + w * .7 + rnd(n, 7.13) * 60;
-        return { sx: off, sy: (rnd(n, 39.425) - .5) * vh * .08, rot: rot * .6, s: 1.05 };
+        // everything else waits tucked in the pile at the centre, and deals out from there
+        return { sx: homes[n].x + (rnd(n, 7.13) - .5) * spread * .5, sy: homes[n].y + (rnd(n, 39.425) - .5) * vh * .1, rot: rot, s: .9 };
       });
       loopMeasure();
       cur = target = done ? 1 : progress();
@@ -889,12 +887,15 @@
       stage.style.cursor = n > -1 ? 'zoom-in' : '';
       layout();
     }
-    function updateHover() { if (!pointer) return; if (cur < .5) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover once the grid is half dealt
+    // hover once the grid is half dealt, and only after the cursor itself moves: scrolling or edge-panning past photos doesn't zoom them
+    var moved = false;
+    function panning() { return Math.abs(panV) > .4; }
+    function updateHover() { if (!pointer) return; if (cur < .5 || !moved || panning()) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); }
     // edge panning: near the left or right edge of the screen the rows glide sideways, faster the closer you get,
     // and loop: photos leaving one edge come back round on the other (each row repeats every L pixels)
     var pan = 0, panV = 0, panRaf = 0, loopOn = false, L = 0, base = [], natural = [];
     function loopMeasure() {
-      allSlots.forEach(function (s) { s.style.translate = ''; });
+      allSlots.forEach(function (s, n) { s.style.translate = ''; s.style.zIndex = String(40 - (parseInt(s.querySelector('.pg_card').style.getPropertyValue('--i'), 10) || 0)); }); // a moved slot stacks on its own, so it carries the card's layer order
       loopOn = !simple && window.innerWidth >= 992 && slots.length > COLS;
       if (!loopOn) { pan = 0; return; }
       var gr = grid.getBoundingClientRect(), gc = gr.left + gr.width / 2, rows = {};
@@ -931,7 +932,10 @@
     }
     function panKick() { if (!panRaf) panRaf = requestAnimationFrame(panStep); }
     if (canHover) {
-      stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); panKick(); });
+      stage.addEventListener('pointermove', function (e) {
+        if (!pointer || Math.abs(e.clientX - pointer.x) + Math.abs(e.clientY - pointer.y) > 2) moved = true; // browsers send a still 'move' after scrolling: ignore those
+        pointer = { x: e.clientX, y: e.clientY }; updateHover(); panKick();
+      });
       stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
     }
     // ease the shown progress toward the scroll position so wheel and trackpad steps don't judder
@@ -954,6 +958,7 @@
     // when the visitor rests mid-way through the pin, the photos float on into the grid by themselves
     function kick() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
     window.addEventListener('scroll', function () {
+      moved = false;
       if (simple) { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; layout(); }); } return; }
       var p = progress();
       if (done) { target = 1; if (!floating) kick(); return; }

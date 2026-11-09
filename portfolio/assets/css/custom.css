@@ -1261,3 +1261,5 @@ html.at-top .navigation::before { opacity: 0; }
   input:not([type]), input[type="text"], input[type="email"], textarea { cursor: text; }
   a, button, [role="button"], summary, label[for], select, input[type="submit"], input[type="button"], input[type="checkbox"], input[type="radio"], .btn { cursor: var(--cur-hand); }
 }
+
+.pg_slot:has(.pg_card.is-focus) { z-index: 100 !important; } /* the hovered photo rises above every other slot */
