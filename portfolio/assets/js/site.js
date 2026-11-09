@@ -1302,6 +1302,65 @@
     window.addEventListener('load', function () { update(); setTimeout(update, 300); }); // Webflow's form script re-enables the button when it starts up
   });
 
+  /* ---------- 5c. Playground on phones: tap a photo to open a swipeable carousel of all of them ---------- */
+  document.querySelectorAll('[data-playground]').forEach(function (pg) {
+    var figs = Array.prototype.slice.call(pg.querySelectorAll('.pg_card')); if (!figs.length) return;
+    var phone = window.matchMedia('(max-width: 767px)');
+    var box = null, track = null, count = null, lastFocus = null;
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; }); }
+    function build() {
+      box = document.createElement('div'); box.className = 'pgx'; box.hidden = true;
+      box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', 'Playground photos');
+      var slides = figs.map(function (f, n) {
+        var im = f.querySelector('img'), cap = f.querySelector('.pg_credit'), a = f.querySelector('.pg_link');
+        var text = cap ? cap.textContent.trim() : '';
+        var link = a ? '<a class="pgx_link" href="' + esc(a.href) + '" target="_blank" rel="noopener">' + esc(text || 'Open') + ' ↗</a>' : (text ? '<p class="pgx_cap">' + esc(text) + '</p>' : '');
+        return '<figure class="pgx_slide" data-n="' + n + '"><img src="' + esc(im.currentSrc || im.src) + '" alt="' + esc(im.alt) + '" loading="lazy" decoding="async">' + link + '</figure>';
+      }).join('');
+      box.innerHTML = '<div class="pgx_track">' + slides + '</div>' +
+        '<button type="button" class="pgx_close" aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg></button>' +
+        '<p class="pgx_count eyebrow-sm" aria-live="polite"></p>';
+      document.body.appendChild(box);
+      track = box.querySelector('.pgx_track'); count = box.querySelector('.pgx_count');
+      box.querySelector('.pgx_close').addEventListener('click', close);
+      track.addEventListener('click', function (e) { if (e.target === track || e.target.classList.contains('pgx_slide')) close(); }); // tap the empty space around a photo to close
+      var rq = 0; track.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; label(); }); }, { passive: true });
+      document.addEventListener('keydown', function (e) {
+        if (box.hidden) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var w = track.clientWidth; track.scrollBy({ left: e.key === 'ArrowRight' ? w : -w, behavior: 'smooth' }); }
+      });
+    }
+    function label() { var n = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); count.textContent = (n + 1) + ' / ' + figs.length; }
+    function open(n) {
+      if (!box) build();
+      lastFocus = document.activeElement; box.hidden = false; document.documentElement.classList.add('pgx-open');
+      track.style.scrollBehavior = 'auto'; track.scrollLeft = n * track.clientWidth; track.style.scrollBehavior = '';
+      label(); requestAnimationFrame(function () { box.classList.add('is-open'); });
+      box.querySelector('.pgx_close').focus({ preventScroll: true });
+    }
+    function close() {
+      box.classList.remove('is-open'); document.documentElement.classList.remove('pgx-open');
+      setTimeout(function () { box.hidden = true; }, 250);
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }
+    // which photo was tapped: the top-most card whose box holds the point (cards themselves don't take pointer events)
+    function cardAt(x, y) {
+      var best = -1, bz = -1e9;
+      figs.forEach(function (f, n) {
+        if (!f.offsetParent) return;
+        var r = f.getBoundingClientRect(); if (x < r.left || x > r.right || y < r.top || y > r.bottom) return;
+        var z = 40 - (parseInt(f.style.getPropertyValue('--i'), 10) || 0); if (z > bz) { bz = z; best = n; }
+      });
+      return best;
+    }
+    pg.addEventListener('click', function (e) {
+      if (!phone.matches) return;
+      var n = cardAt(e.clientX, e.clientY); if (n < 0) return;
+      e.preventDefault(); open(n);
+    }, true);
+  });
+
   /* ---------- 10. Hero loop: still photo for reduced motion ---------- */
   document.querySelectorAll('video.hero_photo, video.about_video, video.about_sky').forEach(function (v) {
     if (reduce) { v.removeAttribute('autoplay'); v.pause(); return; }
