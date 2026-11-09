@@ -1073,11 +1073,6 @@
     }
     cam.querySelectorAll('.livecam_btn').forEach(function (b) { b.addEventListener('click', function () { if (!apiReady || !alive().length) return; dir = +b.getAttribute('data-dir'); show(idx + dir); }); });
     // click the feed to watch it full screen; the X (or Esc, or clicking again) brings it back
-    // phones held upright: a nudge to turn sideways, under the full-screen spinner
-    var rot = document.createElement('div'); rot.className = 'livecam_rotate'; rot.setAttribute('aria-hidden', 'true');
-    rot.innerHTML = '<svg viewBox="0 0 40 40" width="34" height="34" fill="none"><g class="livecam_rotate-phone"><rect x="13" y="6" width="14" height="28" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M18 30.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g></svg>' +
-      '<span class="eyebrow-sm"><span class="livecam_rotate-arrow">←</span> Rotate your phone <span class="livecam_rotate-arrow">→</span></span>';
-    cam.appendChild(rot);
     var closeBtn = document.createElement('button'); closeBtn.type = 'button'; closeBtn.className = 'livecam_close'; closeBtn.setAttribute('aria-label', 'Close full screen');
     closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg>';
     cam.querySelector('.livecam_ui').appendChild(closeBtn);
