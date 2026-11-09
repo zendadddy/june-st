@@ -150,6 +150,7 @@
       modal.innerHTML = '<div class="gate-modal_backdrop" data-soon-close></div>' +
         '<div class="gate-modal_card">' +
           '<button type="button" class="gate-modal_close" aria-label="Close" data-soon-close><svg viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg></button>' +
+          '<img class="soon-modal_thumb" alt="" hidden>' +
           '<img class="soon-modal_icon" alt="" width="258" height="296" hidden>' +
           '<div class="u-vflex-left-top u-vgap-12"><h2 id="soon-title"></h2><p class="u-color-secondary soon-modal_text"></p></div>' +
           '<div class="soon-modal_signup"><form class="form u-vflex-right-top gate-modal_form soon-modal_form" novalidate>' +
@@ -193,10 +194,15 @@
       courses: ['Coming <span class="h2 cc-alt">soon</span>', 'These courses are all on the way. Join my mailing list and I’ll let you know when they’re live.'],
       newsletter: ['My <span class="h2 cc-alt">newsletter</span>', 'Occasional notes on design, building things, and new courses as they launch. No spam, unsubscribe any time.']
     };
-    function open(kind) {
+    function open(kind, card) {
       if (!modal) build();
       var c = COPY[kind] || COPY.courses; syncModalBtn(modal.querySelector('form'));
       modal.querySelector('#soon-title').innerHTML = c[0]; modal.querySelector('.soon-modal_text').textContent = c[1];
+      // a course: its thumbnail on top, and its title in the message
+      var thumb = modal.querySelector('.soon-modal_thumb'), cimg = card && card.querySelector('img'), ct = card && card.querySelector('h4:not(.u-sr-only)');
+      thumb.hidden = !(kind === 'courses' && cimg);
+      if (!thumb.hidden) { thumb.src = cimg.currentSrc || cimg.src; thumb.alt = ''; }
+      if (kind === 'courses' && ct) modal.querySelector('.soon-modal_text').textContent = '“' + ct.textContent.trim() + '” is on the way. Join my mailing list and I’ll let you know when it’s live.';
       var icon = modal.querySelector('.soon-modal_icon'); icon.hidden = kind !== 'newsletter';
       // find the assets folder from the page's own favicon link (works wherever the site is hosted, at any page depth)
       if (!icon.hidden && !icon.getAttribute('src')) { var fav = document.querySelector('link[rel~="icon"]'); icon.src = fav ? fav.href.replace(/[^/]*$/, 'newsletter-face.png') : new URL('assets/newsletter-face.png', siteRoot).href; }
@@ -216,7 +222,7 @@
     document.addEventListener('click', function (e) {
       if (e.button !== 0) return;
       var a = e.target.closest && e.target.closest('a.project_link[href="#"], a[data-newsletter]'); if (!a) return;
-      e.preventDefault(); e.stopImmediatePropagation(); open(a.hasAttribute('data-newsletter') ? 'newsletter' : 'courses');
+      e.preventDefault(); e.stopImmediatePropagation(); open(a.hasAttribute('data-newsletter') ? 'newsletter' : 'courses', a.closest('.project'));
     }, true);
   })();
 

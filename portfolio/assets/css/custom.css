@@ -1487,3 +1487,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* phone gallery: plain X, no circle behind it */
 .pgx_close { background: none !important; }
+
+/* course popup: the course's thumbnail sits on top */
+.soon-modal .gate-modal_card .soon-modal_thumb { display: block; width: 100%; aspect-ratio: 16 / 10; height: auto; max-width: none; object-fit: cover; border-radius: var(--radius-sm, 2px); margin: 0 0 .5rem; }
+.soon-modal_thumb[hidden] { display: none !important; }
