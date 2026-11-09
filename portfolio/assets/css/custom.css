@@ -1235,7 +1235,7 @@ html.at-top .navigation::before { opacity: 0; }
 .livecam_btn, .livecam_close { border: 0 !important; box-shadow: none; }
 
 /* Ram Dass: hover (or focus) his name and a round photo of him pops up above it */
-.rd-name { position: relative; display: inline-block; cursor: default; border-bottom: 1px dotted currentColor; outline: none; }
+.rd-name { position: relative; display: inline-block; cursor: default; border-bottom: 1px dotted rgba(255, 255, 255, .4); outline: none; }
 .rd-tip { position: absolute; left: 50%; bottom: calc(100% + .9rem); width: clamp(8rem, 13vw, 11rem); aspect-ratio: 1; object-fit: cover; object-position: 50% 30%;
   border-radius: 50%; box-shadow: 0 .75rem 2rem #00000040; pointer-events: none; z-index: 5;
   opacity: 0; transform: translate(-50%, .5rem) scale(.6) rotate(-6deg); transform-origin: 50% 100%;
