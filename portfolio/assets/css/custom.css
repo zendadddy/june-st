@@ -1305,3 +1305,15 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 .ways { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: 0; }
 .ways_row { display: block; }
 .ways_k { color: var(--_colors---text--secondary, #2e2e2e99); opacity: .7; }
+
+/* contact, desktop: title and Talk / Read / Unwind on the left, the form on the right (phones keep the centred stack) */
+@media (min-width: 992px) {
+  .contact-intro .row > .col.col-lg-5 { flex: 0 0 83.333%; max-width: 83.333%; width: 83.333%; }
+  .contact-intro .col > .u-vflex-stretch-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-rows: auto 1fr; column-gap: clamp(3rem, 8vw, 8rem); row-gap: 0; align-items: start; }
+  .contact-intro .col > .u-vflex-stretch-top > .u-vflex-center-top { grid-column: 1; grid-row: 1; align-items: flex-start; }
+  .contact-intro .col > .u-vflex-stretch-top > .u-align-center { grid-column: 1; grid-row: 2; text-align: left; margin-top: 1.25rem; }
+  .contact-intro .col > .u-vflex-stretch-top > .w-form { grid-column: 2; grid-row: 1 / span 2; margin-top: .6rem; }
+  .contact-intro .col > .u-vflex-stretch-top > .snail { grid-column: 1 / -1; grid-row: 3; }
+  .contact-intro h1.u-align-center { text-align: left; }
+  .contact-intro .ways { align-items: flex-start; }
+}
