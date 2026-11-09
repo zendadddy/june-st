@@ -1297,3 +1297,6 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 
 /* cam skeleton: a soft, grey, blurred daytime frame of the Venice boardwalk under the shimmer */
 .section.livecam:not(.is-switching) { background: #ecebe8 url('../cam-skeleton.jpg') center / cover no-repeat; }
+
+/* phones have no cams, so the 'stare into the sunset' hint is left out there */
+@media (max-width: 767px) { .cam-hint { display: none; } }

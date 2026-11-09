@@ -1361,6 +1361,16 @@
     }, true);
   });
 
+  /* ---------- 6b. Contact: 'stare into the sunset' glides down to the live cams ---------- */
+  document.querySelectorAll('[data-cams-link]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var t = document.getElementById('cams'); if (!t || t.hidden) return;
+      e.preventDefault();
+      try { if (typeof lenis !== 'undefined' && lenis.scrollTo) { lenis.scrollTo(t, { duration: 1.6 }); return; } } catch (err) {}
+      t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+  });
+
   /* ---------- 10. Hero loop: still photo for reduced motion ---------- */
   document.querySelectorAll('video.hero_photo, video.about_video, video.about_sky').forEach(function (v) {
     if (reduce) { v.removeAttribute('autoplay'); v.pause(); return; }
