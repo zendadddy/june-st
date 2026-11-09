@@ -1422,3 +1422,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 /* 404: a slim black band above and below the clip, to balance its baked-in side borders */
 .page-wrapper.cc-utility { background: #000; }
 .page-wrapper.cc-utility .w-background-video { top: clamp(1.5rem, 5vh, 3.5rem) !important; bottom: clamp(1.5rem, 5vh, 3.5rem) !important; height: auto !important; }
+
+/* 404, phones: words centred in the clip, and smaller */
+.page-wrapper.cc-utility .utility_container.is-centered { text-align: center; align-items: center; }
+@media (max-width: 767px) { .page-wrapper.cc-utility .utility_container h1 { font-size: 2.1rem; line-height: 1.1; } }

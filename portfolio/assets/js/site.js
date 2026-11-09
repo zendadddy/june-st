@@ -549,9 +549,13 @@
       var ox = r.left + (r.width - VW * s) / 2, oy = r.top + (r.height - VH * s) / 2;
       var L = Math.max(0, ox + PIC.l * s), T = Math.max(0, oy + PIC.t * s), R = Math.min(window.innerWidth, ox + PIC.r * s);
       var pad = Math.max(16, Math.min(48, (R - L) * .05));
+      var phone = window.innerWidth < 768, B = Math.min(window.innerHeight, oy + PIC.b * s);
+      box.classList.toggle('is-centered', phone);
       box.style.left = Math.round(L + pad) + 'px';
-      box.style.top = Math.round(Math.max(T + pad, 96)) + 'px';
       box.style.maxWidth = Math.round(R - L - pad * 2) + 'px';
+      box.style.width = phone ? Math.round(R - L - pad * 2) + 'px' : '';
+      // phones: centred in the picture; larger screens: top-left
+      box.style.top = Math.round(phone ? (T + B) / 2 - box.offsetHeight / 2 : Math.max(T + pad, 96)) + 'px';
     }
     fit(); window.addEventListener('resize', fit); v.addEventListener('loadedmetadata', fit);
   })();
