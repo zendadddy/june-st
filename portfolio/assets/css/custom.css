@@ -1266,3 +1266,6 @@ html.at-top .navigation::before { opacity: 0; }
 
 /* desktop: a little more air between the metal logo and the footer links */
 @media (min-width: 992px) { .footer .footer_logo { margin-bottom: 8px; } }
+
+/* project card brand set as text (for projects without a logo file) */
+.project_wordmark { display: block; line-height: 1; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; padding: .15rem 0 0; margin-bottom: -.25rem; }
