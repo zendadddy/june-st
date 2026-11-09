@@ -1306,6 +1306,22 @@
     if (reduce) { v.removeAttribute('autoplay'); v.pause(); return; }
     var p = v.play(); if (p && p.catch) p.catch(function () {}); // some browsers block autoplay; the poster still shows
   });
+  // When a phone refuses to autoplay (iOS Low Power Mode), Safari puts a big play button over the video.
+  // Swap in the poster as a plain image instead, and bring the video back if it can play after the first tap.
+  document.querySelectorAll('video[autoplay][poster]').forEach(function (v) {
+    if (reduce) return;
+    function blocked() {
+      if (v._still) return;
+      var im = document.createElement('img'); im.src = v.getAttribute('poster'); im.alt = ''; im.setAttribute('aria-hidden', 'true'); im.className = v.className;
+      v.parentNode.insertBefore(im, v); v.style.display = 'none'; v._still = im;
+      var retry = function () {
+        var q = v.play(); if (!q || !q.then) return;
+        q.then(function () { if (v._still) { v._still.remove(); v._still = null; v.style.display = ''; } }).catch(function () {});
+      };
+      ['touchend', 'click'].forEach(function (ev) { document.addEventListener(ev, retry, { once: true, passive: true }); });
+    }
+    var p = v.play(); if (p && p.catch) p.catch(function (e) { if (e && e.name === 'NotAllowedError') blocked(); });
+  });
 
   // Sample at load, after fonts/images, and on resize.
   sampleBackdrop();
