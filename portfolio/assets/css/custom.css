@@ -1376,3 +1376,6 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .livecam.is-full.is-live:not(.is-switching)::after, .livecam.is-full.is-offline::after { opacity: 0; animation: none; }
 @keyframes cam-spin { to { transform: rotate(360deg); } }
 .livecam.is-full .livecam_ui { opacity: 1 !important; } /* the close button is reachable right away, even before YouTube is ready */
+
+/* phones: the cam tape tag sits along the bottom of the screen */
+@media (max-width: 767px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; left: 1rem !important; } }
