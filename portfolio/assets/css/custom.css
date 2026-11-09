@@ -1418,3 +1418,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   text-align: left; display: flex; flex-direction: column; align-items: flex-start; max-width: min(36rem, calc(100% - 3rem)); margin: 0; }
 @media (min-width: 992px) { .page-wrapper.cc-utility .utility_container { left: clamp(2rem, 5vw, 5rem); } }
 .page-wrapper.cc-utility .utility_container h1 { text-shadow: 0 2px 30px #0000004d; }
+
+/* 404: a slim black band above and below the clip, to balance its baked-in side borders */
+.page-wrapper.cc-utility { background: #000; }
+.page-wrapper.cc-utility .w-background-video { top: clamp(1.5rem, 5vh, 3.5rem) !important; bottom: clamp(1.5rem, 5vh, 3.5rem) !important; height: auto !important; }

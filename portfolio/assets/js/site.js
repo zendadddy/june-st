@@ -539,6 +539,23 @@
     fit(); window.addEventListener('resize', fit); window.addEventListener('load', fit);
   })();
 
+  /* ---------- 0s. 404: keep the words inside the skate clip's picture, never over the black border baked into the file ---------- */
+  (function () {
+    var wrap = document.querySelector('.page-wrapper.cc-utility'), box = wrap && wrap.querySelector('.utility_container'), v = wrap && wrap.querySelector('video');
+    if (!box || !v) return;
+    var VW = 1280, VH = 720, PIC = { l: 160, t: 32, r: 1119, b: 687 }; // where the picture sits inside the video file
+    function fit() {
+      var r = v.getBoundingClientRect(), s = Math.max(r.width / VW, r.height / VH);
+      var ox = r.left + (r.width - VW * s) / 2, oy = r.top + (r.height - VH * s) / 2;
+      var L = Math.max(0, ox + PIC.l * s), T = Math.max(0, oy + PIC.t * s), R = Math.min(window.innerWidth, ox + PIC.r * s);
+      var pad = Math.max(16, Math.min(48, (R - L) * .05));
+      box.style.left = Math.round(L + pad) + 'px';
+      box.style.top = Math.round(Math.max(T + pad, 96)) + 'px';
+      box.style.maxWidth = Math.round(R - L - pad * 2) + 'px';
+    }
+    fit(); window.addEventListener('resize', fit); v.addEventListener('loadedmetadata', fit);
+  })();
+
   /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
   (function () {
     var root = document.documentElement, rq = 0;
