@@ -1348,8 +1348,8 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .livecam .livecam_note, .about_video-cap.cc-on-video {
   border-radius: 0 !important; background: #121212 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   padding: .5rem 1.1rem !important; color: #f2f0eb;
-  box-shadow: 0 1px 0 #ffffff12 inset, 0 6px 14px -6px #00000080;
-  background-image: linear-gradient(180deg, #ffffff0d, #ffffff00 40%, #00000026) !important;
+  box-shadow: none;
+  background-image: linear-gradient(180deg, #ffffff05, #ffffff00 40%, #00000014) !important;
   clip-path: polygon(0 0, 100% 0, calc(100% - 1.5px) 22%, 100% 48%, calc(100% - 2px) 74%, 100% 100%, 0 100%, 1.5px 76%, 0 52%, 2px 27%);
   rotate: -1.2deg;
 }
