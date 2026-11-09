@@ -895,7 +895,7 @@ body:has(.hero.cc-glow) .page-main { background: #fbfaf7; }
 
 /* Ram Dass quote: palms against the sky, framed on the treetops */
 .quote-palms { object-fit: cover; object-position: 50% 45%; }
-.quote-ramdass { text-shadow: 0 1px 12px #1d3b5266, 0 0 2px #1d3b5240; }
+.quote-ramdass { text-shadow: 0 2px 30px #1d3b5233, 0 0 64px #1d3b521f; } /* faint, soft, puffy */
 
 /* the orb reads as a circle: a fuller disc with a shorter soft edge, and on phones it fits the screen width */
 .hero_glow-sun { background: radial-gradient(circle, #f2c98a 0%, #f3cf98 30%, #f6dcb6 48%, #f9ead6 58%, rgba(251,250,247,0) 68%); }
@@ -1241,3 +1241,9 @@ html.at-top .navigation::before { opacity: 0; }
   opacity: 0; transform: translate(-50%, .5rem) scale(.6) rotate(-6deg); transform-origin: 50% 100%;
   transition: opacity .25s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1); }
 .rd-name:hover .rd-tip, .rd-name:focus-visible .rd-tip { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0deg); }
+
+/* during the burst, a tall soft fade to the page colour rises from the bottom so the wash ends cleanly */
+.hero.cc-glow .hero_glow::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 80%; z-index: 2; pointer-events: none;
+  background: linear-gradient(0deg, #fbfaf7 0%, #fbfaf7 22%, rgba(251, 250, 247, .85) 45%, rgba(251, 250, 247, 0) 100%);
+  opacity: 0; transition: opacity .5s ease; }
+.hero.cc-glow.is-sun-burst .hero_glow::after { opacity: 1; transition: opacity .6s ease .3s; }
