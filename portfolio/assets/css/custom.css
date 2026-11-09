@@ -1304,7 +1304,7 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 /* contact intro: three short lines (Talk / Read / Unwind) */
 .ways { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: 0; }
 .ways_row { display: block; }
-.ways_k { color: var(--_colors---text--secondary, #2e2e2e99); opacity: .7; }
+.ways_k { color: inherit; }
 
 /* contact, desktop: title and Talk / Read / Unwind on the left, the form on the right (phones keep the centred stack) */
 @media (min-width: 992px) {
