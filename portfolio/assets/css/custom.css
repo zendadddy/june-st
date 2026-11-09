@@ -1457,3 +1457,8 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .pgx_arrow::before, .pgx_arrow::after { display: none !important; }
 .pgx_slide.is-in img { animation: pgx-in .35s ease both; }
 @keyframes pgx-in { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+
+/* phones: the line under "Select projects" / "Select courses" sits a little closer to the heading */
+@media (max-width: 767px) { .section .row.row-between.row-bottom.u-vgap-24 > .col:has(> h1) + .col > p { margin-top: -.75rem; } }
+/* mobile menu: bigger social icons */
+@media (max-width: 767px) { .navigation .nav_list .nav_socials { gap: 1.75rem; } .nav_social { width: 3.25rem !important; height: 3.25rem !important; } .nav_social svg { width: 30px; height: 30px; } }
