@@ -1229,6 +1229,7 @@ html.at-top .navigation::before { opacity: 0; }
 /* scrolling down: the sun snaps open into a full-width wash reaching the top of the header */
 .hero.cc-glow.is-sun-moving .hero_glow-sun { transition: translate .55s cubic-bezier(.2, 1, .3, 1), scale .55s cubic-bezier(.2, 1, .3, 1); }
 .hero.cc-glow.is-sun-burst .hero_glow-sun { translate: 0 var(--burst-y, -30%) !important; scale: var(--burst-scale, 2.6) !important; }
+.hero.cc-glow.is-sun-moving.is-sun-burst .hero_glow-sun { transition-delay: .35s; }   /* a beat before it bursts open (settling back has no wait) */
 
 /* cam controls: no white outlines */
 .livecam_btn, .livecam_close { border: 0 !important; box-shadow: none; }

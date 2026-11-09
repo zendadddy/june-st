@@ -505,7 +505,7 @@
         hero.style.setProperty('--burst-y', Math.round(hr.top + hr.height * .22 - (sr.top + sr.height / 2) + y) + 'px');
       }
       clearTimeout(settleT); hero.classList.add('is-sun-moving'); hero.classList.toggle('is-sun-burst', s);
-      settleT = setTimeout(function () { hero.classList.remove('is-sun-moving'); }, 700);
+      settleT = setTimeout(function () { hero.classList.remove('is-sun-moving'); }, 1000);
     }
     window.addEventListener('scroll', onScroll, { passive: true });
   })();
