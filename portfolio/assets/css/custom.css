@@ -1474,3 +1474,11 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .tm-pag .testimonial_controls { opacity: 1 !important; }
 .tm-pag .arrow-ink { background: #fff; }
 .tm-pag .testimonial_controls:hover, .tm-pag .testimonial_controls.is-inked { color: #1d1d1b !important; }
+
+/* About: the podcast tape sits half on, half off the bottom edge of the video */
+.about_tape { position: relative; z-index: 3; height: 0; }
+.about_tape .about_video-cap.cc-on-video { position: absolute !important; top: 0 !important; bottom: auto !important; left: var(--_layout---columns--size, 1.5rem); translate: 0 -50%; }
+/* phone gallery: the same arrow pill as the projects carousel and testimonials */
+.pgx_nav { gap: 0 !important; padding: .4rem; border: 1px solid #ffffff59; border-radius: var(--radius-pill, 99px); }
+.pgx_arrow { background: none !important; width: 2.6rem !important; height: 2.6rem !important; transition: background-color .2s ease, color .2s ease; }
+.pgx_arrow:active { background: #fff !important; color: #1d1d1b; }
