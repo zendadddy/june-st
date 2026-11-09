@@ -1384,7 +1384,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 @media (max-width: 767px), (pointer: coarse) and (max-height: 540px) {
   /* player controls on phones, upright or sideways: the arrows sit together at the bottom right, just above the tape tag */
   .livecam.is-full .livecam_btn { top: auto !important; translate: none !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; width: 2.75rem; height: 2.75rem; }
-  .livecam.is-full .livecam_btn[data-dir="-1"] { left: auto !important; right: calc(1rem + 2.75rem + .5rem) !important; }
+  .livecam.is-full .livecam_btn[data-dir="-1"] { left: auto !important; right: calc(1rem + 2.75rem + 1rem) !important; }
   .livecam.is-full .livecam_btn[data-dir="1"] { right: 1rem !important; }
 }
 
