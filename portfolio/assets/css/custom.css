@@ -1206,15 +1206,20 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* homepage sun: after you've been on the page a while (25s), it slowly drifts orange → pink → purple → blue,
    goes pale, and warms back to orange (90s per cycle, repeating) */
 .hero.cc-glow .hero_glow-sun { animation: glow-set 4.2s cubic-bezier(.33, 0, .2, 1) both, glow-breathe 9s ease-in-out 4.2s infinite, sun-cycle 90s ease-in-out 25s infinite; }
+/* the sun's colours are real colour stops (not a filter), so the blue phase can be a true vivid sky blue */
+@property --s1 { syntax: '<color>'; inherits: false; initial-value: #f2c98a; }
+@property --s2 { syntax: '<color>'; inherits: false; initial-value: #f3cf98; }
+@property --s3 { syntax: '<color>'; inherits: false; initial-value: #f6dcb6; }
+@property --s4 { syntax: '<color>'; inherits: false; initial-value: #f9ead6; }
+.hero_glow-sun { background: radial-gradient(circle, var(--s1) 0%, var(--s2) 30%, var(--s3) 48%, var(--s4) 58%, rgba(251,250,247,0) 68%); }
 @keyframes sun-cycle {
-  0%   { filter: hue-rotate(0deg) saturate(1); }
-  20%  { filter: hue-rotate(-45deg) saturate(1.05); }   /* pink */
-  40%  { filter: hue-rotate(-95deg) saturate(.95); }    /* purple */
-  52%  { filter: hue-rotate(-150deg) saturate(1); }     /* blue */
-  62%  { filter: hue-rotate(-200deg) saturate(1.6); }   /* bright sky blue, like #00bfff */
-  75%  { filter: hue-rotate(-200deg) saturate(.25) brightness(1.04); }  /* pale */
-  82%  { filter: hue-rotate(0deg) saturate(.2) brightness(1.05); }      /* turns while pale, so it never passes through green */
-  100% { filter: hue-rotate(0deg) saturate(1); }        /* back to orange */
+  0%   { --s1: #f2c98a; --s2: #f3cf98; --s3: #f6dcb6; --s4: #f9ead6; }   /* orange */
+  20%  { --s1: #f4a3bf; --s2: #f5b3c9; --s3: #f8cfdc; --s4: #fbe6ec; }   /* pink */
+  38%  { --s1: #b996f7; --s2: #c6a9f7; --s3: #dacbf9; --s4: #ede6fb; }   /* purple */
+  52%  { --s1: #00bfff; --s2: #22c6ff; --s3: #8adfff; --s4: #d2f2ff; }   /* bright sky blue */
+  64%  { --s1: #00bfff; --s2: #22c6ff; --s3: #8adfff; --s4: #d2f2ff; }   /* holds the blue a while */
+  77%  { --s1: #e6edf3; --s2: #ebf0f4; --s3: #f1f4f6; --s4: #f7f8f9; }   /* pale */
+  100% { --s1: #f2c98a; --s2: #f3cf98; --s3: #f6dcb6; --s4: #f9ead6; }   /* back to orange */
 }
 @media (prefers-reduced-motion: reduce) { .hero.cc-glow .hero_glow-sun { animation: none !important; } }
 
