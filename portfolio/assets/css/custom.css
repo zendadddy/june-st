@@ -1430,3 +1430,11 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   .page-wrapper.cc-utility::after { content: ""; position: absolute; left: 0; right: 0; top: var(--shade-top, 0); height: var(--shade-h, 40%); z-index: 1; pointer-events: none;
     background: linear-gradient(180deg, #000000d9 0%, #000000a6 55%, #00000000 100%); }
 }
+
+/* playground carousel: count bottom-left, prev/next arrows bottom-right */
+.pgx_count { left: 1.25rem !important; right: auto !important; text-align: left !important; bottom: calc(max(1.25rem, env(safe-area-inset-bottom)) + .9rem) !important; }
+.pgx_nav { position: absolute; right: 1rem; bottom: max(1.25rem, env(safe-area-inset-bottom)); display: flex; gap: 1rem; }
+.pgx_arrow { width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 0 !important; box-shadow: none !important; background: #ffffff1f; color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; }
+.pgx_arrow::before, .pgx_arrow::after { display: none !important; }
+.pgx_slide.is-in img { animation: pgx-in .35s ease both; }
+@keyframes pgx-in { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }

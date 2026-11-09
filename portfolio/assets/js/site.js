@@ -1360,7 +1360,7 @@
   document.querySelectorAll('[data-playground]').forEach(function (pg) {
     var figs = Array.prototype.slice.call(pg.querySelectorAll('.pg_card')); if (!figs.length) return;
     var phone = window.matchMedia('(max-width: 767px)');
-    var box = null, track = null, count = null, lastFocus = null;
+    var box = null, track = null, count = null, lastFocus = null, aim = -1, aimT = 0;
     function esc(s) { return String(s).replace(/[&<>"]/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]; }); }
     function build() {
       box = document.createElement('div'); box.className = 'pgx'; box.hidden = true;
@@ -1373,10 +1373,21 @@
       }).join('');
       box.innerHTML = '<div class="pgx_track">' + slides + '</div>' +
         '<button type="button" class="pgx_close" aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5"/></svg></button>' +
-        '<p class="pgx_count eyebrow-sm" aria-live="polite"></p>';
+        '<p class="pgx_count eyebrow-sm" aria-live="polite"></p>' +
+        '<div class="pgx_nav"><button type="button" class="pgx_arrow" data-d="-1" aria-label="Previous photo"><svg viewBox="0 0 23 18" width="20" height="16" fill="none" aria-hidden="true"><path d="M8.39 17.28L9.8 16 3.81 9.6H22.5V7.71H3.81L9.8 1.31 8.39 0 .39 8.64z" fill="currentColor"/></svg></button><button type="button" class="pgx_arrow" data-d="1" aria-label="Next photo"><span style="display:inline-flex;transform:scaleX(-1)"><svg viewBox="0 0 23 18" width="20" height="16" fill="none" aria-hidden="true"><path d="M8.39 17.28L9.8 16 3.81 9.6H22.5V7.71H3.81L9.8 1.31 8.39 0 .39 8.64z" fill="currentColor"/></svg></span></button></div>';
       document.body.appendChild(box);
       track = box.querySelector('.pgx_track'); count = box.querySelector('.pgx_count');
       box.querySelector('.pgx_close').addEventListener('click', close);
+      // arrows step from the photo they're aiming for (not the half-scrolled position), wrapping at either end
+      box.querySelectorAll('.pgx_arrow').forEach(function (btn) { btn.addEventListener('click', function () {
+        var N = figs.length, w = track.clientWidth;
+        aim = ((aim < 0 ? Math.round(track.scrollLeft / w) : aim) + (+btn.getAttribute('data-d')) + N) % N;
+        clearTimeout(aimT); aimT = setTimeout(function () { aim = -1; }, 700);
+        // jump straight there (a smooth scroll can be interrupted by the next tap), and let the new photo fade in
+        track.style.scrollBehavior = 'auto'; track.scrollLeft = aim * w; track.style.scrollBehavior = '';
+        var sl = track.children[aim]; if (sl) { sl.classList.remove('is-in'); void sl.offsetWidth; sl.classList.add('is-in'); }
+        count.textContent = (aim + 1) + ' / ' + N;
+      }); });
       track.addEventListener('click', function (e) { if (e.target === track || e.target.classList.contains('pgx_slide')) close(); }); // tap the empty space around a photo to close
       var rq = 0; track.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; label(); }); }, { passive: true });
       document.addEventListener('keydown', function (e) {
@@ -1385,7 +1396,7 @@
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var w = track.clientWidth; track.scrollBy({ left: e.key === 'ArrowRight' ? w : -w, behavior: 'smooth' }); }
       });
     }
-    function label() { var n = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); count.textContent = (n + 1) + ' / ' + figs.length; }
+    function label() { if (aim >= 0) return; var n = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); count.textContent = (n + 1) + ' / ' + figs.length; }
     function open(n) {
       if (!box) build();
       lastFocus = document.activeElement; box.hidden = false; document.documentElement.classList.add('pgx-open');
