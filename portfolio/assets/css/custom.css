@@ -1395,3 +1395,17 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   .contact-intro .ways { align-items: flex-start; }
 }
 @media (pointer: coarse) and (max-height: 540px) and (orientation: landscape) { .livecam.is-full .livecam_btn { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem) !important; } } /* sideways: arrows on the same line as the tape tag */
+
+/* contact: Follow along (socials) */
+.follow { display: flex; flex-direction: column; gap: .9rem; }
+.follow_title { margin: 0; opacity: .6; }
+.follow_list { display: flex; flex-direction: column; gap: .55rem; margin: 0; padding: 0; }
+.follow_item { display: flex; align-items: baseline; gap: .6rem; }
+.follow_handle { opacity: .5; font-size: .9em; }
+@media (max-width: 991px) { .follow { margin-top: 1rem; } .follow_list { gap: 1.1rem; } .follow a::before { top: -11px; bottom: -11px; left: -12px; right: -12px; } }
+@media (min-width: 992px) {
+  .contact-intro .col > .u-vflex-stretch-top { grid-template-rows: auto auto 1fr !important; }
+  .contact-intro .col > .u-vflex-stretch-top > .w-form { grid-row: 1 / span 3 !important; }
+  .contact-intro .col > .u-vflex-stretch-top > .follow { grid-column: 1; grid-row: 3; margin-top: 2.75rem; }
+  .contact-intro .col > .u-vflex-stretch-top > .snail { grid-row: 4 !important; }
+}
