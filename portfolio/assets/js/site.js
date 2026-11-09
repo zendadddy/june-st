@@ -1003,6 +1003,7 @@
      Only cams that are actually streaming are shown: a cam that errors, ends, or hasn't started playing within 8s is skipped.
      The arrows step through the live cams; the photo shows only until the first cam is up (or if none are). */
   var cam = document.querySelector('[data-livecam]');
+  if (cam && window.matchMedia('(max-width: 767px)').matches) { cam.hidden = true; cam = null; } // phones: no live cams (and no YouTube download)
   if (cam) {
     var list; try { list = JSON.parse(cam.getAttribute('data-livecam')); } catch (err) { list = []; }
     // a different order every visit, so it isn't always the same beach first

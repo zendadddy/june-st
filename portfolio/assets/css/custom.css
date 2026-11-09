@@ -1273,3 +1273,6 @@ html.at-top .navigation::before { opacity: 0; }
 }
 /* iOS shows a big play button over background videos when it won't autoplay (e.g. Low Power Mode): hide it, the poster stays */
 video::-webkit-media-controls-start-playback-button, video::-webkit-media-controls-panel, video::-webkit-media-controls { display: none !important; -webkit-appearance: none; opacity: 0; }
+
+/* phones: the live cams section is left out */
+@media (max-width: 767px) { .livecam { display: none !important; } }
