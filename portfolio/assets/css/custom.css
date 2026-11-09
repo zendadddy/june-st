@@ -1300,9 +1300,12 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { .livecam_loading span { animation: none; opacity: 1; } }
 
 /* cams: the fullscreen button sits in the bottom-right corner (clear of the torn footer edge) */
-.livecam_expand { top: auto !important; bottom: clamp(2.75rem, 4.5vw, 4rem); right: clamp(1rem, 3vw, 2.5rem); }
+.livecam_expand { top: auto !important; bottom: calc(clamp(2.75rem, 4.5vw, 4rem) + 24px); right: clamp(1rem, 3vw, 2.5rem); }
 
 /* cam skeleton: a small spinning ring instead of text */
-.livecam_loading::before { content: ""; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid #1d1d1d1f; border-top-color: #1d1d1d73; animation: cam-spin .9s linear infinite; }
+.livecam_loading::before { content: ""; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid #1d1d1d26; border-top-color: #1d1d1da6; animation: cam-spin .9s linear infinite; }
 @keyframes cam-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .livecam_loading::before { animation-duration: 2.4s; } }
+
+/* cam skeleton: a soft, grey, blurred daytime frame of the Venice boardwalk under the shimmer */
+.section.livecam:not(.is-switching) { background: #ecebe8 url('../cam-skeleton.jpg') center / cover no-repeat; }
