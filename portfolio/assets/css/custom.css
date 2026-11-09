@@ -1398,5 +1398,5 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 }
 @media (pointer: coarse) and (max-height: 540px) and (orientation: landscape) { .livecam.is-full .livecam_btn { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem) !important; } } /* sideways: arrows on the same line as the tape tag */
 
-.ways_sep { opacity: .45; padding: 0 .15em; }
-@media (max-width: 991px) { .ways_sep { padding: 0 .45em; } }
+.ways_sep { white-space: pre; }
+@media (max-width: 991px) { .ways_sep { padding-right: .3em; } }
