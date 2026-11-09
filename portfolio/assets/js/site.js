@@ -517,6 +517,19 @@
     new IntersectionObserver(function (es) { es.forEach(function (e) { lg.classList.toggle('is-in', e.isIntersecting); }); }, { threshold: .6 }).observe(lg);
   })();
 
+  /* ---------- 0r. About: the Expertise eyebrow's column runs on under the podcast video, so the video slides over it ---------- */
+  (function () {
+    var col = document.querySelector('.marker-tuck'), vid = document.querySelector('.about_video'); if (!col || !vid) return;
+    var sec = vid.closest('section');
+    function fit() {
+      col.style.marginBottom = '0px';
+      if (window.innerWidth < 480) return;
+      var extra = sec.getBoundingClientRect().bottom - col.getBoundingClientRect().bottom;
+      col.style.marginBottom = -Math.max(0, Math.round(extra)) + 'px';
+    }
+    fit(); window.addEventListener('resize', fit); window.addEventListener('load', fit);
+  })();
+
   /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
   (function () {
     var root = document.documentElement, rq = 0;
@@ -863,7 +876,7 @@
           c.style.transform = 'translate3d(' + r.tx.toFixed(1) + 'px,' + r.ty.toFixed(1) + 'px,0) rotate(' + r.rot.toFixed(2) + 'deg) scale(' + r.s.toFixed(3) + ')';
         }
         // like the project and course thumbnails: each photo comes into focus as it settles (the opening fan only softly)
-        var b = n === focus || reduceMotion ? 0 : Math.round(r.k * (n < 6 ? 1.6 : 12) * 4) / 4;
+        var b = n === focus || reduceMotion || n < 6 ? 0 : Math.round(r.k * 12 * 4) / 4; // the opening pile stays sharp
         if (c._blur !== b) { c._blur = b; c.style.filter = b ? 'blur(' + b + 'px)' : ''; }
       });
     }

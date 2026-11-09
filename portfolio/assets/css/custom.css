@@ -1336,3 +1336,9 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   .contact-intro .ways_row { display: contents; }
   .contact-intro .ways_row > a { justify-self: start; }
 }
+
+/* About: the Expertise eyebrow stays put while the podcast video slides over it, then the copy below takes over */
+@media (min-width: 480px) {
+  .marker-tuck { align-self: stretch; } /* its bottom margin is set in site.js (0r) */
+  .section:has(> .about_video), .section:has(.about_video) { position: relative; z-index: 2; }
+}
