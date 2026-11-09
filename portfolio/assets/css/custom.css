@@ -663,7 +663,7 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .tm-wrap { position: relative; width: 100%; }
 .tm-wrap .tm_slide { padding: 0 clamp(2.5rem, 5vw, 3.5rem); }
 .tm-wrap .testimonial_pagination.tm-arrows { position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0; border: 0; border-radius: 0; pointer-events: none; }
-.tm-wrap .tm-arrows .testimonial_controls { pointer-events: auto; border: 0; border-radius: 0; background: none; opacity: .7; transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
+.tm-wrap .tm-arrows .testimonial_controls { pointer-events: auto; border: 0; border-radius: 0; background: none; opacity: .3; transition: opacity .3s ease, transform .4s cubic-bezier(.22, 1, .36, 1); }
 .tm-wrap .tm-arrows .testimonial_controls::after { display: none; } /* no circle, at rest or on hover */
 .tm-wrap .tm-arrows .testimonial_controls:hover { opacity: 1; }
 .tm-wrap .tm-arrows .cc-prev:hover { transform: translateX(-3px); } .tm-wrap .tm-arrows .cc-next:hover { transform: translateX(3px); }
