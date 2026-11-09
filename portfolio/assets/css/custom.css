@@ -893,7 +893,7 @@ body:has(.hero.cc-glow) .page-main { background: var(--paper); }
 @media (max-width: 767px) { .acc-section h3, .u-vflex-stretch-top.u-vgap-16 > h3:has(+ .acc-box), .u-vflex-stretch-top.u-vgap-16 > h3:has(+ .accolade_link) { font-size: 1.75rem; line-height: 1.15; } }
 
 /* phones: a dotted rule opens the courses section, between the projects and the courses statement */
-@media (max-width: 767px) { .section.cc-courses { padding-top: 0; } .section.cc-courses > .container { border-top: 2px dotted #2b292524; padding-top: var(--space-section-half); } }
+@media (max-width: 767px) { .section.cc-courses { padding-top: 0; } .section.cc-courses > .container { border-top: 2px dotted #2b292524; padding-top: calc(var(--space-section-half) + .55rem); margin-top: -.55rem; } } /* line sits midway between the projects and the courses statement */
 
 /* modals (password, newsletter, coming soon): the button sits inside the field, at its right end */
 .gate-modal_form { display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: .75rem; }
