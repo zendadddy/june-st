@@ -1465,3 +1465,19 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* phones: more sky above the "Take a pause" sun, so its top rays clear the torn edge */
 @media (max-width: 767px) { .section[data-svg="breath"] { aspect-ratio: auto !important; padding-top: 3.25rem !important; padding-bottom: 1rem !important; } }
+
+/* testimonials: no side arrows; a row of dashes under the quote, the current one filling until the next quote */
+.tm-wrap .testimonial_pagination.tm-arrows { display: none !important; }
+.tm-wrap .tm_slide { padding-left: 0 !important; padding-right: 0 !important; }
+.tm-wrap { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; }
+.tm-dots { display: flex; justify-content: center; gap: .4rem; margin-top: clamp(1rem, 2vw, 1.5rem); }
+.tm-dot { appearance: none; border: 0 !important; box-shadow: none !important; background: none; padding: .9rem 0; width: clamp(1.25rem, 2.6vw, 1.75rem); cursor: pointer; }
+.tm-dot::before, .tm-dot::after { display: none !important; }
+.tm-dot span { display: block; height: 2px; border-radius: 2px; background: color-mix(in srgb, currentColor 20%, transparent); position: relative; overflow: hidden; transition: background-color .3s ease; }
+.tm-dot:hover span { background: color-mix(in srgb, currentColor 45%, transparent); }
+.tm-dot.is-past span { background: color-mix(in srgb, currentColor 40%, transparent); }
+.tm-dot.is-on span { background: color-mix(in srgb, currentColor 30%, transparent); }
+.tm-dot.is-on span::after { content: ""; position: absolute; inset: 0; background: currentColor; transform-origin: 0 50%; transform: scaleX(1); }
+.tm-wrap.is-running .tm-dot.is-on span::after { animation: tm-fill 8s linear both; }
+@keyframes tm-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.tm-dot:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }

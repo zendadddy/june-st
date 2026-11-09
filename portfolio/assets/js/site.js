@@ -380,13 +380,23 @@
     var pag = tm.parentElement.parentElement.querySelector('.testimonial_pagination'); if (!pag || slides.length < 2) return;
     // arrows sit on either side of the quotes, so they stay put whatever the quote's length
     var wrap = document.createElement('div'); wrap.className = 'tm-wrap'; tm.parentNode.insertBefore(wrap, tm); wrap.appendChild(tm); wrap.appendChild(pag); pag.classList.add('tm-arrows');
+    // a row of dashes under the quote, one per testimonial: the current one fills like a timer; tap any to jump
+    var dots = document.createElement('div'); dots.className = 'tm-dots'; dots.setAttribute('role', 'tablist'); dots.setAttribute('aria-label', 'Testimonials');
+    slides.forEach(function (s, k) { var d = document.createElement('button'); d.type = 'button'; d.className = 'tm-dot'; d.setAttribute('aria-label', 'Testimonial ' + (k + 1) + ' of ' + slides.length); d.innerHTML = '<span></span>'; d.addEventListener('click', function () { show(k); restart(); }); dots.appendChild(d); });
+    wrap.appendChild(dots);
     function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
+      [].forEach.call(dots.children, function (d, k) { d.classList.toggle('is-on', k === i); d.classList.toggle('is-past', k < i); d.setAttribute('aria-selected', String(k === i)); });
     }
+    // phones: swipe the quote left or right
+    var sx = null;
+    tm.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    tm.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) { show(i + (dx < 0 ? 1 : -1)); restart(); } }, { passive: true });
     // auto-advance every 8s while in view; pauses on hover/focus, and restarts the count after a click
     var autoT = 0, inView = false, held = false;
-    function restart() { clearInterval(autoT); if (reduce || !inView || held) return; autoT = setInterval(function () { show(i + 1); }, 8000); }
+    function restart() { clearInterval(autoT); wrap.classList.remove('is-running'); void dots.offsetWidth; if (reduce || !inView || held) return; wrap.classList.add('is-running'); autoT = setInterval(function () { show(i + 1); wrap.classList.remove('is-running'); void dots.offsetWidth; wrap.classList.add('is-running'); }, 8000); }
+    show(0);
     wrap.addEventListener('mouseenter', function () { held = true; restart(); }); wrap.addEventListener('mouseleave', function () { held = false; restart(); });
     wrap.addEventListener('focusin', function () { held = true; restart(); }); wrap.addEventListener('focusout', function () { held = false; restart(); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; restart(); }, { threshold: .4 }).observe(wrap);
