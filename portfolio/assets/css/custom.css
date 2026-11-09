@@ -1308,7 +1308,7 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 
 /* contact, desktop: title and Talk / Read / Unwind on the left, the form on the right (phones keep the centred stack) */
 @media (min-width: 992px) {
-  .contact-intro .row > .col.col-lg-5 { flex: 0 0 83.333%; max-width: 83.333%; width: 83.333%; }
+  .contact-intro .row > .col.col-lg-5 { flex: 0 0 83.333%; max-width: 83.333%; width: 83.333%; padding-top: clamp(2rem, 5vw, 4.5rem); }
   .contact-intro .col > .u-vflex-stretch-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-rows: auto 1fr; column-gap: clamp(3rem, 8vw, 8rem); row-gap: 0; align-items: start; }
   .contact-intro .col > .u-vflex-stretch-top > .u-vflex-center-top { grid-column: 1; grid-row: 1; align-items: flex-start; }
   .contact-intro .col > .u-vflex-stretch-top > .u-align-center { grid-column: 1; grid-row: 2; text-align: left; margin-top: 1.25rem; }
