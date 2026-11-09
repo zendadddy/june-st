@@ -380,14 +380,19 @@
     var pag = tm.parentElement.parentElement.querySelector('.testimonial_pagination'); if (!pag || slides.length < 2) return;
     // arrows sit on either side of the quotes, so they stay put whatever the quote's length
     var wrap = document.createElement('div'); wrap.className = 'tm-wrap'; tm.parentNode.insertBefore(wrap, tm); wrap.appendChild(tm); wrap.appendChild(pag); pag.classList.add('tm-arrows');
-    // a row of dashes under the quote, one per testimonial: the current one fills like a timer; tap any to jump
-    var dots = document.createElement('div'); dots.className = 'tm-dots'; dots.setAttribute('role', 'tablist'); dots.setAttribute('aria-label', 'Testimonials');
-    slides.forEach(function (s, k) { var d = document.createElement('button'); d.type = 'button'; d.className = 'tm-dot'; d.setAttribute('aria-label', 'Testimonial ' + (k + 1) + ' of ' + slides.length); d.innerHTML = '<span></span>'; d.addEventListener('click', function () { show(k); restart(); }); dots.appendChild(d); });
+    // one small control under the quote: ← 03 / 12 →, with a thin line that fills until the next quote
+    var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    var ARW = '<svg viewBox="0 0 23 18" width="16" height="13" fill="none" aria-hidden="true"><path d="M8.39 17.28L9.8 16 3.81 9.6H22.5V7.71H3.81L9.8 1.31 8.39 0 .39 8.64z" fill="currentColor"/></svg>';
+    var dots = document.createElement('div'); dots.className = 'tm-ctl';
+    dots.innerHTML = '<button type="button" class="tm-step" data-d="-1" aria-label="Previous testimonial">' + ARW + '</button>' +
+      '<span class="tm-count eyebrow-sm" aria-live="polite"><span class="tm-now">01</span> / ' + pad2(slides.length) + '<span class="tm-bar"><span></span></span></span>' +
+      '<button type="button" class="tm-step" data-d="1" aria-label="Next testimonial"><span style="display:inline-flex;transform:scaleX(-1)">' + ARW + '</span></button>';
+    dots.querySelectorAll('.tm-step').forEach(function (b) { b.addEventListener('click', function () { show(i + (+b.getAttribute('data-d'))); restart(); }); });
     wrap.appendChild(dots);
     function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
-      [].forEach.call(dots.children, function (d, k) { d.classList.toggle('is-on', k === i); d.classList.toggle('is-past', k < i); d.setAttribute('aria-selected', String(k === i)); });
+      var now = dots.querySelector('.tm-now'); if (now) now.textContent = pad2(i + 1);
     }
     // phones: swipe the quote left or right
     var sx = null;
