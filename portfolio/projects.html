@@ -256,7 +256,7 @@
   setInterval(updateLATime, 60000);
 
   <!-- COPYRIGHT DYNAMIC YEAR -->
-  document.querySelector('.copyright-year').textContent = new Date().getFullYear();
+  var cy = document.querySelector('.copyright-year'); if (cy) cy.textContent = new Date().getFullYear();
 
   <!-- Footer Scroll Scrub -->
 
