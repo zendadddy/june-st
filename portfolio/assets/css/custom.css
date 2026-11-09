@@ -1261,3 +1261,15 @@ html.at-top .navigation::before { opacity: 0; }
 
 /* project card brand set as text (for projects without a logo file) */
 .project_wordmark { display: block; line-height: 1; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; padding: .15rem 0 0; margin-bottom: -.25rem; }
+
+/* phones: "Take a pause" sky fades out at the bottom instead of ending on a hard line (keeps the torn top edge) */
+@media (max-width: 767px) {
+  .section[data-svg="breath"] {
+    -webkit-mask-image: url('../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg'), linear-gradient(180deg, #000 calc(100% - 7rem), transparent);
+    mask-image: url('../68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg'), linear-gradient(180deg, #000 calc(100% - 7rem), transparent);
+    -webkit-mask-size: cover, 100% 100%; mask-size: cover, 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
+}
+/* iOS shows a big play button over background videos when it won't autoplay (e.g. Low Power Mode): hide it, the poster stays */
+video::-webkit-media-controls-start-playback-button, video::-webkit-media-controls-panel, video::-webkit-media-controls { display: none !important; -webkit-appearance: none; opacity: 0; }
