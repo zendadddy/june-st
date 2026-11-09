@@ -1172,7 +1172,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 @media (prefers-reduced-motion: reduce) { .logo_marquee .logo_col { animation: none; } }
 
 /* Contact on phones: the cam sits closer under the form */
-@media (max-width: 767px) { .section:has(+ .livecam) { padding-bottom: .5rem; } .section:has(+ .livecam) form[data-contact]:not(.is-typing) [type=submit] { display: none; } }
+@media (max-width: 767px) { .section:has(+ .livecam) { padding-bottom: .5rem; } }
 
 /* phones: no card in the collage gets taller than ~half the screen width, whatever slot it lands in */
 @media (max-width: 767px) {
@@ -1257,7 +1257,7 @@ html.at-top .navigation::before { opacity: 0; }
 .pg_slot:has(.pg_card.is-focus) { z-index: 100 !important; } /* the hovered photo rises above every other slot */
 
 /* desktop: a little more air between the metal logo and the footer links */
-@media (min-width: 992px) { .footer .footer_logo { margin-bottom: 8px; } }
+@media (min-width: 992px) { .footer .footer_logo { margin-bottom: 8px; margin-top: -32px; } }
 
 /* project card brand set as text (for projects without a logo file) */
 .project_wordmark { display: block; line-height: 1; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; padding: .15rem 0 0; margin-bottom: -.25rem; }
@@ -1329,3 +1329,10 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   70% { text-shadow: 0 0 10px #ffc24bcc, 0 0 22px #ffb03a80, 0 0 2px #ffd36e; }
 }
 @media (prefers-reduced-motion: reduce) { [data-cams-link] { animation: none; } }
+
+/* desktop: Talk / Read / Unwind in one column, the links lined up in the next */
+@media (min-width: 992px) {
+  .contact-intro .ways { display: grid; grid-template-columns: max-content max-content; column-gap: .45em; row-gap: .3rem; justify-content: start; }
+  .contact-intro .ways_row { display: contents; }
+  .contact-intro .ways_row > a { justify-self: start; }
+}
