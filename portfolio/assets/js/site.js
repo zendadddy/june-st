@@ -236,6 +236,14 @@
     var X_ICON = '<svg class="nav_menu_x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.25"/></svg>'; // same X as the modals
     list.id = list.id || 'site-menu';
     btn.setAttribute('role', 'button'); btn.setAttribute('tabindex', '0'); btn.setAttribute('aria-controls', list.id); btn.setAttribute('aria-expanded', 'false');
+    // Home leads the phone menu (desktop has the name in the corner for that)
+    if (!list.querySelector('.nav_home')) {
+      var home = document.createElement('a'); home.href = '/'; home.className = 'nav_link nav_home w-inline-block'; home.innerHTML = '<div>Home</div>';
+      var here = location.pathname.replace(/\/(index(\.html)?)?$/, '/');
+      if (here === '/' || /\/staging\/?$/.test(here)) { home.classList.add('w--current'); home.setAttribute('aria-current', 'page'); }
+      if (/^\/staging\//.test(location.pathname)) home.href = '/staging/';
+      list.insertBefore(home, list.firstChild);
+    }
     [].forEach.call(list.querySelectorAll('a'), function (a, i) { a.style.setProperty('--i', i); });
     // socials along the bottom of the open menu (phones), as icons
     if (!list.querySelector('.nav_socials')) {
