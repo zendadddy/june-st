@@ -1485,3 +1485,6 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* Home link: only in the phone menu */
 @media (min-width: 768px) { .nav_list .nav_home { display: none !important; } }
+
+/* phone gallery: plain X, no circle behind it */
+.pgx_close { background: none !important; }
