@@ -726,11 +726,11 @@ a, button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 .hero_glow { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
 .hero_glow-sun, .hero_glow-haze { position: absolute; left: 50%; border-radius: 50%; will-change: transform, opacity; }
 /* a reverse sunrise: the glow starts just above the frame and sinks into a round glow behind the headline */
-.hero_glow-sun { top: 46%; width: min(78vw, 760px); aspect-ratio: 1; transform: translate(-50%, -50%);
+.hero_glow-sun { top: 46%; width: min(78vw, 760px); aspect-ratio: 1; transform: translate(-50%, -50%); transform-origin: 0 0; /* origin = the sun's visual centre, so every scale grows it in place */
   background: radial-gradient(circle, #f2c98a 0%, #f4d6a6 26%, #f8e6c8 46%, rgba(251,250,247,0) 70%);
   animation: glow-set 4.2s cubic-bezier(.33, 0, .2, 1) both, glow-breathe 9s ease-in-out 4.2s infinite; }
-@keyframes glow-set { from { top: -22%; opacity: .55; transform: translate(-50%, -50%) scale(1.35); } to { top: 46%; opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-@keyframes glow-breathe { 0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 50% { opacity: .8; transform: translate(-50%, -50%) scale(1.06); } }
+@keyframes glow-set { from { top: -22%; opacity: .55; transform: scale(1.35) translate(-50%, -50%); } to { top: 46%; opacity: 1; transform: scale(1) translate(-50%, -50%); } }
+@keyframes glow-breathe { 0%, 100% { opacity: 1; transform: scale(1) translate(-50%, -50%); } 50% { opacity: .8; transform: scale(1.06) translate(-50%, -50%); } }
 @keyframes glow-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes glow-drift { from { transform: translate(-56%, -50%); } to { transform: translate(-44%, -47%); } }
 .hero.cc-glow h1 { animation: glow-text 1.6s cubic-bezier(.22, 1, .36, 1) .25s both; }
@@ -1142,7 +1142,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 
 /* the orb's resting place follows the headline (set by site.js) */
 .hero_glow-sun { top: var(--orb-y, 46%); }
-@keyframes glow-set { from { top: -22%; opacity: .55; transform: translate(-50%, -50%) scale(1.35); } to { top: var(--orb-y, 46%); opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes glow-set { from { top: -22%; opacity: .55; transform: scale(1.35) translate(-50%, -50%); } to { top: var(--orb-y, 46%); opacity: 1; transform: scale(1) translate(-50%, -50%); } }
 
 /* playground cards that link out: clickable, everything else about them stays the same */
 .pg_card:has(.pg_link) { pointer-events: auto; cursor: pointer; }
@@ -1225,3 +1225,10 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 
 /* at the top of the page the nav floats with no tint; the tint fades in once you scroll */
 html.at-top .navigation::before { opacity: 0; }
+
+/* scrolling down: the sun snaps open into a full-width wash reaching the top of the header */
+.hero.cc-glow.is-sun-moving .hero_glow-sun { transition: translate .55s cubic-bezier(.2, 1, .3, 1), scale .55s cubic-bezier(.2, 1, .3, 1); }
+.hero.cc-glow.is-sun-burst .hero_glow-sun { translate: 0 var(--burst-y, -30%) !important; scale: var(--burst-scale, 2.6) !important; }
+
+/* cam controls: no white outlines */
+.livecam_btn, .livecam_close { border: 0 !important; box-shadow: none; }

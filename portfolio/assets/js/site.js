@@ -493,7 +493,21 @@
       go();
     });
     hero.addEventListener('pointerleave', function () { if (scrolled()) return; tx = 0; ty = 0; go(); });
-    window.addEventListener('scroll', function () { if (scrolled()) { tx = x; ty = y; } }, { passive: true });   // freeze it where it is
+    // scrolling down: the gradient snaps open, full width and up to the top; back at the top it settles back into a sun
+    var burst = false, settleT = 0;
+    function onScroll() {
+      var s = scrolled();
+      if (s) { tx = x; ty = y; }   // freeze it where it is
+      if (s === burst) return; burst = s;
+      if (s) {
+        var sr = sun.getBoundingClientRect(), hr = hero.getBoundingClientRect(), w = sun.offsetWidth || sr.width;
+        hero.style.setProperty('--burst-scale', (Math.max(window.innerWidth, hr.height) * 1.25 / w).toFixed(3));
+        hero.style.setProperty('--burst-y', Math.round(hr.top + hr.height * .22 - (sr.top + sr.height / 2) + y) + 'px');
+      }
+      clearTimeout(settleT); hero.classList.add('is-sun-moving'); hero.classList.toggle('is-sun-burst', s);
+      settleT = setTimeout(function () { hero.classList.remove('is-sun-moving'); }, 700);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
   })();
 
   /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
@@ -956,6 +970,10 @@
     list.forEach(function (s) { var m = memo[s.id]; if (m && !m.ok && Date.now() - m.t < 864e5) dead[s.id] = true; });
     list.sort(function (a, b) { return ((memo[b.id] && memo[b.id].ok) ? 1 : 0) - ((memo[a.id] && memo[a.id].ok) ? 1 : 0); });
     if (!alive().length) { dead = {}; } // everything was marked offline: give them all another chance
+    // always open on the Venice ocean view (if it's streaming; otherwise the usual order takes over)
+    var FIRST = 'D33ZD6sRvnA', fi = list.findIndex(function (s) { return s.id === FIRST; });
+    if (fi > 0) list.unshift(list.splice(fi, 1)[0]);
+    if (fi >= 0) delete dead[FIRST];
     function skip(hard) { if (hard) { memo[list[idx].id] = { ok: 0, t: Date.now() }; save(); } dead[list[idx].id] = true; if (alive().length) show(idx + dir); else offline(); }
     function show(i) {
       if (!alive().length) { offline(); return; }
