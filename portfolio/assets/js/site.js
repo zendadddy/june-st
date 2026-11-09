@@ -467,6 +467,26 @@
     f.insertBefore(clip, bgs[0]); bgs.forEach(function (im) { clip.appendChild(im); });
   })();
 
+  /* ---------- 0o. Glow hero: the orb drifts gently toward the cursor while it's over the header, and eases home when it leaves ---------- */
+  (function () {
+    var hero = document.querySelector('.hero.cc-glow'), sun = hero && hero.querySelector('.hero_glow-sun');
+    if (!sun || reduce || !window.matchMedia('(hover: hover)').matches) return;
+    var tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+    function step() {
+      x += (tx - x) * .06; y += (ty - y) * .06;
+      sun.style.translate = x.toFixed(1) + 'px ' + y.toFixed(1) + 'px';
+      raf = (Math.abs(tx - x) > .3 || Math.abs(ty - y) > .3) ? requestAnimationFrame(step) : 0;
+    }
+    function go() { if (!raf) raf = requestAnimationFrame(step); }
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      tx = (e.clientX - (r.left + r.width / 2)) * .28;   // follows roughly, never all the way
+      ty = (e.clientY - (r.top + r.height * .45)) * .22;
+      go();
+    });
+    hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; go(); });
+  })();
+
   /* ---------- 0g. Footer torn edge as a real shape (Safari can drop CSS masks on the footer's pseudo-element) ---------- */
   (function () {
     var f = document.querySelector('footer.footer'); if (!f) return;
