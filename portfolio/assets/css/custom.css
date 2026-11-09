@@ -1364,3 +1364,6 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* touch screens: the close button is always showing in full screen (there is no hover to reveal it) */
 @media (hover: none), (max-width: 767px) { .livecam.is-full .livecam_close { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; } }
+
+/* phones: the Talk / Read / Unwind links get more room, so each one is an easy, separate tap */
+@media (max-width: 991px) { .contact-intro .ways { gap: 1.1rem; margin-top: .4rem; } .contact-intro .ways a::before { top: -11px; bottom: -11px; left: -12px; right: -12px; } }
