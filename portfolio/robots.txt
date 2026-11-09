@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /projects/
-
-Sitemap: https://francoisbach.com/sitemap.xml
