@@ -1397,3 +1397,10 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 @keyframes cam-tip { 0%, 30% { transform: rotate(0); } 50%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
 @keyframes cam-rock { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
 @media (prefers-reduced-motion: reduce) { .livecam_rotate-phone, .livecam_rotate-arrow { animation: none; } }
+
+/* phones and tablets: contact title and Talk / Read / Unwind left-aligned, in line with the form */
+@media (max-width: 991px) {
+  .contact-intro .u-vflex-center-top { align-items: flex-start; }
+  .contact-intro h1.u-align-center, .contact-intro .u-vflex-stretch-top > .u-align-center { text-align: left; }
+  .contact-intro .ways { align-items: flex-start; }
+}
