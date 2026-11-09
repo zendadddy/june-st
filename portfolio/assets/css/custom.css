@@ -1462,3 +1462,6 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 @media (max-width: 767px) { .section .row.row-between.row-bottom.u-vgap-24 > .col:has(> h1) + .col > p { margin-top: -.75rem; } }
 /* mobile menu: bigger social icons */
 @media (max-width: 767px) { .navigation .nav_list .nav_socials { gap: 1.75rem; } .nav_social { width: 3.25rem !important; height: 3.25rem !important; } .nav_social svg { width: 30px; height: 30px; } }
+
+/* phones: more sky above the "Take a pause" sun, so its top rays clear the torn edge */
+@media (max-width: 767px) { .section[data-svg="breath"] { aspect-ratio: auto !important; padding-top: 3.25rem !important; padding-bottom: 1rem !important; } }
