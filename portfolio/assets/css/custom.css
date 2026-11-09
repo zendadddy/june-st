@@ -1323,15 +1323,15 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 form[data-contact] [type=submit] { opacity: 1; visibility: visible; transform: none; }
 form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
-/* the cam link (sunrise / beach / sunset): every few seconds an orange wave rolls through the dark letters */
+/* the cam link (sunrise / beach / sunset): a soft warm glow living inside the letters, drifting slowly back and forth */
 [data-cams-link] {
-  background-image: linear-gradient(100deg, currentColor 0 40%, #8a5a3a 46%, #c47a45 50%, #8a5a3a 54%, currentColor 60% 100%);
-  background-size: 300% 100%; background-position: 100% 0; background-repeat: no-repeat;
+  background-image: linear-gradient(90deg, currentColor 0%, currentColor 22%, #9a6440 40%, #b8794a 50%, #9a6440 60%, currentColor 78%, currentColor 100%);
+  background-size: 260% 100%; background-position: 100% 0; background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: beach-wave 10s ease-in-out 1s infinite;
+  animation: beach-glow 9s ease-in-out infinite alternate;
 }
-@keyframes beach-wave { 0% { background-position: 100% 0; } 20%, 100% { background-position: 0% 0; } } /* a 2-second wave, then it rests: once every 10 seconds */
-@media (prefers-reduced-motion: reduce) { [data-cams-link] { animation: none; } }
+@keyframes beach-glow { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+@media (prefers-reduced-motion: reduce) { [data-cams-link] { animation: none; background-position: 50% 0; } }
 
 /* desktop: Talk / Read / Unwind in one column, the links lined up in the next */
 @media (min-width: 992px) {
