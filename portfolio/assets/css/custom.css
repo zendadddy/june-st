@@ -1379,3 +1379,21 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* phones: the cam tape tag sits along the bottom of the screen */
 @media (max-width: 767px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; left: 1rem !important; } }
+
+/* phones held upright, full screen: 'Rotate your phone' under the spinner, the phone icon tipping sideways and the arrows rocking */
+.livecam_rotate { display: none; }
+@media (max-width: 767px) and (orientation: portrait) {
+  .livecam.is-full .livecam_rotate { display: flex; flex-direction: column; align-items: center; gap: .6rem; position: absolute; left: 0; right: 0; top: calc(50% + 1.75rem); z-index: 4; color: #1d1d1db3; pointer-events: none; transition: opacity .4s ease; }
+  .livecam.is-full.is-switching .livecam_rotate { color: #ffffffcc; }
+  .livecam.is-full.is-live:not(.is-switching) .livecam_rotate, .livecam.is-full.is-offline .livecam_rotate { opacity: 0; }
+  .livecam_rotate-phone { transform-origin: 20px 20px; animation: cam-tip 2.6s cubic-bezier(.65, 0, .35, 1) infinite; }
+  .livecam_rotate-arrow { display: inline-block; margin: 0 .4em; animation: cam-rock 1.3s ease-in-out infinite; }
+  .livecam_rotate-arrow:first-child { animation-direction: reverse; }
+  /* player controls, upright phone: the arrows sit together at the bottom right, just above the tape tag */
+  .livecam.is-full .livecam_btn { top: auto !important; translate: none !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 4.75rem) !important; width: 2.75rem; height: 2.75rem; }
+  .livecam.is-full .livecam_btn[data-dir="-1"] { left: auto !important; right: calc(1rem + 2.75rem + .5rem) !important; }
+  .livecam.is-full .livecam_btn[data-dir="1"] { right: 1rem !important; }
+}
+@keyframes cam-tip { 0%, 30% { transform: rotate(0); } 50%, 80% { transform: rotate(-90deg); } 100% { transform: rotate(0); } }
+@keyframes cam-rock { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .livecam_rotate-phone, .livecam_rotate-arrow { animation: none; } }
