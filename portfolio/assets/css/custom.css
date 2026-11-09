@@ -1417,3 +1417,9 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .page-wrapper.cc-utility { background: #000; }
 .page-wrapper.cc-utility .w-background-video { top: clamp(2.5rem, 9vh, 6rem) !important; bottom: clamp(2.5rem, 9vh, 6rem) !important; height: auto !important; overflow: hidden; }
 .page-wrapper.cc-utility .w-background-video video { position: absolute; left: 50% !important; top: 50% !important; right: auto !important; bottom: auto !important; margin: 0 !important; width: calc(100% / .75); height: calc(100% / .911); max-width: none; transform: translate(-50%, -50%); object-fit: cover; }
+
+/* 404: the words sit top-left, left-aligned, out of the skater's way */
+.page-wrapper.cc-utility .utility_container { position: absolute; top: calc(clamp(2.5rem, 9vh, 6rem) + clamp(5rem, 9vw, 7rem)); left: var(--_layout---columns--gutter, 1.5rem); right: auto; bottom: auto;
+  text-align: left; display: flex; flex-direction: column; align-items: flex-start; max-width: min(36rem, calc(100% - 3rem)); margin: 0; }
+@media (min-width: 992px) { .page-wrapper.cc-utility .utility_container { left: clamp(2rem, 5vw, 5rem); } }
+.page-wrapper.cc-utility .utility_container h1 { text-shadow: 0 2px 30px #0000004d; }
