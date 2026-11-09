@@ -1345,7 +1345,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* video tags (live cam label, podcast caption): a strip of black gaffer tape instead of a glassy pill —
    flat matte black, square, a slight tilt, and torn zig-zag ends */
-.livecam .livecam_note, .about_video-cap.cc-on-video {
+.livecam .livecam_note, .about_video-cap.cc-on-video .tape {
   border-radius: 0 !important; background: #121212 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   padding: .5rem 1.1rem !important; color: #f2f0eb;
   box-shadow: none;
@@ -1353,5 +1353,10 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   clip-path: polygon(0 0, 100% 0, calc(100% - 1.5px) 22%, 100% 48%, calc(100% - 2px) 74%, 100% 100%, 0 100%, 1.5px 76%, 0 52%, 2px 27%);
   rotate: -1.2deg;
 }
-.about_video-cap.cc-on-video:hover { background-color: #000 !important; }
+.about_video-cap.cc-on-video:hover .tape { background-color: #000 !important; }
 .livecam .livecam_note .livecam_src, .livecam .livecam_note .livecam_time { border-left-color: #ffffff33; }
+
+/* podcast caption: two separate pieces of tape, "Noun Project" and "Design Icons Podcast", with a gap between */
+.about_video-cap.cc-on-video { background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 0 !important; border-radius: 0 !important; gap: .5rem; align-items: center; }
+.about_video-cap.cc-on-video .tape { display: inline-block; }
+.about_video-cap.cc-on-video .tape + .tape { rotate: .8deg; translate: 0 2px; }
