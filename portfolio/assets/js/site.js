@@ -1015,6 +1015,18 @@
     // while the skeleton shows: a small circular loader near the top of the frame
     var loadEl = document.createElement('p'); loadEl.className = 'livecam_loading'; loadEl.setAttribute('aria-hidden', 'true');
     cam.appendChild(loadEl);
+    // keep it centred in whatever part of the frame is on screen (top of the frame to the bottom of the window), following as you scroll
+    (function () {
+      var rq = 0;
+      function place() {
+        rq = 0; if (cam.classList.contains('is-live')) return;
+        var r = cam.getBoundingClientRect(), top = Math.max(r.top, 0), bot = Math.min(r.bottom, window.innerHeight);
+        if (bot <= top) return;
+        loadEl.style.paddingTop = Math.max(16, Math.round((top + bot) / 2 - r.top - 12)) + 'px';
+      }
+      function req() { if (!rq) rq = requestAnimationFrame(place); }
+      window.addEventListener('scroll', req, { passive: true }); window.addEventListener('resize', req); place();
+    })();
     var screen = cam.querySelector('.livecam_screen'), placeEl = cam.querySelector('.livecam_place'), src = cam.querySelector('.livecam_src');
     var idx = -1, player = null, dead = {}, apiReady = false, dir = 1, wait = 0, camReveal = 0, started = false;
     function label(s) { placeEl.textContent = s ? 'Live · ' + s.place : 'Los Angeles'; if (s && src) src.href = 'https://www.youtube.com/watch?v=' + s.id; }
