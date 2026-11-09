@@ -1202,3 +1202,17 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 /* nav over a video/photo section: no tinted band (it showed as a second edge against the moving picture) */
 .navigation::before { transition: --nav-l .9s ease, --nav-c .9s ease, --nav-r .9s ease, opacity .5s ease; }
 .navigation.is-over-media::before { opacity: 0; }
+
+/* homepage sun: after you've been on the page a while (25s), it slowly drifts orange → pink → purple → blue,
+   goes pale, and warms back to orange (90s per cycle, repeating) */
+.hero.cc-glow .hero_glow-sun { animation: glow-set 4.2s cubic-bezier(.33, 0, .2, 1) both, glow-breathe 9s ease-in-out 4.2s infinite, sun-cycle 90s ease-in-out 25s infinite; }
+@keyframes sun-cycle {
+  0%   { filter: hue-rotate(0deg) saturate(1); }
+  20%  { filter: hue-rotate(-45deg) saturate(1.05); }   /* pink */
+  40%  { filter: hue-rotate(-95deg) saturate(.95); }    /* purple */
+  60%  { filter: hue-rotate(-155deg) saturate(.9); }    /* blue */
+  75%  { filter: hue-rotate(-155deg) saturate(.25) brightness(1.04); }  /* pale */
+  82%  { filter: hue-rotate(0deg) saturate(.2) brightness(1.05); }      /* turns while pale, so it never passes through green */
+  100% { filter: hue-rotate(0deg) saturate(1); }        /* back to orange */
+}
+@media (prefers-reduced-motion: reduce) { .hero.cc-glow .hero_glow-sun { animation: none !important; } }
