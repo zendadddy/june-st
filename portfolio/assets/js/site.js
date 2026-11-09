@@ -34,7 +34,8 @@
      Every project page needs the password (the /projects overview is open). While locked, clicking a link to one opens a white modal over the
      current page instead of navigating. The right password unlocks everything for 72 hours in this browser.
      Opening a project URL directly redirects to index.html?gate=<page>, which opens the modal on load.
-     Soft protection: the check runs in the browser. Change the password by replacing PASS_HASH (SHA-256 of the lowercase password). */
+     The real lock is on the server (project.php + unlock.php, a signed 72-hour cookie); this modal is the friendly front for it.
+     Change the password by replacing PASS_HASH here and FB_PASS_HASH in lib-unlock.php (SHA-256 of the lowercase password). */
   var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
   var gate = (function () {
     var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // SHA-256 of the lowercase password (the password itself is never stored)
@@ -90,7 +91,10 @@
         sha256(input.value.trim().toLowerCase()).then(function (h) {
           if (h !== PASS_HASH) { err.hidden = false; card.classList.remove('is-shake'); void card.offsetWidth; card.classList.add('is-shake'); input.select(); return; }
           try { localStorage.setItem(KEY, String(Date.now() + HOURS * 3600 * 1000)); } catch (x) {}
-          var a = document.createElement('a'); a.href = new URL(next, siteRoot).href; document.body.appendChild(a); a.click(); // continue through the page wave
+          // the server holds the real lock: tell it (it sets a 72-hour cookie), then continue through the page wave
+          var go = function () { var a = document.createElement('a'); a.href = new URL(next, siteRoot).href; document.body.appendChild(a); a.click(); };
+          var body = new URLSearchParams(); body.set('pw', input.value);
+          fetch(new URL('unlock', siteRoot).href, { method: 'POST', body: body, credentials: 'same-origin' }).then(go, go);
         });
       });
       modal.addEventListener('keydown', function (e) {
@@ -125,6 +129,8 @@
     }, true);
     // arriving from a gated page that redirected here
     var q = new URLSearchParams(location.search), want = q.get('gate');
+    // the server sent us back (no valid unlock cookie): whatever this browser remembers, ask again
+    if (want !== null && q.has('locked')) { try { localStorage.removeItem(KEY); } catch (e) {} }
     if (want !== null && !unlocked()) { open(want); try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
     return { open: open, close: close, unlocked: unlocked };
   })();
