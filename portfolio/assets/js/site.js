@@ -695,6 +695,9 @@
     if (!nav) return;
     var r = nav.getBoundingClientRect(), w = document.documentElement.clientWidth;
     var y = Math.min(window.innerHeight - 2, r.bottom + 4);
+    // over a video or photo section (sky, palms, live cams) the tint can't match the moving picture, so the nav goes clear there
+    var under = document.elementsFromPoint(w / 2, Math.max(0, r.top + 2)).concat(document.elementsFromPoint(w / 2, y));
+    nav.classList.toggle('is-over-media', under.some(function (el) { return el.closest && el.closest('[data-svg="breath"], .quote-ramdass, .livecam, .hero.cc-photo:not(.cc-glow), .about_video'); }));
     var cols = [.12, .5, .88].map(function (f) { return colorAt(Math.round(w * f), y); });
     var key = cols.map(function (c) { return Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b); }).join('|');
     if (key === lastKey) return; lastKey = key;

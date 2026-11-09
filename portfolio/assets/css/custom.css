@@ -1198,3 +1198,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
 .pg_credit, .pg_card.cc-wide .pg_credit { font-size: var(--cap, 3.3cqh); }
 @media (min-width: 768px) { .logo_marquee .logo_row { margin-left: 0; padding-left: 12vw; } } /* Anthropic starts just inside the faded edge */
 
+
+/* nav over a video/photo section: no tinted band (it showed as a second edge against the moving picture) */
+.navigation::before { transition: --nav-l .9s ease, --nav-c .9s ease, --nav-r .9s ease, opacity .5s ease; }
+.navigation.is-over-media::before { opacity: 0; }
