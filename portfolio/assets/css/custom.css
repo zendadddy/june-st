@@ -1298,3 +1298,6 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 @keyframes cam-dot { 0%, 15% { opacity: 0; } 30%, 75% { opacity: 1; } 90%, 100% { opacity: 0; } }
 .livecam.is-live .livecam_loading, .livecam.is-offline .livecam_loading, .livecam.is-switching .livecam_loading { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .livecam_loading span { animation: none; opacity: 1; } }
+
+/* cams: the fullscreen button sits in the bottom-right corner (clear of the torn footer edge) */
+.livecam_expand { top: auto !important; bottom: clamp(2.75rem, 4.5vw, 4rem); right: clamp(1rem, 3vw, 2.5rem); }
