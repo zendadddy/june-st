@@ -37,7 +37,7 @@
      Soft protection: the check runs in the browser. Change the password by replacing PASS_HASH (SHA-256 of the lowercase password). */
   var siteRoot = (function () { try { return new URL('../../', document.currentScript.src); } catch (e) { return new URL('./', location.href); } })();
   var gate = (function () {
-    var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // sha256("famouslastname")
+    var PASS_HASH = 'b534e1e550a346e0f8b2dcbd974453332682d8f6fe8b103d904fbde0e492e8cc'; // SHA-256 of the lowercase password (the password itself is never stored)
     var HOURS = 72, KEY = 'fb-unlock', GATED = /^projects\/[a-z0-9-]+(\.html)?$/; // individual project pages; /projects itself is open
     function unlocked() { try { return +localStorage.getItem(KEY) > Date.now(); } catch (e) { return false; } }
     // reset: open any page with #lock (or ?lock) to clear the 72-hour unlock in this browser
