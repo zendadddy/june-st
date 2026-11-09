@@ -471,20 +471,23 @@
   (function () {
     var hero = document.querySelector('.hero.cc-glow'), sun = hero && hero.querySelector('.hero_glow-sun');
     if (!sun || reduce || !window.matchMedia('(hover: hover)').matches) return;
-    var tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+    var tx = 0, ty = 0, x = 0, y = 0, raf = 0, mx = 300, my = 100, last = 0;
     function step() {
-      // the pull toward the cursor keeps fading, so the orb always settles back to the centre (like it's on a soft spring)
-      tx *= .99; ty *= .99;   // gentle, unhurried pull home
+      // follows while the cursor moves; once it rests, the pull fades and the orb settles back to the centre
+      if (performance.now() - last > 700) { tx *= .96; ty *= .96; }   // hold the cursor still for a moment and it eases back home
       x += (tx - x) * .035; y += (ty - y) * .035;
       sun.style.translate = x.toFixed(1) + 'px ' + y.toFixed(1) + 'px';
-      sun.style.scale = (1 - Math.min(.22, Math.hypot(x, y) / 600)).toFixed(3); // shrinks a little the further it's pulled, grows back as it settles
+      // shrinks the further it's pulled: barely near the middle, way down (to ~15%) when dragged toward the header's edges
+      var d = Math.min(1, Math.max(Math.abs(x) / mx, Math.abs(y) / my));
+      sun.style.scale = (1 - .85 * Math.pow(d, 2.2)).toFixed(3);
       raf = (Math.abs(x) > .3 || Math.abs(y) > .3 || Math.abs(tx) > .3 || Math.abs(ty) > .3) ? requestAnimationFrame(step) : 0;
     }
     function go() { if (!raf) raf = requestAnimationFrame(step); }
     hero.addEventListener('pointermove', function (e) {
-      var r = hero.getBoundingClientRect();
-      tx = (e.clientX - (r.left + r.width / 2)) * .28;   // follows roughly, never all the way
-      ty = (e.clientY - (r.top + r.height * .45)) * .22;
+      var r = hero.getBoundingClientRect(); last = performance.now();
+      tx = (e.clientX - (r.left + r.width / 2)) * .17;   // follows roughly, never all the way
+      ty = (e.clientY - (r.top + r.height * .45)) * .13;
+      mx = r.width / 2 * .17 * .9; my = r.height * .5 * .13 * .9;   // how far it can get (a touch short of the edge counts as the edge)
       go();
     });
     hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; go(); });
