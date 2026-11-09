@@ -1263,3 +1263,6 @@ html.at-top .navigation::before { opacity: 0; }
 }
 
 .pg_slot:has(.pg_card.is-focus) { z-index: 100 !important; } /* the hovered photo rises above every other slot */
+
+/* desktop: a little more air between the metal logo and the footer links */
+@media (min-width: 992px) { .footer .footer_logo { margin-bottom: 8px; } }
