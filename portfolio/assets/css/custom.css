@@ -1466,16 +1466,10 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 /* phones: more sky above the "Take a pause" sun, so its top rays clear the torn edge */
 @media (max-width: 767px) { .section[data-svg="breath"] { aspect-ratio: auto !important; padding-top: 3.25rem !important; padding-bottom: 1rem !important; } }
 
-/* testimonials: no side arrows; one small control under the quote: ← 03 / 12 → with a line filling until the next quote */
-.tm-wrap .testimonial_pagination.tm-arrows { display: none !important; }
+/* testimonials: the projects carousel's round arrows, centred under the quote */
 .tm-wrap .tm_slide { padding-left: 0 !important; padding-right: 0 !important; }
 .tm-wrap { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; }
-.tm-ctl { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: clamp(1rem, 2vw, 1.5rem); }
-.tm-step { appearance: none; border: 0 !important; box-shadow: none !important; background: none; color: inherit; width: 2.5rem; height: 2.5rem; padding: 0; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; opacity: .45; transition: opacity .25s ease, transform .3s cubic-bezier(.22, 1, .36, 1); }
-.tm-step::before, .tm-step::after { display: none !important; }
-.tm-step:hover { opacity: 1; } .tm-step[data-d="-1"]:hover { transform: translateX(-2px); } .tm-step[data-d="1"]:hover { transform: translateX(2px); }
-.tm-count { position: relative; font-variant-numeric: tabular-nums; letter-spacing: var(--track-label, .08em); opacity: .8; min-width: 4.5em; text-align: center; padding-bottom: .45rem; }
-.tm-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: color-mix(in srgb, currentColor 22%, transparent); overflow: hidden; }
-.tm-bar > span { position: absolute; inset: 0; background: currentColor; transform-origin: 0 50%; transform: scaleX(0); }
-.tm-wrap.is-running .tm-bar > span { animation: tm-fill 8s linear both; }
-@keyframes tm-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.tm-wrap .testimonial_pagination.tm-pag { position: relative; inset: auto; pointer-events: auto; margin: clamp(1.25rem, 2.5vw, 2rem) auto 0 !important; transform: none !important; border-color: #ffffff59; }
+.tm-pag .testimonial_controls { opacity: 1 !important; }
+.tm-pag .arrow-ink { background: #fff; }
+.tm-pag .testimonial_controls:hover, .tm-pag .testimonial_controls.is-inked { color: #1d1d1b !important; }

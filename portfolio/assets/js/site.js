@@ -380,19 +380,12 @@
     var pag = tm.parentElement.parentElement.querySelector('.testimonial_pagination'); if (!pag || slides.length < 2) return;
     // arrows sit on either side of the quotes, so they stay put whatever the quote's length
     var wrap = document.createElement('div'); wrap.className = 'tm-wrap'; tm.parentNode.insertBefore(wrap, tm); wrap.appendChild(tm); wrap.appendChild(pag); pag.classList.add('tm-arrows');
-    // one small control under the quote: ← 03 / 12 →, with a thin line that fills until the next quote
-    var pad2 = function (n) { return (n < 10 ? '0' : '') + n; };
-    var ARW = '<svg viewBox="0 0 23 18" width="16" height="13" fill="none" aria-hidden="true"><path d="M8.39 17.28L9.8 16 3.81 9.6H22.5V7.71H3.81L9.8 1.31 8.39 0 .39 8.64z" fill="currentColor"/></svg>';
-    var dots = document.createElement('div'); dots.className = 'tm-ctl';
-    dots.innerHTML = '<button type="button" class="tm-step" data-d="-1" aria-label="Previous testimonial">' + ARW + '</button>' +
-      '<span class="tm-count eyebrow-sm" aria-live="polite"><span class="tm-now">01</span> / ' + pad2(slides.length) + '<span class="tm-bar"><span></span></span></span>' +
-      '<button type="button" class="tm-step" data-d="1" aria-label="Next testimonial"><span style="display:inline-flex;transform:scaleX(-1)">' + ARW + '</span></button>';
-    dots.querySelectorAll('.tm-step').forEach(function (b) { b.addEventListener('click', function () { show(i + (+b.getAttribute('data-d'))); restart(); }); });
-    wrap.appendChild(dots);
+    // the same round arrows as the projects carousel, centred under the quote
+    pag.classList.remove('tm-arrows'); pag.classList.add('cc-top', 'tm-pag'); wrap.appendChild(pag);
+    if (typeof inkify === 'function') inkify(pag, null);
     function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
-      var now = dots.querySelector('.tm-now'); if (now) now.textContent = pad2(i + 1);
     }
     // phones: swipe the quote left or right
     var sx = null;
@@ -400,7 +393,7 @@
     tm.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null; if (Math.abs(dx) > 40) { show(i + (dx < 0 ? 1 : -1)); restart(); } }, { passive: true });
     // auto-advance every 8s while in view; pauses on hover/focus, and restarts the count after a click
     var autoT = 0, inView = false, held = false;
-    function restart() { clearInterval(autoT); wrap.classList.remove('is-running'); void dots.offsetWidth; if (reduce || !inView || held) return; wrap.classList.add('is-running'); autoT = setInterval(function () { show(i + 1); wrap.classList.remove('is-running'); void dots.offsetWidth; wrap.classList.add('is-running'); }, 8000); }
+    function restart() { clearInterval(autoT); if (reduce || !inView || held) return; autoT = setInterval(function () { show(i + 1); }, 8000); }
     show(0);
     wrap.addEventListener('mouseenter', function () { held = true; restart(); }); wrap.addEventListener('mouseleave', function () { held = false; restart(); });
     wrap.addEventListener('focusin', function () { held = true; restart(); }); wrap.addEventListener('focusout', function () { held = false; restart(); });
@@ -1233,6 +1226,32 @@
     }
   })();
 
+  // one "ink" circle that flows between a pair of round arrows on hover: the leading edge moves first, the trailing edge catches up
+  function inkify(pag, sc) {
+      var ink = document.createElement('span'); ink.className = 'arrow-ink'; ink.setAttribute('aria-hidden', 'true'); pag.insertBefore(ink, pag.firstChild);
+      var side = null, hovering = false, over = null, ctls = [].slice.call(pag.querySelectorAll('.testimonial_controls'));
+      function to(ctl) {
+        var l = ctl.offsetLeft, r = pag.clientWidth - l - ctl.offsetWidth, s = ctl.classList.contains('cc-next') ? 'next' : 'prev';
+        if (side && side !== s) pag.classList.toggle('ink-right', s === 'next'); else if (!side) { pag.classList.add('ink-jump'); void ink.offsetWidth; }
+        ink.style.left = l + 'px'; ink.style.right = r + 'px'; side = s;
+        ctls.forEach(function (c) { c.classList.toggle('is-inked', c === ctl); });
+        pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
+      }
+      // at rest there is no ink: it only appears under the arrow being hovered
+      function refit() { if (hovering && over && !over.classList.contains('is-disabled')) { pag.classList.add('ink-jump'); to(over); } else { hovering = hovering && !!over && !over.classList.contains('is-disabled'); rest(); } }
+      function rest() {
+        if (hovering) return;
+        pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); });
+      }
+      ctls.forEach(function (c) {
+        c.addEventListener('pointerenter', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; hovering = true; over = c; if (!c.classList.contains('is-disabled')) to(c); }); // touch taps don't summon the ink
+        c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') refit(); }); // an arrow folded in or out: the ink follows the arrow under the pointer
+      });
+      pag.addEventListener('pointerleave', function () { hovering = false; over = null; rest(); });
+      var rq = 0; if (sc) sc.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; refit(); }); }, { passive: true });
+      window.addEventListener('resize', rest);
+      requestAnimationFrame(function () { requestAnimationFrame(rest); }); window.addEventListener('load', rest);
+  }
   /* ---------- 8. Home carousels (projects, courses): native scroll, mouse drag, arrow pills ---------- */
   var PAG_HTML = "<div class=\"testimonial_pagination\"><div class=\"testimonial_controls cc-prev\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 23 18\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M8.38769 17.28L9.79569 16L3.8117 9.6H22.4997V7.712H3.8117L9.79569 1.312L8.38769 0L0.387695 8.64L8.38769 17.28Z\" fill=\"currentColor\"></path></svg></div><div class=\"testimonial_controls cc-next\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" viewBox=\"0 0 25 25\" fill=\"none\" class=\"u-icon cc-24 u-z-index-1\"><path d=\"M15.612 21.28L14.204 20L20.188 13.6L1.5 13.6V11.712H20.188L14.204 5.312L15.612 4L23.612 12.64L15.612 21.28Z\" fill=\"currentColor\"></path></svg></div></div>";
   document.querySelectorAll('.swiper-wrapper.cc-project').forEach(function (wrap) {
@@ -1271,32 +1290,7 @@
     sc.parentElement.insertBefore(head, title || sc);
     if (title) head.appendChild(title);
     head.appendChild(pag); pag.classList.add('cc-top');
-    // one black "ink" circle that flows between the arrows on hover: the leading edge moves first, the trailing edge catches up
-    (function () {
-      var ink = document.createElement('span'); ink.className = 'arrow-ink'; ink.setAttribute('aria-hidden', 'true'); pag.insertBefore(ink, pag.firstChild);
-      var side = null, hovering = false, over = null, ctls = [].slice.call(pag.querySelectorAll('.testimonial_controls'));
-      function to(ctl) {
-        var l = ctl.offsetLeft, r = pag.clientWidth - l - ctl.offsetWidth, s = ctl.classList.contains('cc-next') ? 'next' : 'prev';
-        if (side && side !== s) pag.classList.toggle('ink-right', s === 'next'); else if (!side) { pag.classList.add('ink-jump'); void ink.offsetWidth; }
-        ink.style.left = l + 'px'; ink.style.right = r + 'px'; side = s;
-        ctls.forEach(function (c) { c.classList.toggle('is-inked', c === ctl); });
-        pag.classList.add('ink-on'); requestAnimationFrame(function () { pag.classList.remove('ink-jump'); });
-      }
-      // at rest there is no ink: it only appears under the arrow being hovered
-      function refit() { if (hovering && over && !over.classList.contains('is-disabled')) { pag.classList.add('ink-jump'); to(over); } else { hovering = hovering && !!over && !over.classList.contains('is-disabled'); rest(); } }
-      function rest() {
-        if (hovering) return;
-        pag.classList.remove('ink-on'); side = null; ctls.forEach(function (x) { x.classList.remove('is-inked'); });
-      }
-      ctls.forEach(function (c) {
-        c.addEventListener('pointerenter', function (e) { if (e.pointerType && e.pointerType !== 'mouse') return; hovering = true; over = c; if (!c.classList.contains('is-disabled')) to(c); }); // touch taps don't summon the ink
-        c.addEventListener('transitionend', function (e) { if (e.propertyName === 'width') refit(); }); // an arrow folded in or out: the ink follows the arrow under the pointer
-      });
-      pag.addEventListener('pointerleave', function () { hovering = false; over = null; rest(); });
-      var rq = 0; sc.addEventListener('scroll', function () { if (!rq) rq = requestAnimationFrame(function () { rq = 0; refit(); }); }, { passive: true });
-      window.addEventListener('resize', rest);
-      requestAnimationFrame(function () { requestAnimationFrame(rest); }); window.addEventListener('load', rest);
-    })();
+    inkify(pag, sc);
     if (seeAll) head.appendChild(seeAll);
     // cards fade in from the right the first time the carousel scrolls into view
     if (!reduce && 'IntersectionObserver' in window) {
