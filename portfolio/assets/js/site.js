@@ -1382,6 +1382,25 @@
     }, true);
   });
 
+  /* ---------- 6c. Contact: the cam link follows the time of day in LA: sunrise, sunset, or just the beach ---------- */
+  (function () {
+    var links = document.querySelectorAll('[data-cams-link]'); if (!links.length) return;
+    // rough LA sunrise / sunset by month, local clock time in minutes
+    var RISE = [418, 400, 400, 385, 355, 342, 352, 375, 398, 420, 390, 412], SET = [1028, 1058, 1130, 1165, 1190, 1207, 1205, 1180, 1140, 1105, 1015, 1005];
+    function word() {
+      try {
+        var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', month: 'numeric', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+        var get = function (t) { var x = parts.filter(function (q) { return q.type === t; })[0]; return x ? parseInt(x.value, 10) : 0; };
+        var m = get('month') - 1, now = get('hour') * 60 + get('minute');
+        if (now >= RISE[m] - 45 && now <= RISE[m] + 75) return 'sunrise';
+        if (now >= SET[m] - 90 && now <= SET[m] + 45) return 'sunset';
+        return 'beach';
+      } catch (e) { return 'sunset'; }
+    }
+    function update() { var w = 'watch the ' + word(); links.forEach(function (a) { if (a.textContent !== w) a.textContent = w; }); }
+    update(); setInterval(update, 60000);
+  })();
+
   /* ---------- 6b. Contact: 'watch the sunset' opens the live cams full screen ---------- */
   document.querySelectorAll('[data-cams-link]').forEach(function (a) {
     a.addEventListener('click', function (e) {
