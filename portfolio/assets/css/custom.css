@@ -1489,5 +1489,8 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .pgx_close { background: none !important; }
 
 /* course popup: the course's thumbnail sits on top */
-.soon-modal .gate-modal_card .soon-modal_thumb { display: block; width: 100%; aspect-ratio: 16 / 10; height: auto; max-width: none; object-fit: cover; border-radius: var(--radius-sm, 2px); margin: 0 0 .5rem; }
+.soon-modal .gate-modal_card .soon-modal_thumb { display: block; aspect-ratio: 16 / 10; height: auto; max-width: none; object-fit: cover; border-radius: 0;
+  /* full bleed: out to the card's top and side edges */
+  width: calc(100% + 2 * clamp(2.4rem, 4.8vw, 3.6rem)); margin: calc(-1 * clamp(3rem, 6vw, 4.5rem)) calc(-1 * clamp(2.4rem, 4.8vw, 3.6rem)) -.5rem; }
+.soon-modal.has-thumb .gate-modal_close { color: #fff; z-index: 2; filter: drop-shadow(0 1px 3px #00000080); }
 .soon-modal_thumb[hidden] { display: none !important; }

@@ -202,6 +202,7 @@
       var thumb = modal.querySelector('.soon-modal_thumb'), cimg = card && card.querySelector('img'), ct = card && card.querySelector('h4:not(.u-sr-only)');
       thumb.hidden = !(kind === 'courses' && cimg);
       if (!thumb.hidden) { thumb.src = cimg.currentSrc || cimg.src; thumb.alt = ''; }
+      modal.classList.toggle('has-thumb', !thumb.hidden);
       if (kind === 'courses' && ct) {
         var t = modal.querySelector('#soon-title'); t.textContent = ct.textContent.trim();
         modal.querySelector('.soon-modal_text').textContent = 'This course is on the way. Join my mailing list and I’ll let you know when it’s live.';
