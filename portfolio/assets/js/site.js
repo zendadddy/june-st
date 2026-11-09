@@ -1402,7 +1402,7 @@
         return 'beach';
       } catch (e) { return 'sunset'; }
     }
-    function update() { var w = 'watch the ' + word(); links.forEach(function (a) { if (a.textContent !== w) a.textContent = w; }); }
+    function update() { var x = word(), w = x === 'beach' ? 'check out the beach' : 'watch the ' + x; links.forEach(function (a) { if (a.textContent !== w) a.textContent = w; }); }
     update(); setInterval(update, 60000);
   })();
 
