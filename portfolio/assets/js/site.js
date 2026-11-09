@@ -1076,6 +1076,7 @@
     cam.querySelector('.livecam_shield').addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
     closeBtn.addEventListener('click', function (e) { e.stopPropagation(); full(false); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && cam.classList.contains('is-full')) full(false); });
+    cam._full = full; // so 'watch the sunset' can open it straight into full screen
     // Load YouTube's player API. If it never arrives (blocked network), the photo stays and the arrows stay hidden.
     var prevReady = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
@@ -1361,11 +1362,12 @@
     }, true);
   });
 
-  /* ---------- 6b. Contact: 'stare into the sunset' glides down to the live cams ---------- */
+  /* ---------- 6b. Contact: 'watch the sunset' opens the live cams full screen ---------- */
   document.querySelectorAll('[data-cams-link]').forEach(function (a) {
     a.addEventListener('click', function (e) {
       var t = document.getElementById('cams'); if (!t || t.hidden) return;
       e.preventDefault();
+      if (t._full) { t._full(true); return; } // straight into full screen
       try { if (typeof lenis !== 'undefined' && lenis.scrollTo) { lenis.scrollTo(t, { duration: 1.6 }); return; } } catch (err) {}
       t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     });
