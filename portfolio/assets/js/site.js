@@ -482,14 +482,18 @@
       raf = (Math.abs(x) > .3 || Math.abs(y) > .3 || Math.abs(tx) > .3 || Math.abs(ty) > .3) ? requestAnimationFrame(step) : 0;
     }
     function go() { if (!raf) raf = requestAnimationFrame(step); }
+    // once you scroll, the sun lets go of the cursor and stays put; back at the very top it follows again
+    function scrolled() { return window.scrollY > 8; }
     hero.addEventListener('pointermove', function (e) {
+      if (scrolled()) return;
       var r = hero.getBoundingClientRect(); last = performance.now();
       tx = (e.clientX - (r.left + r.width / 2)) * .17;   // follows roughly, never all the way
       ty = (e.clientY - (r.top + r.height * .45)) * .13;
       mx = r.width / 2 * .17 * .9; my = r.height * .5 * .13 * .9;   // how far it can get (a touch short of the edge counts as the edge)
       go();
     });
-    hero.addEventListener('pointerleave', function () { tx = 0; ty = 0; go(); });
+    hero.addEventListener('pointerleave', function () { if (scrolled()) return; tx = 0; ty = 0; go(); });
+    window.addEventListener('scroll', function () { if (scrolled()) { tx = x; ty = y; } }, { passive: true });   // freeze it where it is
   })();
 
   /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
