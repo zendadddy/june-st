@@ -203,6 +203,17 @@
       thumb.hidden = !(kind === 'courses' && cimg);
       if (!thumb.hidden) { thumb.src = cimg.currentSrc || cimg.src; thumb.alt = ''; }
       modal.classList.toggle('has-thumb', !thumb.hidden);
+      // a torn paper edge along the bottom of the photo (the same tear as the sections and footer)
+      if (!thumb.hidden && !modal.querySelector('.soon-modal_tear')) {
+        var tearSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        tearSvg.setAttribute('class', 'soon-modal_tear'); tearSvg.setAttribute('viewBox', '0 0 1440 56'); tearSvg.setAttribute('preserveAspectRatio', 'none'); tearSvg.setAttribute('aria-hidden', 'true');
+        thumb.insertAdjacentElement('afterend', tearSvg);
+        var favT = document.querySelector('link[rel~="icon"]'), fileT = '68e01f11b96ed794c55e8e4d_be70b9722cafdb3a464777bdf72afc9f_quote-top-clip.svg';
+        fetch(favT ? favT.href.replace(/[^/]*$/, fileT) : new URL('assets/' + fileT, siteRoot).href).then(function (r) { return r.text(); }).then(function (t) {
+          var m = t.match(/ d="([^"]+)"/); if (m) tearSvg.innerHTML = '<path d="' + m[1] + '" fill="#fff"/>';
+        }).catch(function () {});
+      }
+      var tearEl = modal.querySelector('.soon-modal_tear'); if (tearEl) tearEl.style.display = thumb.hidden ? 'none' : '';
       if (kind === 'courses' && ct) {
         var t = modal.querySelector('#soon-title'); t.textContent = ct.textContent.trim();
         modal.querySelector('.soon-modal_text').textContent = 'This course is on the way. Join my mailing list and I’ll let you know when it’s live.';

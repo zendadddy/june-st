@@ -1495,3 +1495,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .soon-modal.has-thumb .gate-modal_close { color: #1d1d1b; z-index: 2; background: #ffffffbf; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border-radius: 50%; width: 2.75rem; height: 2.75rem; display: flex; align-items: center; justify-content: center; padding: 0; }
 .soon-modal.has-thumb .gate-modal_close svg { width: 18px; height: 18px; }
 .soon-modal_thumb[hidden] { display: none !important; }
+
+/* course popup: torn paper edge where the photo meets the white card */
+.soon-modal .gate-modal_card .soon-modal_tear { display: block; position: relative; z-index: 1; flex: none; height: clamp(14px, 2.4vw, 22px); max-width: none;
+  width: calc(100% + 2 * clamp(2.4rem, 4.8vw, 3.6rem)); margin: calc(-1 * clamp(14px, 2.4vw, 22px) - 2.4rem + .5rem) calc(-1 * clamp(2.4rem, 4.8vw, 3.6rem)) 0; }
