@@ -1469,7 +1469,8 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 /* testimonials: the projects carousel's round arrows, centred under the quote */
 .tm-wrap .tm_slide { padding-left: 0 !important; padding-right: 0 !important; }
 .tm-wrap { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; }
-.tm-wrap .testimonial_pagination.tm-pag { position: relative; inset: auto; pointer-events: auto; margin: clamp(1.25rem, 2.5vw, 2rem) auto 0 !important; transform: none !important; border-color: #ffffff59; }
+.tm-wrap { position: relative; padding-bottom: 5rem; }
+.tm-wrap .testimonial_pagination.tm-pag { position: absolute; inset: auto; left: 50%; top: 100%; translate: -50% 0; pointer-events: auto; margin: 0 !important; transform: none !important; border-color: #ffffff59; transition: top .5s cubic-bezier(.22, 1, .36, 1); }
 .tm-pag .testimonial_controls { opacity: 1 !important; }
 .tm-pag .arrow-ink { background: #fff; }
 .tm-pag .testimonial_controls:hover, .tm-pag .testimonial_controls.is-inked { color: #1d1d1b !important; }

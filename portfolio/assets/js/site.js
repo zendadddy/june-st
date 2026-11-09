@@ -383,9 +383,18 @@
     // the same round arrows as the projects carousel, centred under the quote
     pag.classList.remove('tm-arrows'); pag.classList.add('cc-top', 'tm-pag'); wrap.appendChild(pag);
     if (typeof inkify === 'function') inkify(pag, null);
+    // the arrows follow the current quote: they sit just under its logo, whatever the quote's length
+    function placePag() {
+      var s = slides[i], last = s && s.lastElementChild; if (!last) return;
+      // layout positions (not on-screen ones), so the slide's little entrance shift doesn't nudge the arrows
+      var top = 0, el = last; while (el && el !== wrap) { top += el.offsetTop; el = el.offsetParent; } top += last.offsetHeight;
+      pag.style.top = Math.round(top + Math.max(20, Math.min(32, window.innerWidth * .025))) + 'px';
+    }
+    window.addEventListener('resize', placePag); window.addEventListener('load', placePag);
     function show(n) {
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
+      if (typeof placePag === 'function') placePag();
     }
     // phones: swipe the quote left or right
     var sx = null;
