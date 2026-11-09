@@ -1378,11 +1378,11 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .livecam.is-full .livecam_ui { opacity: 1 !important; } /* the close button is reachable right away, even before YouTube is ready */
 
 /* phones: the cam tape tag sits along the bottom of the screen */
-@media (max-width: 767px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; left: 1rem !important; } }
+@media (max-width: 767px), (pointer: coarse) and (max-height: 540px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; left: 1rem !important; } }
 
 /* phones held upright, full screen */
-@media (max-width: 767px) and (orientation: portrait) {
-  /* player controls, upright phone: the arrows sit together at the bottom right, just above the tape tag */
+@media (max-width: 767px), (pointer: coarse) and (max-height: 540px) {
+  /* player controls on phones, upright or sideways: the arrows sit together at the bottom right, just above the tape tag */
   .livecam.is-full .livecam_btn { top: auto !important; translate: none !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 4.75rem) !important; width: 2.75rem; height: 2.75rem; }
   .livecam.is-full .livecam_btn[data-dir="-1"] { left: auto !important; right: calc(1rem + 2.75rem + .5rem) !important; }
   .livecam.is-full .livecam_btn[data-dir="1"] { right: 1rem !important; }
@@ -1394,3 +1394,4 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   .contact-intro h1.u-align-center, .contact-intro .u-vflex-stretch-top > .u-align-center { text-align: left; }
   .contact-intro .ways { align-items: flex-start; }
 }
+@media (pointer: coarse) and (max-height: 540px) and (orientation: landscape) { .livecam.is-full .livecam_btn { bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem) !important; } } /* sideways: arrows on the same line as the tape tag */
