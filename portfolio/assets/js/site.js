@@ -375,9 +375,9 @@
       i = (n + slides.length) % slides.length;
       slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
     }
-    // auto-advance every 7s while in view; pauses on hover/focus, and restarts the count after a click
+    // auto-advance every 8s while in view; pauses on hover/focus, and restarts the count after a click
     var autoT = 0, inView = false, held = false;
-    function restart() { clearInterval(autoT); if (reduce || !inView || held) return; autoT = setInterval(function () { show(i + 1); }, 7000); }
+    function restart() { clearInterval(autoT); if (reduce || !inView || held) return; autoT = setInterval(function () { show(i + 1); }, 8000); }
     wrap.addEventListener('mouseenter', function () { held = true; restart(); }); wrap.addEventListener('mouseleave', function () { held = false; restart(); });
     wrap.addEventListener('focusin', function () { held = true; restart(); }); wrap.addEventListener('focusout', function () { held = false; restart(); });
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; restart(); }, { threshold: .4 }).observe(wrap);
