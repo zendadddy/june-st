@@ -1411,3 +1411,7 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
   .nav_social::after, .nav_social::before { display: none !important; }
   .navigation.is-menu-leaving .nav_list .nav_socials { opacity: 0 !important; transition: none !important; }
 }
+
+/* 404: the skate clip fills the screen (the file has black bars baked in, so it is zoomed just past them) */
+.page-wrapper.cc-utility .w-background-video video { object-fit: cover; transform: scale(1.22); transform-origin: 50% 50%; }
+.page-wrapper.cc-utility .w-background-video { overflow: hidden; }
