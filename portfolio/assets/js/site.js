@@ -237,6 +237,15 @@
     list.id = list.id || 'site-menu';
     btn.setAttribute('role', 'button'); btn.setAttribute('tabindex', '0'); btn.setAttribute('aria-controls', list.id); btn.setAttribute('aria-expanded', 'false');
     [].forEach.call(list.querySelectorAll('a'), function (a, i) { a.style.setProperty('--i', i); });
+    // socials along the bottom of the open menu (phones), as icons
+    if (!list.querySelector('.nav_socials')) {
+      var S = function (href, label, svg) { return '<a class="nav_social" href="' + href + '" target="_blank" rel="noopener" aria-label="' + label + '">' + svg + '</a>'; };
+      list.insertAdjacentHTML('beforeend', '<div class="nav_socials">' +
+        S('https://x.com/zendadddy', 'X', '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2z"/></svg>') +
+        S('https://www.linkedin.com/in/francoisbach/', 'LinkedIn', '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3V9.75zm6.5 0h3.83v1.54h.06c.53-1 1.84-2.06 3.79-2.06 4.05 0 4.8 2.67 4.8 6.13V21h-4v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21h-4V9.75z"/></svg>') +
+        S('https://www.instagram.com/zen.daddy/', 'Instagram', '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor"/></svg>') +
+        '</div>');
+    }
     label.insertAdjacentHTML('beforeend', X_ICON); label.classList.add('nav_menu_label');
     function set(open) {
       root.classList.toggle('has-menu', open); nav.classList.toggle('is-menu-open', open);

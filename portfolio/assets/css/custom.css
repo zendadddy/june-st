@@ -1400,3 +1400,14 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 .ways_sep { white-space: pre; }
 @media (max-width: 991px) { .ways_sep { padding-right: .3em; } }
+
+/* mobile menu: social icons along the bottom */
+.nav_socials { display: none; }
+@media (max-width: 767px) {
+  .navigation .nav_list .nav_socials { display: flex; gap: 1.5rem; position: absolute; left: var(--_layout---columns--size, 1rem); bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem);
+    opacity: 0; transform: translateY(8px); transition: opacity .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1); }
+  .navigation.is-menu-open .nav_list .nav_socials { opacity: 1; transform: none; transition-delay: .35s; }
+  .nav_social { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; margin: -.6rem; color: var(--_colors---all--black, #1d1d1b); }
+  .nav_social::after, .nav_social::before { display: none !important; }
+  .navigation.is-menu-leaving .nav_list .nav_socials { opacity: 0 !important; transition: none !important; }
+}
