@@ -554,8 +554,11 @@
       box.style.left = Math.round(L + pad) + 'px';
       box.style.maxWidth = Math.round(R - L - pad * 2) + 'px';
       box.style.width = phone ? Math.round(R - L - pad * 2) + 'px' : '';
-      // phones: centred in the picture; larger screens: top-left
-      box.style.top = Math.round(phone ? (T + B) / 2 - box.offsetHeight / 2 : Math.max(T + pad, 96)) + 'px';
+      // phones: centred across the top of the picture; larger screens: top-left
+      box.style.top = Math.round(phone ? Math.max(T + pad, 88) : Math.max(T + pad, 96)) + 'px';
+      // phones: a black wash from the top of the picture down past the words, so they read cleanly
+      wrap.style.setProperty('--shade-top', Math.round(T) + 'px');
+      wrap.style.setProperty('--shade-h', Math.round(Math.max(T + pad, 88) - T + box.offsetHeight + 90) + 'px');
     }
     fit(); window.addEventListener('resize', fit); v.addEventListener('loadedmetadata', fit);
   })();

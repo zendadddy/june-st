@@ -1425,4 +1425,8 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* 404, phones: words centred in the clip, and smaller */
 .page-wrapper.cc-utility .utility_container.is-centered { text-align: center; align-items: center; }
-@media (max-width: 767px) { .page-wrapper.cc-utility .utility_container h1 { font-size: 2.1rem; line-height: 1.1; } }
+@media (max-width: 767px) {
+  .page-wrapper.cc-utility .utility_container h1 { font-size: 1.7rem; line-height: 1.1; }
+  .page-wrapper.cc-utility::after { content: ""; position: absolute; left: 0; right: 0; top: var(--shade-top, 0); height: var(--shade-h, 40%); z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, #000000d9 0%, #000000a6 55%, #00000000 100%); }
+}
