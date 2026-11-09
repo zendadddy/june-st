@@ -474,7 +474,7 @@
     var tx = 0, ty = 0, x = 0, y = 0, raf = 0, mx = 300, my = 100, last = 0;
     function step() {
       // follows the cursor and stays where you leave it; only drifts back to centre when the cursor leaves the header
-      x += (tx - x) * .035; y += (ty - y) * .035;
+      x += (tx - x) * .06; y += (ty - y) * .06;
       sun.style.translate = x.toFixed(1) + 'px ' + y.toFixed(1) + 'px';
       // shrinks the further it's pulled: barely near the middle, way down (to ~15%) when dragged toward the header's edges
       var d = Math.min(1, Math.max(Math.abs(x) / mx, Math.abs(y) / my));
@@ -487,9 +487,9 @@
     hero.addEventListener('pointermove', function (e) {
       if (scrolled()) return;
       var r = hero.getBoundingClientRect(); last = performance.now();
-      tx = (e.clientX - (r.left + r.width / 2)) * .17;   // follows roughly, never all the way
-      ty = (e.clientY - (r.top + r.height * .45)) * .13;
-      mx = r.width / 2 * .17 * .9; my = r.height * .5 * .13 * .9;   // how far it can get (a touch short of the edge counts as the edge)
+      tx = (e.clientX - (r.left + r.width / 2)) * .34;   // follows roughly, never all the way
+      ty = (e.clientY - (r.top + r.height * .45)) * .26;
+      mx = r.width / 2 * .34 * .9; my = r.height * .5 * .26 * .9;   // how far it can get (a touch short of the edge counts as the edge)
       go();
     });
     hero.addEventListener('pointerleave', function () { if (scrolled()) return; tx = 0; ty = 0; go(); });
