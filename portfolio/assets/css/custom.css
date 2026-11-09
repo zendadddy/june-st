@@ -1061,7 +1061,7 @@ form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-
 .pg_card.cc-square { aspect-ratio: 1; }
 
 /* cam tag: top left, just below the torn top edge */
-.livecam .livecam_note { top: clamp(4rem, 7vw, 6rem); bottom: auto; }
+.livecam .livecam_note { top: calc(clamp(4rem, 7vw, 6rem) - 12px); bottom: auto; }
 
 /* livecam-full: click the feed to fill the screen; an X sits top right */
 .livecam.is-live .livecam_screen { pointer-events: auto; cursor: zoom-in; }
@@ -1075,7 +1075,7 @@ html.cam-full .navigation, html.cam-full .nav_sun { opacity: 0; pointer-events: 
   opacity: 0; visibility: hidden; transition: opacity .3s ease, transform .5s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .3s; }
 .livecam_close:hover { transform: rotate(90deg); }
 .livecam.is-full .livecam_close { opacity: 1; visibility: visible; transition: opacity .3s ease, transform .5s cubic-bezier(.22, 1, .36, 1); }
-.livecam.is-full .livecam_note { top: clamp(1rem, 2.5vw, 2rem); }
+.livecam.is-full .livecam_note { top: calc(clamp(1rem, 2.5vw, 2rem) - 12px); }
 
 /* cam X: same look and hover as the arrows, no rotation, no focus ring on click */
 .livecam_close { border: 1px solid #ffffff99; transition: opacity .3s ease, background-color .2s ease, transform .3s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .3s; }
