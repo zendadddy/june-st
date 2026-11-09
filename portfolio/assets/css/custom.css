@@ -1377,13 +1377,13 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 @keyframes cam-spin { to { transform: rotate(360deg); } }
 .livecam.is-full .livecam_ui { opacity: 1 !important; } /* the close button is reachable right away, even before YouTube is ready */
 
-/* phones: the cam tape tag sits along the bottom of the screen */
-@media (max-width: 767px), (pointer: coarse) and (max-height: 540px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: auto !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; left: 1rem !important; } }
+/* phones: the cam tape tag sits at the top left */
+@media (max-width: 767px), (pointer: coarse) and (max-height: 540px) { .livecam .livecam_note, .livecam.is-full .livecam_note { top: calc(env(safe-area-inset-top, 0px) + 1.4rem) !important; bottom: auto !important; left: 1rem !important; } }
 
 /* phones held upright, full screen */
 @media (max-width: 767px), (pointer: coarse) and (max-height: 540px) {
   /* player controls on phones, upright or sideways: the arrows sit together at the bottom right, just above the tape tag */
-  .livecam.is-full .livecam_btn { top: auto !important; translate: none !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 4.75rem) !important; width: 2.75rem; height: 2.75rem; }
+  .livecam.is-full .livecam_btn { top: auto !important; translate: none !important; bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem) !important; width: 2.75rem; height: 2.75rem; }
   .livecam.is-full .livecam_btn[data-dir="-1"] { left: auto !important; right: calc(1rem + 2.75rem + .5rem) !important; }
   .livecam.is-full .livecam_btn[data-dir="1"] { right: 1rem !important; }
 }
