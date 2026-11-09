@@ -1028,7 +1028,7 @@ form[data-contact].is-typing [type=submit] { opacity: 1; visibility: visible; tr
 form[data-contact].is-typing [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* pg-center-last: desktop playground on 14 half-columns so a short last row can be centred */
-@media (min-width: 992px) { .pg .pg_grid { grid-template-columns: repeat(14, 1fr); } .pg .pg_slot { grid-column-end: span 2; } }
+@media (min-width: 992px) { .pg .pg_grid { grid-template-columns: repeat(20, 1fr); width: calc(100% * 10 / 7); margin-left: calc(100% * -3 / 14); } .pg .pg_slot { grid-column-end: span 2; } } /* ten a row, wider than the screen, centred; edges pan it (site.js) */
 
 /* About podcast: the frosted circle is back around the play triangle */
 .about_video-btn { width: clamp(3.75rem, 6.5vw, 5.5rem); background: #ffffff38; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); filter: none; }
@@ -1232,7 +1232,7 @@ html.at-top .navigation::before { opacity: 0; }
 .hero.cc-glow.is-sun-moving.is-sun-burst .hero_glow-sun { transition-delay: .35s; }   /* a beat before it bursts open (settling back has no wait) */
 
 /* cam controls: no white outlines */
-.livecam_btn, .livecam_close { border: 0 !important; box-shadow: none; }
+.livecam_btn, .livecam_close, .livecam_expand { border: 0 !important; box-shadow: none; }
 
 /* Ram Dass: hover (or focus) his name and a round photo of him pops up above it */
 .rd-name { position: relative; display: inline-block; cursor: default; border-bottom: 1px dotted rgba(255, 255, 255, .4); outline: none; }
@@ -1247,3 +1247,8 @@ html.at-top .navigation::before { opacity: 0; }
   background: linear-gradient(0deg, #fbfaf7 0%, #fbfaf7 22%, rgba(251, 250, 247, .85) 45%, rgba(251, 250, 247, 0) 100%);
   opacity: 0; transition: opacity .5s ease; }
 .hero.cc-glow.is-sun-burst .hero_glow::after { opacity: 1; transition: opacity .6s ease .3s; }
+
+/* footer: the metal logo swells 5% as it scrolls into view */
+.footer .footer_logo { scale: 1; transition: scale 1.4s cubic-bezier(.22, 1, .36, 1); }
+.footer .footer_logo.is-in { scale: 1.05; }
+@media (prefers-reduced-motion: reduce) { .footer .footer_logo { transition: none; } }

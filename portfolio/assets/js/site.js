@@ -510,6 +510,12 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   })();
 
+  /* ---------- 0q. Footer logo grows 5% when it scrolls into view (and back when it leaves) ---------- */
+  (function () {
+    var lg = document.querySelector('.footer .footer_logo'); if (!lg || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (es) { es.forEach(function (e) { lg.classList.toggle('is-in', e.isIntersecting); }); }, { threshold: .6 }).observe(lg);
+  })();
+
   /* ---------- 0p. At the very top of a page the nav has no tint behind it; the tint fades in once you scroll ---------- */
   (function () {
     var root = document.documentElement, rq = 0;
@@ -772,6 +778,7 @@
     var slots = [], cards = [], homes = [], jitter = [], rest = [], pinH = 0, focus = -1;
     var cur = 0, target = 0, ticking = false, pointer = null, latched = false, floating = false, idle = 0, done = false;
     var canHover = window.matchMedia('(hover: hover)').matches;
+    var COLS = 10; // desktop: ten photos a row, wider than the screen; push the cursor to the left or right edge to look along it
     function rnd(n, k) { var s = Math.sin(n * k) * 43758.5453; return s - Math.floor(s); }
     function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
@@ -787,7 +794,7 @@
       pg.classList.toggle('is-simple', simple);
       // a short last row sits centred, with even gaps either side (desktop grid is 14 half-columns, each photo spans 2)
       allSlots.forEach(function (s) { s.style.gridColumnStart = ''; });
-      if (window.innerWidth >= 992) { var vis = allSlots.filter(function (s) { return s.offsetParent !== null; }), rem = vis.length % 7; if (rem) vis[vis.length - rem].style.gridColumnStart = String(7 - rem + 1); }
+      if (window.innerWidth >= 992) { var vis = allSlots.filter(function (s) { return s.offsetParent !== null; }), rem = vis.length % COLS; if (rem) vis[vis.length - rem].style.gridColumnStart = String(COLS - rem + 1); }
       slots = allSlots.filter(function (s) { return s.offsetParent !== null; });
       cards = slots.map(function (s) { return s.querySelector('.pg_card'); });
       allSlots.forEach(function (s) { s.querySelector('.pg_card').style.transform = 'none'; });
@@ -882,8 +889,27 @@
       layout();
     }
     function updateHover() { if (!pointer) return; if (cur < .5) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover once the grid is half dealt
+    // edge panning: near the left or right edge of the screen the row glides sideways, faster the closer you get
+    var pan = 0, panV = 0, panRaf = 0;
+    function panMax() { return Math.max(0, (grid.offsetWidth - document.documentElement.clientWidth) / 2); }
+    function panStep() {
+      panRaf = 0;
+      var want = 0;
+      if (pointer && !simple && cur >= .985 && window.innerWidth >= 992) {
+        var vw = document.documentElement.clientWidth, Z = vw * .16;
+        if (pointer.x < Z) want = (1 - pointer.x / Z); else if (pointer.x > vw - Z) want = -(1 - (vw - pointer.x) / Z);
+        want = want * Math.abs(want) * 16; // px per frame, eased in
+      }
+      panV += (want - panV) * .12;
+      var m = panMax(), np = Math.max(-m, Math.min(m, pan + panV));
+      if (np === pan && Math.abs(want) < .01) { panV = 0; }
+      if (np !== pan) { pan = np; grid.style.translate = pan.toFixed(1) + 'px 0'; layout(); updateHover(); }
+      if (Math.abs(panV) > .05 || Math.abs(want) > .01) panRaf = requestAnimationFrame(panStep);
+    }
+    function panKick() { if (!panRaf) panRaf = requestAnimationFrame(panStep); }
+    window.addEventListener('resize', function () { pan = 0; panV = 0; grid.style.translate = ''; });
     if (canHover) {
-      stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); });
+      stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); panKick(); });
       stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
     }
     // ease the shown progress toward the scroll position so wheel and trackpad steps don't judder
