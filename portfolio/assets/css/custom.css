@@ -1276,7 +1276,7 @@ html.at-top .navigation::before { opacity: 0; }
 video::-webkit-media-controls-start-playback-button, video::-webkit-media-controls-panel, video::-webkit-media-controls { display: none !important; -webkit-appearance: none; opacity: 0; }
 
 /* phones: the live cams section is left out */
-@media (max-width: 767px) { .livecam { display: none !important; } }
+@media (max-width: 767px) { .livecam:not(.is-full) { display: none !important; } }
 
 /* phones: playground carousel popup */
 .pgx { position: fixed; inset: 0; z-index: 2000; background: #111111f2; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #fff; opacity: 0; transition: opacity .25s ease; }
@@ -1300,7 +1300,7 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
 .section.livecam:not(.is-switching) { background: #ecebe8 url('../cam-skeleton.jpg?v=1794188864') center / cover no-repeat; }
 
 /* phones have no cams, so the 'stare into the sunset' hint is left out there */
-@media (max-width: 767px) { .cam-hint { display: none; } }
+
 
 /* contact intro: three short lines (Talk / Read / Unwind) */
 .ways { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: 0; }
@@ -1361,3 +1361,6 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 .about_video-cap.cc-on-video { background: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 0 !important; border-radius: 0 !important; gap: .5rem; align-items: center; }
 .about_video-cap.cc-on-video .tape { display: inline-block; }
 .about_video-cap.cc-on-video .tape + .tape { rotate: .8deg; translate: 0 2px; }
+
+/* touch screens: the close button is always showing in full screen (there is no hover to reveal it) */
+@media (hover: none), (max-width: 767px) { .livecam.is-full .livecam_close { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; } }

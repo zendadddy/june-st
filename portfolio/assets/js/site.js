@@ -1016,9 +1016,13 @@
   /* ---------- 6. Contact: live LA cams over the mirror photo ----------
      Only cams that are actually streaming are shown: a cam that errors, ends, or hasn't started playing within 8s is skipped.
      The arrows step through the live cams; the photo shows only until the first cam is up (or if none are). */
-  var cam = document.querySelector('[data-livecam]');
-  if (cam && window.matchMedia('(max-width: 767px)').matches) { cam.hidden = true; cam = null; } // phones: no live cams (and no YouTube download)
-  if (cam) {
+  // phones: the cams stay out of the page (and YouTube isn't loaded) until 'watch the sunset' is tapped, which opens them full screen
+  var camEl = document.querySelector('[data-livecam]');
+  if (camEl) {
+    if (window.matchMedia('(max-width: 767px)').matches) { camEl.hidden = true; camEl._lazy = function () { camEl._lazy = null; camEl.hidden = false; initCam(camEl); }; }
+    else initCam(camEl);
+  }
+  function initCam(cam) {
     var list; try { list = JSON.parse(cam.getAttribute('data-livecam')); } catch (err) { list = []; }
     // a different order every visit, so it isn't always the same beach first
     for (var q = list.length - 1; q > 0; q--) { var w = Math.floor(Math.random() * (q + 1)), t = list[q]; list[q] = list[w]; list[w] = t; }
@@ -1086,6 +1090,8 @@
       cam.classList.toggle('is-full', on); document.documentElement.classList.toggle('cam-full', on);
       try { if (typeof lenis !== 'undefined') { if (on && lenis.stop) lenis.stop(); else if (!on && lenis.start) lenis.start(); } } catch (e) {}
       if (on) closeBtn.focus({ preventScroll: true, focusVisible: false });
+      // phones only see the cams full screen: pause when it closes, carry on when it reopens
+      if (window.matchMedia('(max-width: 767px)').matches && player) { try { if (on && player.playVideo) player.playVideo(); else if (!on && player.pauseVideo) player.pauseVideo(); } catch (e) {} }
     }
     cam.querySelector('.livecam_shield').addEventListener('click', function () { if (cam.classList.contains('is-live')) full(!cam.classList.contains('is-full')); });
     closeBtn.addEventListener('click', function (e) { e.stopPropagation(); full(false); });
@@ -1379,7 +1385,9 @@
   /* ---------- 6b. Contact: 'watch the sunset' opens the live cams full screen ---------- */
   document.querySelectorAll('[data-cams-link]').forEach(function (a) {
     a.addEventListener('click', function (e) {
-      var t = document.getElementById('cams'); if (!t || t.hidden) return;
+      var t = document.getElementById('cams'); if (!t) return;
+      if (t._lazy) t._lazy(); // phones: start the cams now
+      if (t.hidden) return;
       e.preventDefault();
       if (t._full) { t._full(true); return; } // straight into full screen
       try { if (typeof lenis !== 'undefined' && lenis.scrollTo) { lenis.scrollTo(t, { duration: 1.6 }); return; } } catch (err) {}
