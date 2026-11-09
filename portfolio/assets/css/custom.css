@@ -1317,3 +1317,7 @@ html.pgx-open, html.pgx-open body { overflow: hidden; }
   .contact-intro h1.u-align-center { text-align: left; }
   .contact-intro .ways { align-items: flex-start; }
 }
+
+/* contact form: the submit button is always there (dimmed until the form is complete) */
+form[data-contact] [type=submit] { opacity: 1; visibility: visible; transform: none; }
+form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
