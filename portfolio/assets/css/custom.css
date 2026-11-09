@@ -1367,3 +1367,12 @@ form[data-contact] [type=submit]:disabled { opacity: .35; cursor: not-allowed; }
 
 /* phones: the Talk / Read / Unwind links get more room, so each one is an easy, separate tap */
 @media (max-width: 991px) { .contact-intro .ways { gap: 1.1rem; margin-top: .4rem; } .contact-intro .ways a::before { top: -11px; bottom: -11px; left: -12px; right: -12px; } }
+
+/* full screen: no fullscreen button, and a small spinner in the middle until the stream is up */
+.livecam.is-full .livecam_expand { display: none !important; }
+.livecam.is-full::after { content: ""; position: absolute; left: 50%; top: 50%; z-index: 4; width: 1.75rem; height: 1.75rem; margin: -.875rem 0 0 -.875rem; border-radius: 50%;
+  border: 2px solid #1d1d1d26; border-top-color: #1d1d1da6; animation: cam-spin .9s linear infinite; pointer-events: none; transition: opacity .4s ease; }
+.livecam.is-full.is-switching::after { border-color: #ffffff2e; border-top-color: #ffffffbf; }
+.livecam.is-full.is-live:not(.is-switching)::after, .livecam.is-full.is-offline::after { opacity: 0; animation: none; }
+@keyframes cam-spin { to { transform: rotate(360deg); } }
+.livecam.is-full .livecam_ui { opacity: 1 !important; } /* the close button is reachable right away, even before YouTube is ready */
