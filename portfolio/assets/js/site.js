@@ -819,6 +819,7 @@
         var off = side < 0 ? -(cxs + w * .7 + rnd(n, 7.13) * 60) : (vw - cxs) + w * .7 + rnd(n, 7.13) * 60;
         return { sx: off, sy: (rnd(n, 39.425) - .5) * vh * .08, rot: rot * .6, s: 1.05 };
       });
+      loopMeasure();
       cur = target = done ? 1 : progress();
       layout();
     }
@@ -889,25 +890,46 @@
       layout();
     }
     function updateHover() { if (!pointer) return; if (cur < .5) { setFocus(-1); return; } setFocus(hitTest(pointer.x, pointer.y)); } // hover once the grid is half dealt
-    // edge panning: near the left or right edge of the screen the row glides sideways, faster the closer you get
-    var pan = 0, panV = 0, panRaf = 0;
-    function panMax() { return Math.max(0, (grid.offsetWidth - document.documentElement.clientWidth) / 2); }
+    // edge panning: near the left or right edge of the screen the rows glide sideways, faster the closer you get,
+    // and loop: photos leaving one edge come back round on the other (each row repeats every L pixels)
+    var pan = 0, panV = 0, panRaf = 0, loopOn = false, L = 0, base = [], natural = [];
+    function loopMeasure() {
+      allSlots.forEach(function (s) { s.style.translate = ''; });
+      loopOn = !simple && window.innerWidth >= 992 && slots.length > COLS;
+      if (!loopOn) { pan = 0; return; }
+      var gr = grid.getBoundingClientRect(), gc = gr.left + gr.width / 2, rows = {};
+      natural = slots.map(function (s) { var r = s.getBoundingClientRect(); return r.left + r.width / 2 - gc; });
+      slots.forEach(function (s, n) { var k = Math.floor(n / COLS); (rows[k] = rows[k] || []).push(n); }); // rows fill in order, COLS at a time
+      var full = Object.keys(rows).map(function (k) { return rows[k]; }).filter(function (row) { return row.length === COLS; })[0];
+      var pitch = full ? (natural[full[COLS - 1]] - natural[full[0]]) / (COLS - 1) : gr.width / COLS;
+      L = pitch * COLS;
+      base = natural.slice();
+      Object.keys(rows).forEach(function (k) { // a shorter row spreads out evenly over the same loop, so it has no gap as it comes round
+        var row = rows[k], m = row.length; if (m === COLS) return;
+        row.forEach(function (n, i) { base[n] = (i - (m - 1) / 2) * (L / m); });
+      });
+      loopApply();
+    }
+    function loopApply() {
+      if (!loopOn) return;
+      slots.forEach(function (s, n) {
+        var x = base[n] + pan; x = ((x + L / 2) % L + L) % L - L / 2;
+        s.style.translate = (x - natural[n]).toFixed(1) + 'px 0';
+      });
+    }
     function panStep() {
       panRaf = 0;
       var want = 0;
-      if (pointer && !simple && cur >= .985 && window.innerWidth >= 992) {
+      if (pointer && loopOn && cur >= .985) {
         var vw = document.documentElement.clientWidth, Z = vw * .16;
         if (pointer.x < Z) want = (1 - pointer.x / Z); else if (pointer.x > vw - Z) want = -(1 - (vw - pointer.x) / Z);
         want = want * Math.abs(want) * 16; // px per frame, eased in
       }
       panV += (want - panV) * .12;
-      var m = panMax(), np = Math.max(-m, Math.min(m, pan + panV));
-      if (np === pan && Math.abs(want) < .01) { panV = 0; }
-      if (np !== pan) { pan = np; grid.style.translate = pan.toFixed(1) + 'px 0'; layout(); updateHover(); }
-      if (Math.abs(panV) > .05 || Math.abs(want) > .01) panRaf = requestAnimationFrame(panStep);
+      if (Math.abs(panV) > .01) { pan += panV; loopApply(); layout(); updateHover(); }
+      if (Math.abs(panV) > .05 || Math.abs(want) > .01) panRaf = requestAnimationFrame(panStep); else panV = 0;
     }
     function panKick() { if (!panRaf) panRaf = requestAnimationFrame(panStep); }
-    window.addEventListener('resize', function () { pan = 0; panV = 0; grid.style.translate = ''; });
     if (canHover) {
       stage.addEventListener('pointermove', function (e) { pointer = { x: e.clientX, y: e.clientY }; updateHover(); panKick(); });
       stage.addEventListener('pointerleave', function () { pointer = null; setFocus(-1); });
