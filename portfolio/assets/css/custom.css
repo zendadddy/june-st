@@ -1257,7 +1257,7 @@ html.at-top .navigation::before { opacity: 0; }
 .pg_slot:has(.pg_card.is-focus) { z-index: 100 !important; } /* the hovered photo rises above every other slot */
 
 /* desktop: a little more air between the metal logo and the footer links */
-@media (min-width: 992px) { .footer .footer_logo { margin-bottom: 8px; margin-top: -32px; } }
+@media (min-width: 992px) { .footer .footer_logo { margin-bottom: 24px; margin-top: -32px; } }
 
 /* project card brand set as text (for projects without a logo file) */
 .project_wordmark { display: block; line-height: 1; font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; padding: .15rem 0 0; margin-bottom: -.25rem; }
