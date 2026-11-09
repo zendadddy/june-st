@@ -2,7 +2,15 @@
 <!--
   PROJECT PAGE TEMPLATE
   Copy this file to projects/<slug>.html and edit the content.
-  - Keep <head><script>(function(){try{if(+localStorage.getItem('fb-unlock')>Date.now())return}catch(e){}document.documentElement.style.visibility='hidden';location.replace('/projects?gate='+encodeURIComponent('projects/template'))})();</script>, <nav>, <footer> and the <script> tags at the bottom as they are.
+  - Keep <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T97ZKZSFFG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-T97ZKZSFFG');
+</script>
+<script>(function(){try{if(+localStorage.getItem('fb-unlock')>Date.now())return}catch(e){}document.documentElement.style.visibility='hidden';location.replace('/projects?gate='+encodeURIComponent('projects/template'))})();</script>, <nav>, <footer> and the <script> tags at the bottom as they are.
   - Change <title> and the name="description" meta (the export has no og: tags; add them if you want link previews).
   - Each section inside <main> is labelled with a comment; delete, duplicate or reorder them freely.
   - Image paths are relative to this file: ../assets/<file>. Drop new images into assets/.
